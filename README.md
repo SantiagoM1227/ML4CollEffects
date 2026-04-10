@@ -5,23 +5,6 @@ Machine learning for accelerator physics — research code for studying collecti
 This repository collects code, datasets and reproducible experiment artifacts used for ongoing research into ML-based modeling of collective beam dynamics. It is organized for reproducibility, collaboration, and iterative experiment development.
 
 ---
-
-## Table of contents
-
-- Project overview
-- Repository structure (ground truth)
-- Design principles
-- Quick start (example bash setup)
-- Typical workflow & reproducibility
-- Experiment run-folder layout (example)
-- Notebooks vs source code
-- Data management
-- Development notes & contributing
-- Ongoing cleanup / restructuring notes
-- License & references
-
----
-
 ## Project overview
 
 This repository contains research code and artifacts for using machine learning (neural operators, normalizing flows, etc.) to model and analyze collective effects in accelerator beam dynamics. Major research axes include:
@@ -29,13 +12,13 @@ This repository contains research code and artifacts for using machine learning 
 - Symplectic/Hénon-style low-dimensional models for beam dynamics and stability analysis.
 - Data-driven surrogates: neural operators and normalizing flows.
 - Xsuite-compatible dataset generation and processing for training and evaluation.
+- External experimental datasets availability and integration.
 - Reproducible experiment pipelines that capture configs, metrics, logs, and checkpoints.
 
-The project aims to produce reliable, reproducible experiments and modular code that can be shared with collaborators and extended over time.
 
 ---
 
-## Repository structure (ground truth)
+## Repository structure 
 
 Top-level folders follow the layout used across the project. Use these as the canonical organization.
 
@@ -75,49 +58,16 @@ Top-level folders follow the layout used across the project. Use these as the ca
   - `ment-flow/` — vendored or referenced external code (kept separate).
   - `neuraloperator/` — external neural operator code (kept separate).
 
-Note: `.gitignore` is configured to avoid uploading `third_party/`, `reports/`, and `docs/` directories when desired — follow your repository policy and the `.gitignore` for what is excluded.
-
----
-
-## Design principles
-
-- Single source of truth: `src/` is the authoritative implementation. Tests, scripts, and experiment harnesses should import and rely on `src/` modules rather than notebook copies.
+Note:  `src/` is intended to be the authoritative implementation. 
 - Notebooks are exploratory: use notebooks for interactive analysis and plotting; don’t rely on them for reproducible experiments or canonical code paths.
-- Reproducibility first: experiments must capture config, deterministic seeds, environment info, and output artifacts required to re-run or analyze results.
-- Minimal side effects: pipelines should read from `data/` and write to `outputs/` (or `experiments/runs/`) to prevent accidental data loss.
-- Modularity and testability: split physics code, models, data, and training into small modules with unit tests in `tests/`.
-- Clear provenance: dataset `metadata/` and `configs/` should carry provenance and versioning information.
 
 ---
-
-## Quick start (example bash setup)
-
-These are example commands to get a working developer environment. Adapt paths and package manager choices to your local conventions.
-
-```bash
-# macOS / zsh example: create a Python virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Upgrade pip and install dependencies if a requirements file exists
-pip install --upgrade pip
-if [ -f requirements.txt ]; then
-  pip install -r requirements.txt
-fi
-
-# Install editable package to ensure src/ is importable
-pip install -e src
-
-# Run unit tests (example; adapt to your test runner)
-pytest -q tests
-```
-
-Notes:
-- If you use conda or poetry, prefer those tools and adapt the commands.
 
 ---
 
 ## Typical workflow & reproducibility
+
+Foreseen usage (to be implemented and documented in more detail):
 
 1. Prepare data
    - Place original data in `data/raw/`.
@@ -137,7 +87,7 @@ Notes:
 5. Record environment
    - Save environment info (Python version, pip freeze, OS, GPU details) with the run metadata.
 
-Reproducibility checklist (per run):
+Reproducibility relies on:
 - Config file used to launch the run (YAML/JSON) — commit to `experiments/runs/<run-id>/config.yaml`.
 - Random seeds and deterministic flags recorded.
 - Version of the code: commit hash or tag saved under `experiments/runs/<run-id>/git-rev.txt`.
@@ -151,7 +101,7 @@ Reproducibility checklist (per run):
 
 ## Experiment run-folder layout (suggested example)
 
-A recommended, self-contained layout for a single experiment run under `experiments/runs/<run-id>/`:
+Intended self-contained layout for a single experiment run under `experiments/runs/<run-id>/`:
 
 ```
 experiments/runs/<run-id>/
@@ -167,10 +117,8 @@ experiments/runs/<run-id>/
 │  └─ loss_curve.png
 ├─ artifacts/
 │  └─ processed_dataset_info.json
-└─ notes.md               # short human-readable notes about the run
+└─ notes.md               # short readable notes about the run
 ```
-
-This layout keeps all artifacts required to re-run or analyze that experiment in a single, versioned place.
 
 ---
 
@@ -184,26 +132,17 @@ This layout keeps all artifacts required to re-run or analyze that experiment in
 
 ## Data management
 
-- Keep original, immutable files in `data/raw/`. Do not edit files in-place.
+- Keep original, immutable files in `data/raw/`. 
 - Store processing scripts and transformation code in `src/collefects_ml/data/` and `scripts/`.
-- Use `data/metadata/` to record schema, provenance, and checksums (MD5/SHA256).
-- For large datasets, consider external hosting and a manifest in `data/metadata/` that lists expected files and download URLs.
+- `data/metadata/` to record schema, provenance, and checksums.
 
 ---
 
 ## Development notes & contributing
 
 - Tests: add unit tests under `tests/` alongside modules in `src/`.
-- Linting & formatting: prefer a consistent formatter (black/isort/ruff/etc.). If the project does not yet standardize a tool, add one and a minimal config.
-- When changing APIs in `src/`, update tests and any notebooks that document usage patterns.
-- Document design decisions in `docs/notes/` and add references in `docs/references/papers/`.
-- For research reproducibility, prefer small, focused commits and include experiment config files in the corresponding `experiments/runs/` folders.
+- Linting & formatting: prefer a consistent formatter (black/isort/ruff/etc.). Further work includes setting up minimal formatting scdripting.
 
-Pull requests
-- Reference associated experiment run-ids when changes affect results or reproduction.
-- Run the test suite before opening a PR.
-
----
 
 ## Ongoing cleanup / restructuring
 
@@ -213,7 +152,6 @@ This repository is actively being cleaned and restructured to:
 - Improve test coverage under `tests/`.
 - Clarify data provenance under `data/metadata/`.
 
-Expect changes to layout and naming conventions during the cleanup; follow the design principles and aim to keep experiments reproducible during refactors.
 
 ---
 

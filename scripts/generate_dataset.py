@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt  # plots
 import xtrack as xt  # tracking module of Xsuite
 #%matplotlib widget
 
+data_folder = "./data/raw/"
+
+
 def plot_phase_space_with_profiles(x_array, px_array, title="",axis_labels = None, label=None, bins=120, difference=False)->None:
     fig = plt.figure(figsize=(10, 8))
     gs = fig.add_gridspec(
@@ -209,11 +212,11 @@ def data_builder(line: xt.Line,
     perm = rng.permutation(X.shape[0])   # fixed
     X = X[perm]
     Y = Y[perm]
-
-    np.savez("xsuite_dataset.npz", X=X, Y=Y)
-    print("Dataset shapes: X =", X.shape, ", Y =", Y.shape)
-    print("Dataset saved to xsuite_dataset.npz")
-
+    
+    filename = "./data/raw/xsuite_dataset_with_params.npz" if save_params else "./data/raw/xsuite_dataset.npz"
+    np.savez(filename, X=X, Y=Y)
+    print("Dataset Tracking shapes: X =", X.shape, ", Y =", Y.shape)
+    print("Dataset Tracking saved to", filename)
     return {"X": X, "Y": Y, "params": sampled_params}
 
 def build_operator_dataset(
@@ -261,9 +264,12 @@ def build_operator_dataset(
     X_samples = np.stack(X_samples, axis=0)   # [Ns, Np, 6]
     Y_samples = np.stack(Y_samples, axis=0)   # [Ns, Np, 6]
     MU_samples = np.stack(MU_samples, axis=0) # [Ns, 3]
+    
+    filename = "./data/raw/xsuite_operator_dataset.npz"
 
-    np.savez("xsuite_operator_dataset.npz", X=X_samples, Y=Y_samples, MU=MU_samples)
-    print("Saved:", X_samples.shape, Y_samples.shape, MU_samples.shape)
+    np.savez(filename, X=X_samples, Y=Y_samples, MU=MU_samples)
+    print("Saved operator dataset: to ", filename)
+    print("Shapes:", X_samples.shape, Y_samples.shape, MU_samples.shape)
     
     
 # in generate_dataset.py
@@ -277,9 +283,9 @@ if __name__ == "__main__":
         kf1_range=(0.1, 2.0),
         kd1_range=(-4.5, -0.05),
         kf2_range=(0.1, 2.0),
-    )
+        )
 
-data = data_builder(line, 
+    data_builder(line, 
              env, 
              total_particles=50000, 
              seed=42, 
@@ -289,40 +295,3 @@ data = data_builder(line,
              quad_iterations=1,
              save_params=False)
 
-
-z_in_raw = data["X"]
-z_out_raw = data["Y"]
-
-
-x_data_generator = z_out_raw[:, 0]
-px_data_generator = z_out_raw[:, 3]
-y_data_generator = z_out_raw[:, 1]
-py_data_generator = z_out_raw[:, 4]
-zeta_data_generator = z_out_raw[:, 2]
-delta_data_generator = z_out_raw[:, 5]
-
-x = np.array(p0.x)
-px = np.array(p0.px)
-y = np.array(p0.y)
-py = np.array(p0.py)
-zeta = np.array(p0.zeta)
-delta = np.array(p0.delta)
-
-x_array = [x, x_data_generator]
-px_array = [px, px_data_generator]
-y_array = [y, y_data_generator]
-py_array = [py, py_data_generator]
-zeta_array = [zeta, zeta_data_generator]
-delta_array = [delta, delta_data_generator]
-
-label = ["Original", "Data Generator"]
-x_axis_array = [x_array, y_array, zeta_array]
-px_axis_array = [px_array, py_array, delta_array]
-
-axis_labels = [["x", "px"] , ["y", "py"], ["zeta", "delta"]]
-
-axis_index = 1 # 0 for x-px, 1 for y-py, 2 for zeta-delta
-
-for axis_index in range(3):
-    plot_phase_space_with_profiles(x_axis_array[axis_index], px_axis_array[axis_index], title=f"Transport for kf1={env['kf1']}, kd1={env['kd1']}, kf2={env['kf2']}", axis_labels=axis_labels[axis_index], label=label, difference=False)
-    
