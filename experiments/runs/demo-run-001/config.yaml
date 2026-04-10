@@ -1,5 +1,4 @@
 # Example, minimal, implementation-agnostic configuration for an experiment run
-# Do not treat this as a precise API; adapt fields to your training/evaluation code.
 
 run_id: demo-run-001
 description: "Demo config: template for experiments/runs/<run-id>/config.yaml"
@@ -30,7 +29,7 @@ output:
   checkpoints_dir: experiments/runs/demo-run-001/checkpoints
   metrics_path: experiments/runs/demo-run-001/metrics/metrics.json
 
-# reproducibility metadata (filled in at runtime)
+# reproducibility metadata 
 metadata:
   git_rev: null  # fill with `git rev-parse HEAD` or similar when running
   environment: null  # e.g. output of `pip freeze`
