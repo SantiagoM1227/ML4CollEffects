@@ -1,6 +1,4 @@
 # ML4CollEffects
-Machine Learning approaches to Collective effects in Accelerator Physics
-# ML Collective Effects (ML4CollEffects)
 
 Machine learning for accelerator physics — research code for studying collective effects, beam dynamics, symplectic / Hénon-like models, neural operators, normalizing flows, and Xsuite dataset generation.
 
