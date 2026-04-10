@@ -28,11 +28,6 @@ Top-level folders follow the layout used across the project. Use these as the ca
   - `external/` — datasets from third parties or external downloads.
   - `processed/` — preprocessed datasets ready for training/evaluation.
   - `metadata/` — dataset manifests, schema, checksums, provenance.
-- `docs/`
-  - `notes/` — working notes, design documents (human-readable).
-  - `references/`
-    - `papers/` — bibliographic notes and PDFs where permitted.
-    - `presentations/` — slides and posters.
 - `experiments/`
   - `runs/` — reproducible experiment run artifacts (see below for layout).
 - `notebooks/` — exploratory analyses and experiments (NOT the source of truth).
@@ -41,10 +36,6 @@ Top-level folders follow the layout used across the project. Use these as the ca
   - `figures/` — figures and plots exported from experiments/analysis.
   - `logs/` — aggregated logs and run transcripts.
   - `tables/` — result tables and CSV exports.
-- `reports/`
-  - `midterm/`
-    - `src/` — LaTeX/source for reports.
-    - `build/` — compiled artifacts (PDF, aux files).
 - `scripts/` — runnable entry points (dataset generation, training wrappers, evaluation scripts).
 - `src/collefects_ml/`
   - `data/` — dataset loaders, transforms, and I/O utilities.
@@ -54,12 +45,9 @@ Top-level folders follow the layout used across the project. Use these as the ca
   - `training/` — training loops, trainers, and checkpointing helpers.
   - `utils/` — small utility modules used across the codebase.
 - `tests/` — unit and integration tests.
-- `third_party/`
-  - `ment-flow/` — vendored or referenced external code (kept separate).
-  - `neuraloperator/` — external neural operator code (kept separate).
 
 Note:  `src/` is intended to be the authoritative implementation. 
-- Notebooks are exploratory: use notebooks for interactive analysis and plotting; don’t rely on them for reproducible experiments or canonical code paths.
+
 
 ---
 
