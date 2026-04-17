@@ -1,0 +1,1651 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{metral_wake_2021-1}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=df99401da2031fb8ea92211a26230d7c}{%
+           family={Métral},
+           familyi={M\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \strng{bibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorbibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authornamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The ﬁrst mention of the impedance concept appeared on November 1966 in the CERN internal report Longitudinal instability of a coasting beam above transition, due to the action of lumped discontinuities by V.G. Vaccaro. Then, a more general treatment of it appeared in February 1967 in the CERN yellow report Longitudinal instabilities of azimuthally uniform beams in circular vacuum chambers of arbitrary electrical properties by A.M. Sessler and V.G. Vaccaro. The concept of wake ﬁeld came two years later, in 1969, in the paper The wake ﬁeld of an oscillating particle in the presence of conducting plates with resistive terminations at both ends by A.G. Ruggiero and V.G. Vaccaro. This was the beginning of many studies, which took place over the last ﬁve decades, and today, impedances and wake ﬁelds continue to be an important ﬁeld of activity, as concerns theory, simulation, bench and beam-based measurements. Building a reliable impedance or wake ﬁeld model of a machine is the ﬁrst necessary step to be able to evaluate the machine performance limitations, identify the main contributors in case an impedance reduction is required, and study the interaction with other mechanisms such as optics nonlinearities, transverse damper, noise, space charge, electron cloud, beam-beam (in a collider), etc. Beam collective instabilities, and their mitigation, cover a wide range of eﬀects in particle accelerators and they have been the subjects of intense research. As the machines performance was pushed new mechanisms were revealed and nowadays the challenge consists in studying the interplays between all these intricate phenomena, as it is very often not possible to treat the diﬀerent eﬀects separately. With the increasing power of our computers this becomes easier but the need to continue and develop theories remains, to have a better understanding of the interplays between all these eﬀects: the subject of impedance and beam instabilities in particle accelerators is far from being exhausted, as testiﬁed by the many new instability and stabilizing mechanisms which have been recently explained or discovered. Furthermore, in the context of the studies for possible future accelerators, some uncharted territories remain such as, for instance, the collective instabilities during the necessary ionization cooling for a muon collider.}
+      \field{issn}{1748-0221}
+      \field{journaltitle}{J. Inst.}
+      \field{month}{10}
+      \field{number}{10}
+      \field{title}{Wake field, impedance and collective instability}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{16}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{P10009}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{file}
+      \verb PDF:files/57/Métral - 2021 - Wake field, impedance and collective instability.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{url}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+    \endentry
+    \entry{gibellieri_impact_nodate}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=dea427a80930cfe6fff275ce77124fea}{%
+           family={Gibellieri},
+           familyi={G\bibinitperiod},
+           given={D},
+           giveni={D\bibinitperiod}}}%
+        {{hash=c5b51caef426309cf78caac23384463b}{%
+           family={Ghribi},
+           familyi={G\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=37a3a88c0a3141f7a9129233b5d92974}{%
+           family={Zannini},
+           familyi={Z\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=a1c9aeb6612912839cdbf4c1d202a8b7}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=0203164cb562044718d52e3433dc6506}{%
+           family={Zobov},
+           familyi={Z\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{e82ebb0fc73549e37c664399950ba1c5}
+      \strng{fullhash}{21c186a2e43558c0637b2f23d476e9ca}
+      \strng{fullhashraw}{21c186a2e43558c0637b2f23d476e9ca}
+      \strng{bibnamehash}{e82ebb0fc73549e37c664399950ba1c5}
+      \strng{authorbibnamehash}{e82ebb0fc73549e37c664399950ba1c5}
+      \strng{authornamehash}{e82ebb0fc73549e37c664399950ba1c5}
+      \strng{authorfullhash}{21c186a2e43558c0637b2f23d476e9ca}
+      \strng{authorfullhashraw}{21c186a2e43558c0637b2f23d476e9ca}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Beam stability in the FCC-ee collider is strongly influenced by transverse and longitudinal beam coupling impedance. Developing a flexible and comprehensive impedance model is crucial for accurately evaluating and mitigating instabilities as machine parameters evolve. This study investigates the effect of the FCC-ee collimation system, identifying it as a dominant source of total machine impedance. Both resistive and geometric contributions are analyzed, with geometric effects found to play a critical role in shaping the overall impedance landscape. Accurately modeling collimators’ geometric impedance is essential for beam stability assessment. Such modeling enables global impedance considerations, accounting for the interplay between different accelerator elements and guiding the definition of critical design parameters.}
+      \field{title}{Impact of the geometric impedance of collimators on beam stability in {FCC}-ee}
+      \verb{file}
+      \verb PDF:files/90/Gibellieri et al. - Impact of the geometric impedance of collimators on beam stability in FCC-ee.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{arpaia_machine_2021}{article}{}{}
+      \name{author}{20}{}{%
+        {{hash=3498bfb336ca8c0aaa9e00193d1002d3}{%
+           family={Arpaia},
+           familyi={A\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=49fd3dc892afa90c9e3c54e9e0923ad1}{%
+           family={Azzopardi},
+           familyi={A\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=3f6ef903259922b2c08745a42603cf76}{%
+           family={Blanc},
+           familyi={B\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=a1ac2ede2bcd9875b44597e9ca3765aa}{%
+           family={Bregliozzi},
+           familyi={B\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=40b8692aa3e6ad14eeefac0c66795599}{%
+           family={Buffat},
+           familyi={B\bibinitperiod},
+           given={X.},
+           giveni={X\bibinitperiod}}}%
+        {{hash=9946d32c058d60d5ea2455c062318600}{%
+           family={Coyle},
+           familyi={C\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=869ce40e619c9b1d8da91f3eff406969}{%
+           family={Fol},
+           familyi={F\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+        {{hash=028371a6aaad0383e06f2bfc6315d96b}{%
+           family={Giordano},
+           familyi={G\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=0f8809297a0f137d7a589895b9774394}{%
+           family={Giovannozzi},
+           familyi={G\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=cf97e1b91b2eae27e668e6aaed578b82}{%
+           family={Pieloni},
+           familyi={P\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+        {{hash=12de2af8def2bdcbe161a83b7e8ae375}{%
+           family={Prevete},
+           familyi={P\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bd626f98949606bcb6d9fa5614a3dc39}{%
+           family={Redaelli},
+           familyi={R\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d418966546d7498e002d72faef98d752}{%
+           family={Salvachua},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=ff0b9653555beff9cf999e91de958fc5}{%
+           family={Salvant},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=f981c95c65d1e68c6962a5a984aa4f80}{%
+           family={Schenk},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=606f3929d3387481f6633a71dfda87ae}{%
+           family={Camillocci},
+           familyi={C\bibinitperiod},
+           given={M.\bibnamedelimi Solfaroli},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c25c17ae7f703e6fbb197dd02bf0194f}{%
+           family={Tomás},
+           familyi={T\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=d84624c1f47f025b44347dc2f13fc081}{%
+           family={Valentino},
+           familyi={V\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=d69de2aaa48eb8bcd26b1121ce9f8659}{%
+           family={Van\bibnamedelimb Der\bibnamedelima Veken},
+           familyi={V\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim V\bibinitperiod},
+           given={F.F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=56597e3d38c7d1c9230bda78838e1d7f}{%
+           family={Wenninger},
+           familyi={W\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{ce9a41afdb9c740747aec5bb2601cb9b}
+      \strng{fullhash}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \strng{fullhashraw}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \strng{bibnamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
+      \strng{authorbibnamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
+      \strng{authornamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
+      \strng{authorfullhash}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \strng{authorfullhashraw}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Machine learning entails a broad range of techniques that have been widely used in Science and Engineering since decades. High-energy physics has also profited from the power of these tools for advanced analysis of colliders data. It is only up until recently that Machine Learning has started to be applied successfully in the domain of Accelerator Physics, which is testified by intense efforts deployed in this domain by several laboratories worldwide. This is also the case of CERN, where recently focused efforts have been devoted to the application of Machine Learning techniques to beam dynamics studies at the Large Hadron Collider (LHC). This implies a wide spectrum of applications from beam measurements and machine performance optimisation to analysis of numerical data from tracking simulations of non-linear beam dynamics. In this paper, the LHCrelated applications that are currently pursued are presented and discussed in detail, paying also attention to future developments.}
+      \field{issn}{01689002}
+      \field{journaltitle}{Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment}
+      \field{month}{1}
+      \field{title}{Machine learning for beam dynamics studies at the {CERN} {Large} {Hadron} {Collider}}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{985}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{164652}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.nima.2020.164652
+      \endverb
+      \verb{file}
+      \verb PDF:files/92/Arpaia et al. - 2021 - Machine learning for beam dynamics studies at the CERN Large Hadron Collider.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900220310494
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900220310494
+      \endverb
+    \endentry
+    \entry{ghribi_impact_nodate}{article}{}{}
+      \name{author}{10}{}{%
+        {{hash=c5b51caef426309cf78caac23384463b}{%
+           family={Ghribi},
+           familyi={G\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=29691a5cc04125fb373d44ff0c3bf507}{%
+           family={Mashal},
+           familyi={M\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d71d1b42f2b2ad559bc3bea1d7afc515}{%
+           family={Chance},
+           familyi={C\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=aaee24d638679e2360a99a5efc27c3a4}{%
+           family={Dalena},
+           familyi={D\bibinitperiod},
+           given={B},
+           giveni={B\bibinitperiod}}}%
+        {{hash=37a3a88c0a3141f7a9129233b5d92974}{%
+           family={Zannini},
+           familyi={Z\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=dea427a80930cfe6fff275ce77124fea}{%
+           family={Gibellieri},
+           familyi={G\bibinitperiod},
+           given={D},
+           giveni={D\bibinitperiod}}}%
+        {{hash=a1c9aeb6612912839cdbf4c1d202a8b7}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=0203164cb562044718d52e3433dc6506}{%
+           family={Zobov},
+           familyi={Z\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fd47fc879f087e830fe76c2a44a6f783}{%
+           family={Bruant},
+           familyi={B\bibinitperiod},
+           given={Q},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=1f26f664835ac6c347db22001b657f1a}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Y},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{fullhash}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{fullhashraw}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{bibnamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authorbibnamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authornamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authorfullhash}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{authorfullhashraw}{e8a7ddf8a52cf19908192bb0010655f5}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The Future Circular Collider (FCC-ee) is a leading candidate for Europe’s next major particle accelerator, aimed at achieving unprecedented luminosity to enable precise studies of the Z, W, and H bosons and the top quark. However, it faces major design and operational challenges, especially from collective effects like space charge and wake fields. The FCC-IS Feasibility Study united experts to tackle these issues. This paper reviews the latest progress on collective effects in the FCC-ee main ring and booster, and outlines strategies to mitigate related instabilities.}
+      \field{title}{Impact of collective effects on beam stability in the {FCC}-ee main rings and the high-energy booster}
+      \verb{file}
+      \verb PDF:files/88/Ghribi et al. - Impact of collective effects on beam stability in the FCC-ee main rings and the high-energy booster.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{zhou_theories_2023}{misc}{}{}
+      \name{author}{6}{}{%
+        {{hash=d27d040dd550d482bd14821ce09e1765}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Demin},
+           giveni={D\bibinitperiod}}}%
+        {{hash=2ce70dd6a4c31e784404981097a1574e}{%
+           family={Ishibashi},
+           familyi={I\bibinitperiod},
+           given={Takuya},
+           giveni={T\bibinitperiod}}}%
+        {{hash=83873a3ffc35bc15a3b0e77ca797a0ca}{%
+           family={Mitsuka},
+           familyi={M\bibinitperiod},
+           given={Gaku},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ef683a713777dcb1c70b2f9511b4744f}{%
+           family={Tobiyama},
+           familyi={T\bibinitperiod},
+           given={Makoto},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4dde7d4e637faed71b4251e277d98b59}{%
+           family={Bane},
+           familyi={B\bibinitperiod},
+           given={Karl},
+           giveni={K\bibinitperiod}}}%
+        {{hash=aa9084c890b697c611f6c993fb0c3062}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Linhao},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{fullhash}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{fullhashraw}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{bibnamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authorbibnamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authornamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authorfullhash}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{authorfullhashraw}{2b7f7918fa09adc447ae4cd671fd558f}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{As a stationary solution of the Vlasov-Fokker-Planck equation, the Haissinski equation predicts the equilibrium line density of a bunch that circulates in a storage ring for a given wake function. This paper shows that some equations regarding the centroid shift of the bunch, the peak position of the bunch profile, bunch length, and extraction of impedance from the bunch profile can be derived from the Haissinski equation in a self-consistent manner. In particular, a generalized quadratic equation for potential-well bunch lengthening is obtained to accommodate any absolute impedance model, expanding upon Zotter's cubic equation, which is primarily applicable to inductive impedance. The equations derived in this paper are tested using computed impedance models for some electron storage rings, showing machine-dependent properties of impedance effects. We conclude that these equations can be employed in electron storage rings to effectively bridge the gap between impedance computations and beam-based measurements.}
+      \field{annotation}{Comment: 13 pages, 14 figures}
+      \field{month}{12}
+      \field{note}{arXiv:2307.01286 [physics]}
+      \field{title}{Theories derived from {Haissinski} equation and their applications to electron storage rings}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2307.01286
+      \endverb
+      \verb{file}
+      \verb PDF:files/54/Zhou et al. - 2023 - Theories derived from Haissinski equation and their applications to electron storage rings.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2307.01286
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2307.01286
+      \endverb
+      \keyw{Physics - Accelerator Physics}
+    \endentry
+    \entry{kim_mbtrack2_cuda_2025}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{hash=5bac6a3ecd66eff3f23741f6f108de6d}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Keon\bibnamedelima Hee},
+           giveni={K\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Korea University}%
+      }
+      \strng{namehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{fullhash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{fullhashraw}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{bibnamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorbibnamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authornamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorfullhash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorfullhashraw}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{8}
+      \field{title}{Development of GPU-Accelerated Particle Tracking Simulation Code MBTRACK2-CUDA for Studies of Collective Effects in Circular Accelerators}
+      \field{type}{PhD thesis}
+      \field{year}{2025}
+      \field{dateera}{ce}
+    \endentry
+    \entry{huang_symplectic_2024}{article}{}{}
+      \name{author}{9}{}{%
+        {{hash=12f4306d591b98a9a8e7eead1a881fa6}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={C-K},
+           giveni={C\bibinithyphendelim K\bibinitperiod}}}%
+        {{hash=4d364a0b532303441c6621ce57289055}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Q},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=52f806c156bd209225cd7d10650ec4b9}{%
+           family={Batygin},
+           familyi={B\bibinitperiod},
+           given={Y\bibnamedelima K},
+           giveni={Y\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=c33f8891299b411bc3297dbf745a78c5}{%
+           family={Beznosov},
+           familyi={B\bibinitperiod},
+           given={O},
+           giveni={O\bibinitperiod}}}%
+        {{hash=9a7f86816d5cbd00e160c8d48a9176b6}{%
+           family={Burby},
+           familyi={B\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=47283dd6210310eb4bbcd7bfafc0fbf7}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=fb19e124da427dcfc9b71acd96e8292a}{%
+           family={Kurennoy},
+           familyi={K\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ed86c69ef6d9f0532f6e3e61d1a49c26}{%
+           family={Kwan},
+           familyi={K\bibinitperiod},
+           given={T},
+           giveni={T\bibinitperiod}}}%
+        {{hash=efd2e43e0777c000402738262ec8d1f3}{%
+           family={Rakotoarivelo},
+           familyi={R\bibinitperiod},
+           given={H\bibnamedelima N},
+           giveni={H\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{86ab4db30180a71244283aad7c790e9f}
+      \strng{fullhash}{8adc26e24a057a235089c33aeaaa15ad}
+      \strng{fullhashraw}{8adc26e24a057a235089c33aeaaa15ad}
+      \strng{bibnamehash}{86ab4db30180a71244283aad7c790e9f}
+      \strng{authorbibnamehash}{86ab4db30180a71244283aad7c790e9f}
+      \strng{authornamehash}{86ab4db30180a71244283aad7c790e9f}
+      \strng{authorfullhash}{8adc26e24a057a235089c33aeaaa15ad}
+      \strng{authorfullhashraw}{8adc26e24a057a235089c33aeaaa15ad}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Development of robust machine-learning (ML) based surrogates for particle accelerators can significantly benefit the modeling, design, optimization, monitoring and control of such accelerators. It is desirable that the surrogate models embed fundamental physical constraints to the interaction and dynamics of the beams, for which an accelerator must be designed to operate upon. We implement and train a class of phase space structure-preserving neural networks — Henon Neural Networks (HenonNets) [1], for nonlinear beam dynamics problems. It is demonstrated that the trained HenonNet model predicts the beam transfer matrix to a reasonably good accuracy while strongly maintaining the symplecticity. To explore such model’s applicability and flexibility for high brightness or intensity beams, we further test it with beam dynamics in the presence of electrostatic and radiative collective effects. Our results indicate that HenonNet may be used as a base ML model for the surrogate of complex beam dynamics, thus opening up a wide range of applications.}
+      \field{issn}{1742-6588, 1742-6596}
+      \field{journaltitle}{J. Phys.: Conf. Ser.}
+      \field{month}{1}
+      \field{number}{6}
+      \field{title}{Symplectic neural surrogate models for beam dynamics}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{2687}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \field{pages}{062026}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1088/1742-6596/2687/6/062026
+      \endverb
+      \verb{file}
+      \verb PDF:files/73/Huang et al. - 2024 - Symplectic neural surrogate models for beam dynamics.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://iopscience.iop.org/article/10.1088/1742-6596/2687/6/062026
+      \endverb
+      \verb{url}
+      \verb https://iopscience.iop.org/article/10.1088/1742-6596/2687/6/062026
+      \endverb
+    \endentry
+    \entry{burby_fast_2021}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=b9344e4d95e0625f313bea3132f8724c}{%
+           family={Burby},
+           familyi={B\bibinitperiod},
+           given={J.\bibnamedelimi W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=4d364a0b532303441c6621ce57289055}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=9ac3e9968bca9ea6ac6d93e6b6695f97}{%
+           family={Maulik},
+           familyi={M\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{fullhash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{fullhashraw}{5937adfc50ad8e584282666ae1385b40}
+      \strng{bibnamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorbibnamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authornamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorfullhash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorfullhashraw}{5937adfc50ad8e584282666ae1385b40}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Poincaré maps for toroidal magnetic fields are routinely employed to study gross confinement properties in devices built to contain hot plasmas. In most practical applications, evaluating a Poincaré map requires numerical integration of a magnetic field line, a process that can be slow and that cannot be easily accelerated using parallel computations. We show that a novel neural network architecture, the HénonNet, is capable of accurately learning realistic Poincaré maps from observations of a conventional field-line-following algorithm. After training, such learned Poincaré maps evaluate much faster than the field-line integration method. Moreover, the HénonNet architecture exactly reproduces the primary physics constraint imposed on field-line Poincaré maps: flux preservation. This structure-preserving property is the consequence of each layer in a HénonNet being a symplectic map. We demonstrate empirically that a HénonNet can learn to mock the confinement properties of a large magnetic island by using coiled hyperbolic invariant manifolds to produce a sticky chaotic region at the desired island location. This suggests a novel approach to designing magnetic fields with good confinement properties that may be more flexible than ensuring confinement using KAM tori.}
+      \field{annotation}{Comment: 28 pages, 26 figures}
+      \field{issn}{0741-3335, 1361-6587}
+      \field{journaltitle}{Plasma Phys. Control. Fusion}
+      \field{month}{2}
+      \field{note}{arXiv:2007.04496 [physics]}
+      \field{number}{2}
+      \field{title}{Fast neural {Poincaré} maps for toroidal magnetic fields}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{63}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{024001}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1088/1361-6587/abcbaa
+      \endverb
+      \verb{file}
+      \verb PDF:files/71/Burby et al. - 2021 - Fast neural Poincaré maps for toroidal magnetic fields.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2007.04496
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2007.04496
+      \endverb
+      \keyw{Physics - Plasma Physics}
+    \endentry
+    \entry{hoover_high-dimensional_2024}{misc}{}{}
+      \name{author}{2}{}{%
+        {{hash=706997da4bd33662fe1fbb7feeaec844}{%
+           family={Hoover},
+           familyi={H\bibinitperiod},
+           given={Austin},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b6dcfcddac86d8fe60ea9d7cd12698b9}{%
+           family={Wong},
+           familyi={W\bibinitperiod},
+           given={Jonathan\bibnamedelima C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{fullhash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{fullhashraw}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{bibnamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorbibnamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authornamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorfullhash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorfullhashraw}{1448de4703983cb81f5388eb7bd8eb73}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Particle accelerators generate charged-particle beams with tailored distributions in six-dimensional position-momentum space (phase space). Knowledge of the phase space distribution enables model-based beam optimization and control. In the absence of direct measurements, the distribution must be tomographically reconstructed from its projections. In this paper, we highlight that such problems can be severely underdetermined and that entropy maximization is the most conservative solution strategy. We leverage normalizing flows -- invertible generative models -- to extend maximum-entropy tomography to six-dimensional phase space and perform numerical experiments to validate the model's performance. Our numerical experiments demonstrate consistency with exact two-dimensional maximum-entropy solutions and the ability to fit complicated six-dimensional distributions to large measurement sets in reasonable time.}
+      \field{annotation}{Comment: 13 pages, 7 figures, submitted to PRResearch}
+      \field{month}{8}
+      \field{note}{arXiv:2406.00236 [physics]}
+      \field{title}{High-dimensional maximum-entropy phase space tomography using normalizing flows}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2406.00236
+      \endverb
+      \verb{file}
+      \verb PDF:files/76/Hoover and Wong - 2024 - High-dimensional maximum-entropy phase space tomography using normalizing flows.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2406.00236
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2406.00236
+      \endverb
+      \keyw{Physics - Accelerator Physics}
+    \endentry
+    \entry{kovachki_neural_nodate}{article}{}{}
+      \name{author}{6}{}{%
+        {{hash=d3715d69863d59245589f244c5866bd4}{%
+           family={Kovachki},
+           familyi={K\bibinitperiod},
+           given={Nikola},
+           giveni={N\bibinitperiod}}}%
+        {{hash=009036050bf23abe561429f6eaa0b018}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Zongyi},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9caea1a7b561311e5146f4c7f740496c}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Burigede},
+           giveni={B\bibinitperiod}}}%
+        {{hash=3648b51d63e1ae389e46f87296d4c89a}{%
+           family={Azizzadenesheli},
+           familyi={A\bibinitperiod},
+           given={Kamyar},
+           giveni={K\bibinitperiod}}}%
+        {{hash=1e523aae18c868f77439b35add494ff9}{%
+           family={Bhattacharya},
+           familyi={B\bibinitperiod},
+           given={Kaushik},
+           giveni={K\bibinitperiod}}}%
+        {{hash=9fdd1b883dec513483f9ee5c99b7e251}{%
+           family={Stuart},
+           familyi={S\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{d1a1701be8d68f5d464310f6647611ca}
+      \strng{fullhash}{078512b57b8a9d515380736bbc9b9136}
+      \strng{fullhashraw}{078512b57b8a9d515380736bbc9b9136}
+      \strng{bibnamehash}{d1a1701be8d68f5d464310f6647611ca}
+      \strng{authorbibnamehash}{d1a1701be8d68f5d464310f6647611ca}
+      \strng{authornamehash}{d1a1701be8d68f5d464310f6647611ca}
+      \strng{authorfullhash}{078512b57b8a9d515380736bbc9b9136}
+      \strng{authorfullhashraw}{078512b57b8a9d515380736bbc9b9136}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The classical development of neural networks has primarily focused on learning mappings between finite dimensional Euclidean spaces or finite sets. We propose a generalization of neural networks to learn operators, termed neural operators, that map between infinite dimensional function spaces. We formulate the neural operator as a composition of linear integral operators and nonlinear activation functions. We prove a universal approximation theorem for our proposed neural operator, showing that it can approximate any given nonlinear continuous operator. The proposed neural operators are also discretization-invariant, i.e., they share the same model parameters among different discretization of the underlying function spaces. Furthermore, we introduce four classes of efficient parameterization, viz., graph neural operators, multi-pole graph neural operators, lowrank neural operators, and Fourier neural operators. An important application for neural operators is learning surrogate maps for the solution operators of partial differential equations (PDEs). We consider standard PDEs such as the Burgers, Darcy subsurface flow, and the Navier-Stokes equations, and show that the proposed neural operators have superior performance compared to existing machine learning based methodologies, while being several orders of magnitude faster than conventional PDE solvers.}
+      \field{title}{Neural {Operator}: {Learning} {Maps} {Between} {Function} {Spaces} {With} {Applications} to {PDEs}}
+      \verb{file}
+      \verb PDF:files/96/Kovachki et al. - Neural Operator Learning Maps Between Function Spaces With Applications to PDEs.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{kossaifi_library_2026}{misc}{}{}
+      \name{author}{11}{}{%
+        {{hash=cbd0b159e6f95f4c491cdd8647937fed}{%
+           family={Kossaifi},
+           familyi={K\bibinitperiod},
+           given={Jean},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d3715d69863d59245589f244c5866bd4}{%
+           family={Kovachki},
+           familyi={K\bibinitperiod},
+           given={Nikola},
+           giveni={N\bibinitperiod}}}%
+        {{hash=009036050bf23abe561429f6eaa0b018}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Zongyi},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9ab2bbfde9ad82e07b657e3c79ad17e3}{%
+           family={Pitt},
+           familyi={P\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=a60247ed916f17dde7bd3f592bbac2ae}{%
+           family={Liu-Schiaffini},
+           familyi={L\bibinithyphendelim S\bibinitperiod},
+           given={Miguel},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b563323b4d0ab22d2a3d6b6e14175773}{%
+           family={George},
+           familyi={G\bibinitperiod},
+           given={Robert\bibnamedelima Joseph},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=a9e473c93ebd20f3d927caad0d6a16cd}{%
+           family={Bonev},
+           familyi={B\bibinitperiod},
+           given={Boris},
+           giveni={B\bibinitperiod}}}%
+        {{hash=3648b51d63e1ae389e46f87296d4c89a}{%
+           family={Azizzadenesheli},
+           familyi={A\bibinitperiod},
+           given={Kamyar},
+           giveni={K\bibinitperiod}}}%
+        {{hash=2f45c7b06edceda99c5169c8b0847367}{%
+           family={Berner},
+           familyi={B\bibinitperiod},
+           given={Julius},
+           giveni={J\bibinitperiod}}}%
+        {{hash=0374bc5710e4a5160237123774f058ff}{%
+           family={Duruisseaux},
+           familyi={D\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod}}}%
+        {{hash=bd4a2be6ede169a3c794a1cd7e3fb9a2}{%
+           family={Anandkumar},
+           familyi={A\bibinitperiod},
+           given={Anima},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{fullhash}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{fullhashraw}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{bibnamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authorbibnamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authornamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authorfullhash}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{authorfullhashraw}{6966cf2767c5dbc68a7e24951f499dce}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We present NeuralOperator, an open-source Python library for operator learning. Neural operators generalize neural networks to maps between function spaces instead of finitedimensional Euclidean spaces. They can be trained and inferenced on input and output functions given at various discretizations, satisfying a discretization convergence properties. Part of the official PyTorch Ecosystem, NeuralOperator provides all the tools for training and deploying neural operator models, as well as developing new ones, in a high-quality, tested, open-source package. It combines cutting-edge models and customizability with a gentle learning curve and simple user interface for newcomers.}
+      \field{month}{1}
+      \field{note}{arXiv:2412.10354 [cs]}
+      \field{title}{A {Library} for {Learning} {Neural} {Operators}}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2412.10354
+      \endverb
+      \verb{file}
+      \verb PDF:files/91/Kossaifi et al. - 2026 - A Library for Learning Neural Operators.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2412.10354
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2412.10354
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Machine Learning}
+    \endentry
+    \entry{wang_resistive-wall_2022}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=dab2a48d9607c0ab6dfe6ca148c1ad0d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Y.T.},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=da71d3435569425664b347932f50af6c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=0f5a015a1ab7ba65c0730e4590d302bf}{%
+           family={Qin},
+           familyi={Q\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=61545bd3bf816e88e4632ad51d1455d2}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=23aa59fe1ef97b9309bc34f1b4946aec}{%
+           family={Yue},
+           familyi={Y\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{fullhash}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{fullhashraw}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{bibnamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authorbibnamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authornamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authorfullhash}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{authorfullhashraw}{0a67fd46de53b7cdb1715023617e6988}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In order to investigate the influence of nonuniform thickness of the coating on the impedances, the analytical expressions of the resistive-wall impedances for the elliptical multilayer beam pipe, considering the confocal interfaces, are studied in the ultrarelativistic limit. The form factors are calculated and benchmarked with the Yokoya form factors. The influences of the nonuniform thickness of non-evaporable getter coating (NEG) coating in angular direction on the impedances are discussed.}
+      \field{issn}{01689002}
+      \field{journaltitle}{Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment}
+      \field{month}{8}
+      \field{title}{Resistive-wall impedance of an elliptical multilayer beam pipe}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{1037}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{166928}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.nima.2022.166928
+      \endverb
+      \verb{file}
+      \verb PDF:files/98/Wang et al. - 2022 - Resistive-wall impedance of an elliptical multilayer beam pipe.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900222003722
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900222003722
+      \endverb
+    \endentry
+    \entry{iadarola_xsuite_2023}{misc}{}{}
+      \name{author}{20}{}{%
+        {{hash=4879793390d8823abb0be18bba13a38d}{%
+           family={Iadarola},
+           familyi={I\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=1d2146e57f6ce6c30b1e06f3cab2571c}{%
+           family={Maria},
+           familyi={M\bibinitperiod},
+           given={R.\bibnamedelimi De},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=001405828b41261d5cb62d257bc3fb8c}{%
+           family={Lopaciuk},
+           familyi={L\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=8eaf9f60591025dd7f3cf3f4005373db}{%
+           family={Abramov},
+           familyi={A\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=40b8692aa3e6ad14eeefac0c66795599}{%
+           family={Buffat},
+           familyi={B\bibinitperiod},
+           given={X.},
+           giveni={X\bibinitperiod}}}%
+        {{hash=38823293bec5305e652d056373b2f8a4}{%
+           family={Demetriadou},
+           familyi={D\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=945a9789f95dd0790048c3753172a5f5}{%
+           family={Deniau},
+           familyi={D\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=6d0ce0bb9cf0aee65c76cde81fb4e1dc}{%
+           family={Hermes},
+           familyi={H\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=40240247d7f1084265c4bfa2e0fb8adb}{%
+           family={Kicsiny},
+           familyi={K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=67632b0fdd8eb537c6b533723fb4a7ee}{%
+           family={Kruyt},
+           familyi={K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=a4bca4a1ca9a453dbdbbc04d3722aca6}{%
+           family={Latina},
+           familyi={L\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=50ac7fb817776dab9b1ea18e8ae2b55d}{%
+           family={Mether},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=55476433e70151cb44eb24bdbba8ef19}{%
+           family={Paraschou},
+           familyi={P\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=c701243d1aab2ac78653b125732a9976}{%
+           family={Sterbini},
+           familyi={S\bibinitperiod}}}%
+        {{hash=eb52e6f313b445af7243c2f882dd7dd3}{%
+           family={Veken},
+           familyi={V\bibinitperiod},
+           given={F.\bibnamedelimi Van\bibnamedelima Der},
+           giveni={F\bibinitperiod\bibinitdelim V\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=2deb7e391a84f7ba00e9d75d3752de2e}{%
+           family={Belanger},
+           familyi={B\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=c61d2ae43d0e48d3a077f677ca22e527}{%
+           family={Niedermayer},
+           familyi={N\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=a1fb6ef5c728239698bae339ca1707e2}{%
+           family={Croce},
+           familyi={C\bibinitperiod},
+           given={D.\bibnamedelimi Di},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=cf97e1b91b2eae27e668e6aaed578b82}{%
+           family={Pieloni},
+           familyi={P\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+        {{hash=4f1064ecb313d7501852f74db6488723}{%
+           family={Riesen-Haupt},
+           familyi={R\bibinithyphendelim H\bibinitperiod},
+           given={L.\bibnamedelimi Van},
+           giveni={L\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{fullhash}{1c4ebbca2f4390e21e1ae9e9215c53db}
+      \strng{fullhashraw}{1c4ebbca2f4390e21e1ae9e9215c53db}
+      \strng{bibnamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authorbibnamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authornamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authorfullhash}{1c4ebbca2f4390e21e1ae9e9215c53db}
+      \strng{authorfullhashraw}{1c4ebbca2f4390e21e1ae9e9215c53db}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Xsuite is a newly developed modular simulation package combining in a single flexible and modern framework the capabilities of different tools developed at CERN in the past decades, notably Sixtrack, Sixtracklib, COMBI and PyHEADTAIL. The suite consists of a set of Python modules (Xobjects, Xpart, Xtrack, Xcoll, Xfields, Xdeps) that can be flexibly combined together and with other acceleratorspecific and general-purpose python tools to study complex simulation scenarios. The code allows for symplectic modeling of the particle dynamics, combined with the effect of synchrotron radiation, impedances, feedbacks, space charge, electron cloud, beam-beam, beamstrahlung, and electron lenses. For collimation studies, beam-matter interaction is simulated using the K2 scattering model or interfacing Xsuite with the BDSIM/Geant4 library. Tools are available to compute the accelerator optics functions from the tracking model and to generate particle distributions matched to the optics. Different computing platforms are supported, including conventional CPUs, as well as GPUs from different vendors.}
+      \field{month}{9}
+      \field{note}{arXiv:2310.00317 [physics]}
+      \field{shorttitle}{Xsuite}
+      \field{title}{Xsuite: an integrated beam physics simulation framework}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2310.00317
+      \endverb
+      \verb{file}
+      \verb PDF:files/101/Iadarola et al. - 2023 - Xsuite an integrated beam physics simulation framework.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2310.00317
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2310.00317
+      \endverb
+      \keyw{Physics - Accelerator Physics}
+    \endentry
+    \entry{metral_wake_2021}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=df99401da2031fb8ea92211a26230d7c}{%
+           family={Métral},
+           familyi={M\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \strng{bibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorbibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authornamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \field{extraname}{2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The ﬁrst mention of the impedance concept appeared on November 1966 in the CERN internal report Longitudinal instability of a coasting beam above transition, due to the action of lumped discontinuities by V.G. Vaccaro. Then, a more general treatment of it appeared in February 1967 in the CERN yellow report Longitudinal instabilities of azimuthally uniform beams in circular vacuum chambers of arbitrary electrical properties by A.M. Sessler and V.G. Vaccaro. The concept of wake ﬁeld came two years later, in 1969, in the paper The wake ﬁeld of an oscillating particle in the presence of conducting plates with resistive terminations at both ends by A.G. Ruggiero and V.G. Vaccaro. This was the beginning of many studies, which took place over the last ﬁve decades, and today, impedances and wake ﬁelds continue to be an important ﬁeld of activity, as concerns theory, simulation, bench and beam-based measurements. Building a reliable impedance or wake ﬁeld model of a machine is the ﬁrst necessary step to be able to evaluate the machine performance limitations, identify the main contributors in case an impedance reduction is required, and study the interaction with other mechanisms such as optics nonlinearities, transverse damper, noise, space charge, electron cloud, beam-beam (in a collider), etc. Beam collective instabilities, and their mitigation, cover a wide range of eﬀects in particle accelerators and they have been the subjects of intense research. As the machines performance was pushed new mechanisms were revealed and nowadays the challenge consists in studying the interplays between all these intricate phenomena, as it is very often not possible to treat the diﬀerent eﬀects separately. With the increasing power of our computers this becomes easier but the need to continue and develop theories remains, to have a better understanding of the interplays between all these eﬀects: the subject of impedance and beam instabilities in particle accelerators is far from being exhausted, as testiﬁed by the many new instability and stabilizing mechanisms which have been recently explained or discovered. Furthermore, in the context of the studies for possible future accelerators, some uncharted territories remain such as, for instance, the collective instabilities during the necessary ionization cooling for a muon collider.}
+      \field{issn}{1748-0221}
+      \field{journaltitle}{J. Inst.}
+      \field{month}{10}
+      \field{number}{10}
+      \field{title}{Wake field, impedance and collective instability}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{16}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{P10009}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{file}
+      \verb PDF:files/99/Métral - 2021 - Wake field, impedance and collective instability.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{url}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+    \endentry
+    \entry{kim_cuda-based_2026}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=5bac6a3ecd66eff3f23741f6f108de6d}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Keon\bibnamedelima Hee},
+           giveni={K\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=f7fb345578c2dc025510fa9cb1c40081}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Eun-San},
+           giveni={E\bibinithyphendelim S\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{fullhash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{fullhashraw}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{bibnamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorbibnamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authornamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorfullhash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorfullhashraw}{6cb6d96f25d7b367cdde9b520efa1618}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Beam-tracking simulations have been extensively utilized in the study of collective beam instabilities in circular accelerators. Traditionally, many simulation codes have relied on central processing unit (CPU)-based methods, tracking on a single CPU core, or parallelizing the computation across multiple cores via the message passing interface (MPI). Although these approaches work well for single-bunch tracking, scaling them to multiple bunches significantly increases the computational load, which often necessitates the use of a dedicated multi-CPU cluster. To address this challenge, alternative methods leveraging General-Purpose computing on Graphics Processing Units (GPGPU) have been proposed, enabling tracking studies on a standalone desktop personal computer (PC). However, frequent CPU-GPU interactions, including data transfers and synchronization operations during tracking, can introduce communication overheads, potentially reducing the overall effectiveness of GPU-based computations. In this study, we propose a novel approach that eliminates this overhead by performing the entire tracking simulation process exclusively on the GPU, thereby enabling the simultaneous processing of all bunches and their macro-particles. Specifically, we introduce MBTRACK2-CUDA, a Compute Unified Device Architecture (CUDA) ported version of MBTRACK2, which facilitates efficient tracking of single- and multi-bunch collective effects by leveraging the full GPU-resident computation.}
+      \field{issn}{1001-8042, 2210-3147}
+      \field{journaltitle}{NUCL SCI TECH}
+      \field{month}{1}
+      \field{number}{1}
+      \field{title}{{CUDA}-based {GPU}-only computation for efficient tracking simulation of single and multi-bunch collective effects}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{37}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{6}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1007/s41365-025-01814-0
+      \endverb
+      \verb{file}
+      \verb PDF:files/94/Kim and Kim - 2026 - CUDA-based GPU-only computation for efficient tracking simulation of single and multi-bunch collecti.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/s41365-025-01814-0
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/s41365-025-01814-0
+      \endverb
+    \endentry
+    \entry{funkner_reconstructing_nodate}{article}{}{}
+      \name{author}{8}{}{%
+        {{hash=6a945dbef830cb07cf584758d8bcc833}{%
+           family={Funkner},
+           familyi={F\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=e0ad92e00d6f87df77a1b0fd7611456e}{%
+           family={Mochihashi},
+           familyi={M\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=96475ab16857b2b6455c4793145e314e}{%
+           family={Mueller},
+           familyi={M\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d89d05b55acb2a6f7d61aed14a8ea2e7}{%
+           family={Bründermann},
+           familyi={B\bibinitperiod},
+           given={E},
+           giveni={E\bibinitperiod}}}%
+        {{hash=93260d39d01030cc22917749c1abe8d0}{%
+           family={Donoso},
+           familyi={D\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=66ba992a21331b9e3efd4aa59c0696d0}{%
+           family={Niehues},
+           familyi={N\bibinitperiod},
+           given={G},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ab6a4ea9f25ea963d2d74a778accb092}{%
+           family={Steinmann},
+           familyi={S\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=09f74b3603b8af86835268aaa3f77d7a}{%
+           family={Schwarz},
+           familyi={S\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{a2635ff13ef4f5575b1474b1f8d5741a}
+      \strng{fullhash}{193a2a2b11a71637e68b60a79cc45f57}
+      \strng{fullhashraw}{193a2a2b11a71637e68b60a79cc45f57}
+      \strng{bibnamehash}{a2635ff13ef4f5575b1474b1f8d5741a}
+      \strng{authorbibnamehash}{a2635ff13ef4f5575b1474b1f8d5741a}
+      \strng{authornamehash}{a2635ff13ef4f5575b1474b1f8d5741a}
+      \strng{authorfullhash}{193a2a2b11a71637e68b60a79cc45f57}
+      \strng{authorfullhashraw}{193a2a2b11a71637e68b60a79cc45f57}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Accurate knowledge of wake functions is crucial in accelerator physics, serving as the cornerstone for understanding intra-bunch interactions and for controlling or mitigating instabilities that limit accelerator performance. Haïssinski distributions, which describe the steady-state longitudinal bunch density, are intrinsically determined by the wake function experienced by the bunch. While these distributions are typically computed from a given wake function, we investigate the inverse problem: extracting the wake function directly from measured Haïssinski distributions. In this theoretical work, we introduce a novel method to reconstruct wake functions by utilizing Haïssinski distributions obtained at multiple bunch charges. By combining these profiles into an overdetermined system, we address challenges posed by the inverse problem, which is sensitive to noise and discretization errors. Here, our preliminary results suggest that the use of regularization techniques may help achieve more stable reconstructions of the wake function.}
+      \field{title}{Reconstructing wake functions using {Haissinski} distributions from multiple bunch charges}
+      \true{nocite}
+      \verb{file}
+      \verb PDF:files/51/Funkner et al. - Reconstructing wake functions using Haissinski distributions from multiple bunch charges.pdf:application/pdf
+      \endverb
+    \endentry
+    \entry{liu_survey_2025}{misc}{}{}
+      \name{author}{10}{}{%
+        {{hash=83f95dca7c81df3fe67380769eb0321c}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Jing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=87d7505abb0a27a70d1d38d9613a71c6}{%
+           family={Ma},
+           familyi={M\bibinitperiod},
+           given={Zhenchao},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=280280355f35ee0123870f82695c847f}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zepu},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=64c8b646fd22d5733f0edeaa9e5aba1c}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={Chenxuanyin},
+           giveni={C\bibinitperiod}}}%
+        {{hash=bca2e981ea48254d8e4c3f577b096317}{%
+           family={Ren},
+           familyi={R\bibinitperiod},
+           given={Jiayang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7854df7d2d51eff7a971cc37d31cda4b}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zehua},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=cce3fe771da500a9e35bf9956380ddba}{%
+           family={Song},
+           familyi={S\bibinitperiod},
+           given={Liang},
+           giveni={L\bibinitperiod}}}%
+        {{hash=411bdca716d2c6048b0e8219b47b64ad}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Bo},
+           giveni={B\bibinitperiod}}}%
+        {{hash=621013bf54d3546375ad71f17f020b5b}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=8b4082936a45dafc0f71d542aad12350}{%
+           family={Leung},
+           familyi={L\bibinitperiod},
+           given={Victor\bibnamedelimb C.\bibnamedelimi M.},
+           giveni={V\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{fullhash}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{fullhashraw}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{bibnamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authorbibnamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authornamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authorfullhash}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{authorfullhashraw}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Diffusion models (DMs) have emerged as a powerful class of generative AI models, showing remarkable potential in anomaly detection (AD) tasks across various domains, such as cybersecurity, fraud detection, healthcare, and manufacturing. The intersection of these two fields, termed diffusion models for anomaly detection (DMAD), offers promising solutions for identifying deviations in increasingly complex and high-dimensional data. In this survey, we review recent advances in DMAD research. We begin by presenting the fundamental concepts of AD and DMs, followed by a comprehensive analysis of classic DM architectures including DDPMs, DDIMs, and Score SDEs. We further categorize existing DMAD methods into reconstruction-based, density-based, and hybrid approaches, providing detailed examinations of their methodological innovations. We also explore the diverse tasks across different data modalities, encompassing image, time series, video, and multimodal data analysis. Furthermore, we discuss critical challenges and emerging research directions, including computational efficiency, model interpretability, robustness enhancement, edge-cloud collaboration, and integration with large language models. The collection of DMAD research papers and resources is available at https://github. com/fdjingliu/DMAD.}
+      \field{month}{2}
+      \field{note}{arXiv:2501.11430 [cs]}
+      \field{title}{A {Survey} on {Diffusion} {Models} for {Anomaly} {Detection}}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2501.11430
+      \endverb
+      \verb{file}
+      \verb PDF:files/86/Liu et al. - 2025 - A Survey on Diffusion Models for Anomaly Detection.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2501.11430
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2501.11430
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Machine Learning}
+    \endentry
+    \entry{roussel_bayesian_2024}{article}{}{}
+      \name{author}{27}{}{%
+        {{hash=ea7ae361a35847fefa577493d9c6bef1}{%
+           family={Roussel},
+           familyi={R\bibinitperiod},
+           given={Ryan},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bbad294b38a578c55e6c52fad6ebbfc8}{%
+           family={Edelen},
+           familyi={E\bibinitperiod},
+           given={Auralee\bibnamedelima L.},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=e05b3d6e1158c430ce7c362ce5d9fd62}{%
+           family={Boltz},
+           familyi={B\bibinitperiod},
+           given={Tobias},
+           giveni={T\bibinitperiod}}}%
+        {{hash=1b62110711159dc6fb37cc79cb283685}{%
+           family={Kennedy},
+           familyi={K\bibinitperiod},
+           given={Dylan},
+           giveni={D\bibinitperiod}}}%
+        {{hash=3e9bdcbb8bbc1d52ef1d6e391b4b5a59}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Zhe},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=7bcf4e640d3a1b70f6299da472fae83c}{%
+           family={Ji},
+           familyi={J\bibinitperiod},
+           given={Fuhao},
+           giveni={F\bibinitperiod}}}%
+        {{hash=389b389cef811fe6247639c8676b2eeb}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={Xiaobiao},
+           giveni={X\bibinitperiod}}}%
+        {{hash=a2ac918dc5218184f0ac178d5789f1a3}{%
+           family={Ratner},
+           familyi={R\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=4024289f509743fbd3885d4833a71540}{%
+           family={Garcia},
+           familyi={G\bibinitperiod},
+           given={Andrea\bibnamedelima Santamaria},
+           giveni={A\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=aef0e97ca0ec712fd53143dc9635270b}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Chenran},
+           giveni={C\bibinitperiod}}}%
+        {{hash=9760871fd150bc9f8167e47897ab7904}{%
+           family={Kaiser},
+           familyi={K\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f611677a7a26eece1e2afc0dc9ecb4bf}{%
+           family={Pousa},
+           familyi={P\bibinitperiod},
+           given={Angel\bibnamedelima Ferran},
+           giveni={A\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=53c4b70edf77b4316b8aab2fd2920da6}{%
+           family={Eichler},
+           familyi={E\bibinitperiod},
+           given={Annika},
+           giveni={A\bibinitperiod}}}%
+        {{hash=61cab51f1e16da0434e47d2c84c6f7da}{%
+           family={Lübsen},
+           familyi={L\bibinitperiod},
+           given={Jannis\bibnamedelima O.},
+           giveni={J\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
+        {{hash=dacffacb2c10649febcf253cb66919cd}{%
+           family={Isenberg},
+           familyi={I\bibinitperiod},
+           given={Natalie\bibnamedelima M.},
+           giveni={N\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=a85dcf731e772b177341998a236d587a}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Yuan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=4496468867f103f3bd7835264f36be48}{%
+           family={Kuklev},
+           familyi={K\bibinitperiod},
+           given={Nikita},
+           giveni={N\bibinitperiod}}}%
+        {{hash=15dcd55f04f9b37baf633eff3c8aafa0}{%
+           family={Martinez},
+           familyi={M\bibinitperiod},
+           given={Jose},
+           giveni={J\bibinitperiod}}}%
+        {{hash=6b0726beb2530d7d84ac0caf3d21f6e3}{%
+           family={Mustapha},
+           familyi={M\bibinitperiod},
+           given={Brahim},
+           giveni={B\bibinitperiod}}}%
+        {{hash=e47dd6b187fe1bc866d4e7d1523b8798}{%
+           family={Kain},
+           familyi={K\bibinitperiod},
+           given={Verena},
+           giveni={V\bibinitperiod}}}%
+        {{hash=f35f8458c6fd2fb5cf277d9c60b43249}{%
+           family={Mayes},
+           familyi={M\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod}}}%
+        {{hash=562dc030fdc9104ca9f358d9cf5289b1}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Weijian},
+           giveni={W\bibinitperiod}}}%
+        {{hash=764dd94b0a7760f4558ee5edf6d6c908}{%
+           family={Liuzzo},
+           familyi={L\bibinitperiod},
+           given={Simone\bibnamedelima Maria},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=f25c52725d7fc0bf2516efe886b77d7b}{%
+           family={St.\bibnamedelimi John},
+           familyi={S\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Jason},
+           giveni={J\bibinitperiod}}}%
+        {{hash=3703c50dcf5a60844063d4633a978943}{%
+           family={Streeter},
+           familyi={S\bibinitperiod},
+           given={Matthew\bibnamedelimb J.\bibnamedelimi V.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=187fd2ad47bb486c2b3dd87f3efb0787}{%
+           family={Lehe},
+           familyi={L\bibinitperiod},
+           given={Remi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=cb1889b535f5e3414808403a8cb0c85c}{%
+           family={Neiswanger},
+           familyi={N\bibinitperiod},
+           given={Willie},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{b877250e48ae121d245cc1eb032dd263}
+      \strng{fullhash}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \strng{fullhashraw}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \strng{bibnamehash}{b877250e48ae121d245cc1eb032dd263}
+      \strng{authorbibnamehash}{b877250e48ae121d245cc1eb032dd263}
+      \strng{authornamehash}{b877250e48ae121d245cc1eb032dd263}
+      \strng{authorfullhash}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \strng{authorfullhashraw}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Accelerator physics relies on numerical algorithms to solve optimization problems in online accelerator control and tasks such as experimental design and model calibration in simulations. The effectiveness of optimization algorithms in discovering ideal solutions for complex challenges with limited resources often determines the problem complexity these methods can address. The accelerator physics community has recognized the advantages of Bayesian optimization algorithms, which leverage statistical surrogate models of objective functions to effectively address complex optimization challenges, especially in the presence of noise during accelerator operation and in resource-intensive physics simulations. In this review article, we offer a conceptual overview of applying Bayesian optimization techniques toward solving optimization problems in accelerator physics. We begin by providing a straightforward explanation of the essential components that make up Bayesian optimization techniques. We then give an overview of current and previous work applying and modifying these techniques to solve accelerator physics challenges. Finally, we explore practical implementation strategies for Bayesian optimization algorithms to maximize their performance, enabling users to effectively address complex optimization challenges in real-time beam control and accelerator design. Published by the American Physical Society 2024}
+      \field{issn}{2469-9888}
+      \field{journaltitle}{Phys. Rev. Accel. Beams}
+      \field{month}{8}
+      \field{number}{8}
+      \field{title}{Bayesian optimization algorithms for accelerator physics}
+      \field{urlday}{9}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{27}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \field{pages}{084801}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevAccelBeams.27.084801
+      \endverb
+      \verb{file}
+      \verb PDF:files/83/Roussel et al. - 2024 - Bayesian optimization algorithms for accelerator physics.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PhysRevAccelBeams.27.084801
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PhysRevAccelBeams.27.084801
+      \endverb
+    \endentry
+    \entry{chance_selected_nodate}{article}{}{}
+      \name{author}{31}{}{%
+        {{hash=d71d1b42f2b2ad559bc3bea1d7afc515}{%
+           family={Chance},
+           familyi={C\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=aaee24d638679e2360a99a5efc27c3a4}{%
+           family={Dalena},
+           familyi={D\bibinitperiod},
+           given={B},
+           giveni={B\bibinitperiod}}}%
+        {{hash=caa843f9a14d34c52daf5f86b05f3d07}{%
+           family={Bartosik},
+           familyi={B\bibinitperiod},
+           given={H},
+           giveni={H\bibinitperiod}}}%
+        {{hash=669ebba2522a7759505b41275058b0ed}{%
+           family={Bauche},
+           familyi={B\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=40b8692aa3e6ad14eeefac0c66795599}{%
+           family={Buffat},
+           familyi={B\bibinitperiod},
+           given={X},
+           giveni={X\bibinitperiod}}}%
+        {{hash=23b77ca206253b09199fd15cf4e74309}{%
+           family={Keintzel},
+           familyi={K\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=9a43d634c2eba80deedbb225167bb3b9}{%
+           family={Kersevan},
+           familyi={K\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+        {{hash=50ac7fb817776dab9b1ea18e8ae2b55d}{%
+           family={Mether},
+           familyi={M\bibinitperiod},
+           given={L},
+           giveni={L\bibinitperiod}}}%
+        {{hash=585bb8c3dcdde3359b00ece92523e022}{%
+           family={Tomas},
+           familyi={T\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+        {{hash=f860a0a13951ce0b6139e2ea577b40ad}{%
+           family={Vanel},
+           familyi={V\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=497da07871a3d809f6683c6532493102}{%
+           family={Freeden},
+           familyi={F\bibinitperiod},
+           given={L\bibnamedelima Von},
+           giveni={L\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=4698cc1a6450a33aa92ad1307166b853}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=c1d9ffa79ef978c194dbdcc11904844d}{%
+           family={Kisciny},
+           familyi={K\bibinitperiod},
+           given={P},
+           giveni={P\bibinitperiod}}}%
+        {{hash=cf97e1b91b2eae27e668e6aaed578b82}{%
+           family={Pieloni},
+           familyi={P\bibinitperiod},
+           given={T},
+           giveni={T\bibinitperiod}}}%
+        {{hash=f107b07249bdc060d92a28427c28df7e}{%
+           family={Sabato},
+           familyi={S\bibinitperiod},
+           given={L},
+           giveni={L\bibinitperiod}}}%
+        {{hash=c84333257e5fef7e25ef4f7a4111077c}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Y},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=5907847198dceca77d4a23812dd9cc99}{%
+           family={Liuzzo},
+           familyi={L\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=4e2767ecf231c6b6a205c6951e1fb469}{%
+           family={White},
+           familyi={W\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=4fb8b868ab1abe43d508d09ae8ac46d3}{%
+           family={Gianfelice},
+           familyi={G\bibinitperiod},
+           given={E},
+           giveni={E\bibinitperiod}}}%
+        {{hash=0119a2d333b4907be8d40ac1380d5695}{%
+           family={Raimondi},
+           familyi={R\bibinitperiod},
+           given={P},
+           giveni={P\bibinitperiod}}}%
+        {{hash=a1c9aeb6612912839cdbf4c1d202a8b7}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=2b6c9bac16fc4ccd1c9f9b8b62f75133}{%
+           family={Chaikovska},
+           familyi={C\bibinitperiod},
+           given={I},
+           giveni={I\bibinitperiod}}}%
+        {{hash=9c8d61c9b2b8bd840f066f63e0247a6f}{%
+           family={Milardi},
+           familyi={M\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=0d24435a1b6626176311ab453807599e}{%
+           family={Ohmi},
+           familyi={O\bibinitperiod},
+           given={K},
+           giveni={K\bibinitperiod}}}%
+        {{hash=ff69cd4bf3e6b4c7b852ceb8a5f364e8}{%
+           family={Craievich},
+           familyi={C\bibinitperiod},
+           given={P},
+           giveni={P\bibinitperiod}}}%
+        {{hash=29c893d635590f21520c2e6e71e1f629}{%
+           family={Koratzinos},
+           familyi={K\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=79626c00d95f50bcd812ec777fbc861d}{%
+           family={Zennaro},
+           familyi={Z\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bf1afb45a50313a87b61c9f7a08f8989}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={X},
+           giveni={X\bibinitperiod}}}%
+        {{hash=5a51b5a21cc190e2df20dc7e1119378d}{%
+           family={Raubenheimer},
+           familyi={R\bibinitperiod},
+           given={T\bibnamedelima O},
+           giveni={T\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
+        {{hash=e4a67935a850327ae40d7fb4eca3c6f7}{%
+           family={Yaman},
+           familyi={Y\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=895c7b429f1559c3004a52c6b0a3b76d}{%
+           family={Maury},
+           familyi={M\bibinitperiod},
+           given={H},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \strng{namehash}{dd9cfc340c19c060e178889b4d707137}
+      \strng{fullhash}{32b641b19bb49f05e6ae58d0425af847}
+      \strng{fullhashraw}{32b641b19bb49f05e6ae58d0425af847}
+      \strng{bibnamehash}{dd9cfc340c19c060e178889b4d707137}
+      \strng{authorbibnamehash}{dd9cfc340c19c060e178889b4d707137}
+      \strng{authornamehash}{dd9cfc340c19c060e178889b4d707137}
+      \strng{authorfullhash}{32b641b19bb49f05e6ae58d0425af847}
+      \strng{authorfullhashraw}{32b641b19bb49f05e6ae58d0425af847}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In autumn 2023, the FCC Feasibility Study underwent a crucial “mid-term review”. We describe some accelerator performance risks for the proposed future circular electronpositron collider, FCC-ee, identified for, and during, the mid-term review. For the collider rings, these are the collective effects when running on the Z resonance – especially resistive wall, beam-beam, and electron cloud –, the beam lifetime, dynamic aperture, alignment tolerances, and beambased alignment. For the booster, the primary concern is the vacuum system, with regard to impedance and effects of the residual gas. For the injector, the layout and the linac repetition rate are primary considerations. We discuss the various issues and report the planned mitigations.}
+      \field{title}{{SELECTED} {ADVANCES} {IN} {THE} {ACCELERATOR} {DESIGN} {OF} {THE} {FUTURE} {CIRCULAR} {ELECTRON}-{POSITRON} {COLLIDER} ({FCC}-ee)}
+      \true{nocite}
+      \verb{file}
+      \verb PDF:files/80/Chance et al. - SELECTED ADVANCES IN THE ACCELERATOR DESIGN OF THE FUTURE CIRCULAR ELECTRON-POSITRON COLLIDER (FCC-e.pdf:application/pdf
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

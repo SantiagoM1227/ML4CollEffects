@@ -1,0 +1,25 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}State of the art and methodology}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Wakefields, impedance and collective effects in particle accelerators}{2}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Theoretical aspects}{3}{subsubsection.2.1.1}%
+\contentsline {paragraph}{\numberline {2.1.1.1}Wake functions as Green functions.}{3}{paragraph.2.1.1.1}%
+\contentsline {paragraph}{\numberline {2.1.1.2}Impedance formalism.}{3}{paragraph.2.1.1.2}%
+\contentsline {paragraph}{\numberline {2.1.1.3}Hamiltonian longitudinal dynamics without dissipation.}{4}{paragraph.2.1.1.3}%
+\contentsline {paragraph}{\numberline {2.1.1.4}Vlasov-Fokker-Planck equation.}{5}{paragraph.2.1.1.4}%
+\contentsline {paragraph}{\numberline {2.1.1.5}Stationary Gaussian in the no-wake limit.}{5}{paragraph.2.1.1.5}%
+\contentsline {paragraph}{\numberline {2.1.1.6}Ha\"issinski equation.}{5}{paragraph.2.1.1.6}%
+\contentsline {paragraph}{\numberline {2.1.1.7}Physical consequences derived from Ha\"issinski.}{6}{paragraph.2.1.1.7}%
+\contentsline {subsection}{\numberline {2.2}Collective instabilities}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Machine learning for surrogate modeling of collective effects}{8}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}HenonNets}{9}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Phase-space tomography reconstruction}{11}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Neural operators}{12}{subsubsection.2.3.3}%
+\contentsline {paragraph}{\numberline {2.3.3.1} Stationary longitudinal profile learning.}{15}{paragraph.2.3.3.1}%
+\contentsline {paragraph}{\numberline {2.3.3.2} Time-dependent density evolution.}{15}{paragraph.2.3.3.2}%
+\contentsline {paragraph}{\numberline {2.3.3.3} Observable operator learning.}{15}{paragraph.2.3.3.3}%
+\contentsline {paragraph}{\numberline {2.3.3.4} Transverse collective surrogate.}{15}{paragraph.2.3.3.4}%
+\contentsline {subsection}{\numberline {2.4}Summary}{16}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Conclusion et perspectives}{17}{section.3}%
+\contentsline {section}{\numberline {A}Annexe}{20}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Parametrized H\'enon Maps}{20}{subsection.A.1}%
