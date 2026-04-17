@@ -1,0 +1,92 @@
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel} % define document language
+% \usepackage{datetime}  
+\usepackage[T1]{fontenc}
+\usepackage{arydshln}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{bbold} % fct indicatrice
+
+\usepackage{tikz}
+
+
+\usepackage{url}
+\usepackage[colorlinks,linkcolor=red,anchorcolor=green,citecolor=blue]{hyperref}
+
+\usepackage{lmodern}
+% \usepackage[hidelinks]{hyperref} % Hyperref package for url's and [hidelinks] option to remove collouring
+
+
+\linespread{1.2}
+
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{graphicx} 
+\usepackage{float} 
+\usepackage{subfigure}
+\usepackage{caption}
+% \renewcommand{\thesubfigure}{(\roman{subfigure})}
+
+
+% section title size
+\usepackage{titlesec}
+\titleformat*{\section}{\huge\bfseries}
+\titleformat*{\subsection}{\Large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+
+
+% \graphicspath{ {./images/} }
+
+%marges
+\usepackage{geometry}
+\geometry{top= 3 cm, bottom= 3 cm, right= 2.5 cm, left= 3 cm, headheight=13.6pt}
+
+% extra section for paragraph
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+
+% % % extra section for subparagraph
+% % \usepackage{titlesec}
+% \setcounter{secnumdepth}{5}
+% \setcounter{tocdepth}{5}
+% \titleformat{\subparagraph}
+% {\normalfont\normalsize\bfseries}{\thesubparagraph}{1em}{}
+% \titlespacing*{\subparagraph}
+% {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+
+% % codes
+% \usepackage{minted}
+
+\newtheorem{exemple}{Exemple}
+
+% abstract
+\renewenvironment{abstract}
+ {\quotation\small\noindent\rule{\linewidth}{.5pt}\par\smallskip
+  {\centering\bfseries\abstractname\par}\medskip}
+ {\par\noindent\rule{\linewidth}{.5pt}\endquotation}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{physics}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\newtheorem{theorem}{Theorem}
+% biblio 
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=none
+]{biblatex}
+\usepackage{csquotes}
+\usepackage[export]{adjustbox}

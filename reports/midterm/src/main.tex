@@ -1,0 +1,1767 @@
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+
+\input{glossary}
+\addbibresource{ML_collefects.bib}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+
+
+% remarks in red
+\usepackage{xcolor}
+\newcommand{\rmq}[1]{\textcolor{red}{#1}}
+\newcommand\ignore[1]\null
+
+% \setcounter{secnumdepth}{0} % sections will not be enumerated
+
+\usepackage[figurename=Fig.]{caption}
+\usepackage[tablename=Tab.]{caption}
+
+
+\usepackage{fancyhdr,graphicx,lastpage}% http://ctan.org/pkg/{fancyhdr,graphicx,lastpage}
+\fancypagestyle{plain}{
+  \fancyhf{}% Clear header/footer
+  \fancyhead[R]{\textit{Internship report}}% Right header
+  \fancyhead[L]{\textit{Santiago Martinez Saenz}}% Right header
+  \fancyfoot[L]{\textit{Université Paris-Saclay 2026}}% Left footer
+  \fancyfoot[R]{\thepage\  / \pageref{LastPage}}% Right footer
+}
+\pagestyle{plain}% Set page style to plain.
+
+
+
+\begin{document}
+\begin{sloppypar}
+\pagestyle{empty}
+
+% Declare new goemetry for the title page only.
+\newgeometry{margin=1in}
+\newcommand\titleofdoc{\bfseries Midterm Internship Report M2}
+
+ %%%%% Put your document title in this argument
+\newcommand\GroupName{} %%%%% Put your group name here. If you are the only member of the group, just put your name
+\begin{titlepage}
+   \begin{center}
+        \vspace*{0.5cm} % Adjust spacings to ensure the title page is generally filled with text
+        %% input logos
+        \begin{center}
+        \begin{tabular}{cccc}
+        \includegraphics[height=1.7cm,valign=c]{images/logo/lascala.png} &
+        \includegraphics[height=1.7cm,valign=c]{images/logo/ijclab.jpg} &
+        \includegraphics[height=0.8 cm,valign=c]{images/logo/LogoGANIL.png} &
+        \includegraphics[height=1.7cm,valign=c]{images/logo/cnrs.png}
+        \end{tabular}
+        \end{center}
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        
+        \vspace{2.5 cm} 
+
+        \Huge{\titleofdoc} 
+
+        \vspace{0.5cm}
+        \LARGE{Exploratory modeling of collective effects in the FCC-ee high energy booster using machine learning.}
+          
+        \vspace{2 cm}
+        % \Large{\GroupName}
+        \vspace{1.25cm}
+        \large{Santiago Martinez Saenz}\\
+        \large{\bfseries Internship carried out from April to August 2026}\\
+        % \vfill
+        \vspace{4 cm}
+         
+        \leftline{ \small { \textbf{Internship tutors :} Dr. Adnan Ghribi (GANIL) and Dr. Hayg Guler (IJCLab) } }
+        \leftline{ \small { \textbf{Referent teacher :} Dr. Sophie Kazamias (Université Paris-Saclay) } }
+        \vspace{1 cm}
+        \leftline{\small { \textbf{Educational institutions :} Université Paris-Saclay / Università di Roma La Sapienza}}
+        \leftline{\small { \textbf{Internship host Laboratory :} Grand Accélérateur National d'Ions Lourds (GANIL) } }
+        \vspace{2 cm}
+        
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}\\
+        
+        \begin{center}
+        \begin{tabular}{ccccc}
+        \includegraphics[height=1cm,valign=c]{images/logo/saclay.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/Uniroma1.svg.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/szeged.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/lund.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/erasmus.png}
+        \end{tabular}
+        \end{center}
+      
+    \end{center}
+\setcounter{page}{0}
+\end{titlepage}
+%%% notice: 
+% . prénom et nom de l’élève
+% . titre du stage
+% . type du stage (1A, 2A ou 3A + humanitaire ou autre mise en situation
+% pro. . .)
+% . nom de l’établissement
+% . prénom et nom de l’encadrant·e dans l’établissement
+% . dates du stage
+
+
+%%% Ends the declared geometry for the titlepage
+\restoregeometry
+
+
+%\section*{Acknowledgments}\
+%\setcounter{page}{-5}
+
+% Acknowledgments
+
+
+
+% \newpage 
+% \ % The empty page
+%\newpage
+
+
+
+
+
+% \section{Préambule}
+%\begin{abstract}
+%\noindent
+%. \\  \\
+%\textit{Key words}: ...
+%\end{abstract}
+
+
+
+
+
+
+
+
+\newpage
+\tableofcontents
+
+
+
+
+% Corps du rapport
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\section{Introduction}
+
+Collective effects are among the main performance-limiting phenomena in modern circular accelerators. As beam intensity increases, the beam can no longer be described as a collection of independent particles evolving only under externally applied electromagnetic fields. Instead, the beam interacts with its environment and with itself through wake fields, impedance, space-charge forces, radiation effects, and other collective mechanisms, which may lead to emittance growth, tune shifts, coupled-bunch motion, and single-bunch instabilities. In this framework, the notions of wake field and impedance provide the standard language for describing beam-environment interactions and for assessing the stability limits of a machine \cite{metral_wake_2021-1}.
+
+These questions are particularly relevant in the context of the Future Circular Collider for electrons and positrons (FCC-ee), a proposed high-luminosity machine designed to operate over a broad energy range in order to deliver precision measurements of the Z, W and Higgs bosons, as well as of the top quark. Within this complex, the High-Energy Booster (HEB) is a key element of the injector chain, responsible for accumulating and ramping beams up to the collider operating energies while preserving beam quality. Although the bunch population in the booster is lower than in the main rings, collective effects at injection remain a significant concern. Recent studies have shown that, in the HEB, resistive-wall effects, transverse coupled-bunch instabilities, transverse mode-coupling phenomena, and the interplay of wakefields with space charge, intrabeam scattering, and incoherent synchrotron radiation must all be considered when evaluating performance margins and optics choices \cite{gibellieri_impact_nodate}.
+
+A reliable analysis of these phenomena generally requires multi-particle tracking and large-scale numerical simulations. Such simulations are indispensable because collective instabilities emerge from the coupling of many degrees of freedom and from the non-trivial interplay between machine optics, beam parameters, feedback systems, and impedance models. However, this level of fidelity comes at a substantial computational cost. In particular, single- and multi-bunch tracking over many turns, combined with detailed impedance and wakefield models, makes systematic parameter scans expensive and often impractical in an iterative design context. More generally, as emphasized in recent work on collective-effects simulations, accelerator studies increasingly face a tension between physical realism and computational tractability.
+
+In parallel with these developments, machine learning has become an increasingly important tool in accelerator physics. Recent applications range from beam diagnostics and machine optimization to the analysis of numerical beam-dynamics simulations and the construction of fast surrogate models \cite{arpaia_machine_2021}. For dynamical systems in phase space, an important direction is the use of physics-informed or structure-preserving models, which seek to retain part of the geometric or Hamiltonian structure of beam dynamics while reducing evaluation time. Such approaches are especially attractive when the objective is not to replace high-fidelity simulations outright, but to accelerate exploratory studies, parameter scans, sensitivity analyses, and the identification of relevant stability boundaries.
+
+The purpose of this internship is to investigate such an exploratory strategy for the FCC-ee High-Energy Booster. More precisely, the goal is to study whether machine-learning-based surrogate models can approximate selected aspects of collective beam dynamics with sufficient accuracy to support faster exploration of parameter space. The focus is therefore not only on predictive performance, but also on the choice of physically meaningful representations, on the relation between simulation data and reduced models, and on the possible role of machine learning as a complementary tool alongside established beam-dynamics codes.
+
+This report is organized as follows. First, the physical background on wakefields, impedance, and collective effects relevant to circular electron machines is reviewed. Then, the numerical and machine-learning tools used in this work are introduced, together with the methodology adopted to generate and process the simulation data. Finally, the first results obtained for the FCC-ee HEB are presented and discussed, with particular attention to the opportunities and limitations of surrogate modelling in this context.
+
+
+\section{State of the art and methodology}
+
+\subsection{Wakefields, impedance and collective effects in particle accelerators}
+
+The dynamics of intense charged-particle beams in circular accelerators cannot, in general, be described as the independent evolution of single particles under externally imposed electromagnetic fields alone. As the beam intensity increases, the interaction of the beam with the surrounding vacuum chamber and accelerator components generates electromagnetic fields that act back on trailing particles. These self-induced fields are referred to as wake fields, and their frequency-domain representation defines the beam coupling impedance. Together, wakefields and impedance provide the standard framework for describing beam-environment interaction, energy loss, tune shifts, emittance growth, bunch lengthening, and the onset of collective instabilities \cite{metral_wake_2021-1,ghribi_impact_nodate,gibellieri_impact_nodate}.
+
+In this framework, the total impedance of a machine is built as the sum of contributions from multiple accelerator elements and mechanisms, including resistive-wall effects, geometric discontinuities, collimators, RF higher-order modes, bellows, BPMs, and transitions. These contributions combine into a global impedance budget whose detailed structure determines the stability thresholds of the machine. This is particularly important in the case of the FCC-ee, where the impedance model of both the collider rings and the high-energy booster (HEB) plays a central role in the assessment of single-bunch and coupled-bunch instabilities \cite{ghribi_impact_nodate,gibellieri_impact_nodate}.
+
+The relevant intensity parameter is the bunch population $N_b$, or equivalently the bunch current. As $N_b$ increases, the self-induced electromagnetic fields become stronger and modify the beam dynamics more significantly. In the longitudinal plane this may produce potential-well distortion, centroid shifts, and bunch lengthening. In the transverse plane it may cause coherent tune shifts, head-tail mode coupling, and coupled-bunch growth. In storage rings, these effects must be treated self-consistently because the beam both generates and responds to the wakefields that deform its own equilibrium distribution \cite{metral_wake_2021-1,zhou_theories_2023}.
+
+\subsubsection{Theoretical aspects}
+
+\paragraph{Wake functions as Green functions.}
+The wake formalism is naturally expressed as a Green-function description of the beam-environment response. In the rigid-beam and impulse approximations, one focuses on the integrated Lorentz force experienced by a trailing test particle rather than on the instantaneous force during the traversal of the structure. The longitudinal and transverse wake functions, denoted respectively by $W_{\parallel}$ and $\mathbf W_{\perp}$, represent the response of the environment to a point-like source charge. In that sense, the wake function is the shock response, or Green kernel, of the beam pipe and its discontinuities. The wake function is associated with the integrated force, and the wake potential is obtained by convolving that Green function with the beam distribution \cite{metral_wake_2021-1}.
+
+If $\lambda(z)$ denotes the normalized longitudinal line density of a bunch, then the wake potentials generated by the bunch are
+\begin{equation}
+V_{\parallel}(z)
+=
+\int_{-\infty}^{\infty}
+W_{\parallel}(z-z')\,\lambda(z')\,dz',
+\label{eq:long_wake_potential}
+\end{equation}
+\begin{equation}
+\mathbf V_{\perp}(z)
+=
+\int_{-\infty}^{\infty}
+\mathbf W_{\perp}(z-z')\,\lambda(z')\,dz'.
+\label{eq:trans_wake_potential}
+\end{equation}
+These are convolution laws, and they make the Green-function interpretation explicit. The bunch profile acts as a source, and the wake function encodes the linear response kernel of the surrounding structure. 
+
+\paragraph{Impedance formalism.}
+It is often more convenient to work in the frequency domain because material properties and resonant structures are more naturally characterized spectrally. The longitudinal impedance is the Fourier transform of the longitudinal wake, and similarly for the transverse case. A common convention is
+\begin{equation}
+Z_{\parallel}(\omega)
+=
+\frac{1}{c}
+\int_{-\infty}^{\infty}
+W_{\parallel}(z)\,e^{i\omega z/c}\,dz,
+\label{eq:Zlong}
+\end{equation}
+\begin{equation}
+\mathbf Z_{\perp}(\omega)
+=
+\frac{i}{c}
+\int_{-\infty}^{\infty}
+\mathbf W_{\perp}(z)\,e^{i\omega z/c}\,dz,
+\label{eq:Ztrans}
+\end{equation}
+up to sign conventions. The inverse transforms recover the wake functions. Because the wake is real-valued, the impedance satisfies the Hermitian symmetry relation
+\begin{equation}
+Z^*(\omega)=Z(-\omega).
+\label{eq:impedance_symmetry}
+\end{equation}
+This is one of the basic structural properties emphasized in Métral’s discussion of wakefields and impedance \cite{metral_wake_2021-1}. A related formulation, written explicitly as inverse Fourier transform relations for wake functions, is given by Kim \cite{kim_mbtrack2_cuda_2025}:
+\begin{equation}
+W_{\parallel}(\tau_d)
+=
+\frac{L}{2\pi}
+\int_{-\infty}^{\infty}
+Z_{\parallel}(\omega)\,e^{-i\omega \tau_d}\,d\omega,
+\end{equation}
+\begin{equation}
+W_{\perp}(\tau_d)
+=
+\frac{iL}{2\pi}
+\int_{-\infty}^{\infty}
+Z_{\perp}(\omega)\,e^{-i\omega \tau_d}\,d\omega,
+\end{equation}
+with $L$ the effective interaction length and $\tau_d$ the longitudinal delay variable. 
+
+A crucial theoretical relation is the Panofsky-Wenzel theorem, Connecting longitudinal and transverse wakefields. In one standard form,
+\begin{equation}
+\nabla_{\perp} W_{\parallel}(z,\mathbf r_{\perp})
+=
+\frac{\partial}{\partial z}\mathbf W_{\perp}(z,\mathbf r_{\perp}),
+\label{eq:PW}
+\end{equation}
+or equivalently, in terms of the delay variable $\tau_d$,
+\begin{equation}
+\frac{1}{c}\frac{\partial}{\partial \tau_d}\mathbf W_{\perp}
+=
+\nabla_{\perp}W_{\parallel}.
+\label{eq:PW_tau}
+\end{equation}
+This theorem follows from Maxwell’s equations under the rigid-beam and impulse approximations and does not require a specific boundary condition. It is therefore one of the most general structural constraints in wakefield theory. In practice, it is used to relate transverse and longitudinal impedances and to check the consistency of numerical or experimental impedance data \cite{metral_wake_2021-1}. Kim \cite{kim_mbtrack2_cuda_2025} gives the same relation explicitly as Eq. (3.11) and emphasizes that it is one of the bases of beam-instability analysis. 
+
+\paragraph{Hamiltonian longitudinal dynamics without dissipation.}
+Before adding damping and diffusion, the longitudinal beam dynamics in a storage ring can be written as a Hamiltonian system. If $z$ denotes the longitudinal position relative to the synchronous particle and $\delta$ the relative energy deviation, the equations of motion may be written as
+\begin{equation}
+z' = -\eta \delta,
+\qquad
+\delta' = K(z),
+\label{eq:long_eq_motion}
+\end{equation}
+where prime denotes derivative with respect to the longitudinal independent variable, $K(z)$ is the longitudinal restoring force, and $\eta$ is the phase-slip factor. In this conservative limit, the beam distribution $\psi(z,\delta,s)$ obeys the Vlasov equation
+\begin{equation}
+\frac{\partial \psi}{\partial s}
+-
+\eta\delta\,\frac{\partial \psi}{\partial z}
++
+K(z)\,\frac{\partial \psi}{\partial \delta}
+=0.
+\label{eq:vlasov}
+\end{equation}
+Equivalently, in Hamiltonian form,
+\begin{equation}
+\frac{\partial \psi}{\partial s} + \{\psi,H\}=0,
+\label{eq:vlasov_hamiltonian}
+\end{equation}
+where $\{\cdot,\cdot\}$ is the Poisson bracket and $H$ is the longitudinal Hamiltonian. Kim \cite{kim_mbtrack2_cuda_2025} gives the corresponding Hamiltonian as
+\begin{equation}
+H
+=
+\frac{\eta}{2c^2\omega_s}
+\left[
+\frac{\delta^2}{2}
++
+\frac{1}{\eta}\Phi(z)
+\right],
+\qquad
+\Phi(z)=\int_0^z K(z')\,dz'.
+\label{eq:long_ham}
+\end{equation}
+The importance of this conservative formulation is conceptual. In the absence of damping and noise, the phase-space density is simply transported by a Hamiltonian flow. It stretches and folds, but it does not relax to a unique equilibrium distribution. This is a direct consequence of Liouville’s theorem and the symplectic nature of the flow. In order to have a well-defined stationary distribution, one must include dissipative effects such as radiation damping and quantum excitation, which break the Hamiltonian structure and allow for relaxation to an equilibrium state. 
+
+\paragraph{Vlasov-Fokker-Planck equation.}
+A realistic electron storage ring includes synchrotron-radiation damping and quantum excitation. These effects are non conservative and as such do not preserve the Hamiltonian flow, in other words they do not preserve phase-space area. These dissipative effects add drift and diffusion in energy space. The result is a kinetic equation of Vlasov-Fokker-Planck type. In the notation quoted Kim \cite{kim_mbtrack2_cuda_2025}
+\begin{equation}
+\frac{\partial \psi}{\partial s}
+-
+\eta\delta\,\frac{\partial \psi}{\partial z}
++
+K(z)\,\frac{\partial \psi}{\partial \delta}
+=
+\frac{2}{c\tau_z}
+\frac{\partial}{\partial \delta}
+\left(
+\delta\psi+\sigma_\delta^2\frac{\partial \psi}{\partial \delta}
+\right),
+\label{eq:VFP}
+\end{equation}
+where $\tau_z$ is the longitudinal damping time and $\sigma_\delta$ is the rms energy spread. The left-hand side describes the collisionless Hamiltonian transport of the distribution, while the right-hand side contains the Fokker-Planck term. The drift term proportional to $\delta\psi$ represents radiation damping, and a diffusion term proportional to $\sigma_\delta^2 \partial_\delta \psi$ represents quantum excitation.The right hand side is viewed as the relaxation mechanism. With it, a stationary equilibrium becomes possible. 
+
+\paragraph{Stationary Gaussian in the no-wake limit.}
+When wakefields are absent, the stationary solution of the Vlasov-Fokker-Planck equation factors into a Gaussian in $\delta$ and a Gaussian in $z$, with nominal bunch length $\sigma_{z0}$. In the stationary regime,
+\begin{equation}
+\psi(z,\delta)
+=
+\frac{1}{\sqrt{2\pi}\sigma_\delta}
+\exp\!\left(-\frac{\delta^2}{2\sigma_\delta^2}\right)\lambda(z),
+\label{eq:gauss_factor}
+\end{equation}
+and in the no-wake case the line density is the nominal Gaussian bunch profile. The presence of wakefields deforms that profile, so the stationary longitudinal density must be determined self-consistently rather than imposed. 
+
+\paragraph{Ha\"issinski equation.}
+Below the microwave-instability threshold, the stationary solution of the Vlasov-Fokker-Planck equation is given by the Ha\"issinski equation. In the formulation given by Zhou et al., the equilibrium line density $\lambda_h(z)$ satisfies
+\begin{equation}
+\frac{d\lambda_h(z)}{dz}
++
+\left[
+\frac{z}{\sigma_{z0}^2}
+-
+\frac{1}{\eta\sigma_\delta^2}F_h(z)
+\right]
+\lambda_h(z)
+=
+0,
+\label{eq:haissinski_diff}
+\end{equation}
+where $F_h(z)$ is the longitudinal wake force generated self-consistently by the bunch itself. Its explicit solution can be written
+\begin{equation}
+\lambda_h(z)
+=
+A\,
+\exp\!\left[
+-\frac{z^2}{2\sigma_{z0}^2}
+-
+\frac{I}{\sigma_{z0}}
+\int_z^\infty W_k(z')\,dz'
+\right],
+\label{eq:haissinski_sol}
+\end{equation}
+with normalization constant $A$ such that
+\begin{equation}
+\int_{-\infty}^{\infty}\lambda_h(z)\,dz=1,
+\end{equation}
+and bunch wake potential
+\begin{equation}
+W_k(z)
+=
+\int_{-\infty}^{\infty}
+W_k(z-z')\,\lambda_h(z')\,dz'.
+\label{eq:wake_potential_self}
+\end{equation}
+The dimensionless intensity parameter in Zhou’s notation is
+\begin{equation}
+I=\frac{I_n\sigma_{z0}}{\eta\sigma_\delta^2},
+\end{equation}
+or equivalently, in terms of bunch population and ring parameters,
+\begin{equation}
+I=-\frac{Ne^2}{2\pi\nu_s E\sigma_\delta}.
+\end{equation}
+Zhou further rewrites the solution as
+\begin{equation}
+\lambda_h(z)=A e^{-V(z)},
+\end{equation}
+with the effective potential well
+\begin{equation}
+V(z)
+=
+\frac{z^2}{2\sigma_{z0}^2}
++
+\frac{I}{\sigma_{z0}}
+\int_z^\infty W_k(z')\,dz'.
+\label{eq:effective_potential}
+\end{equation}
+With this formulation, it is clear that the natural RF Gaussian confinement is modified by the self-induced wake potential, and the stationary bunch profile is the Boltzmann-like density corresponding to that deformed effective potential. 
+
+\paragraph{Physical consequences derived from Ha\"issinski.}
+One of the important contributions of Zhou et al. is that the Ha\"issinski framework yields direct relations between measurable beam observables and the underlying wake/impedance model.
+
+The bunch centroid is
+\begin{equation}
+z_c=\int_{-\infty}^{\infty} z\,\lambda_h(z)\,dz,
+\end{equation}
+and Zhou derives
+\begin{equation}
+z_c(I)=I\sigma_{z0}\kappa_k,
+\label{eq:centroid_shift}
+\end{equation}
+where the loss factor is
+\begin{equation}
+\kappa_k(I)
+=
+\int_{-\infty}^{\infty}\lambda_h(z)\,W_k(z)\,dz.
+\label{eq:loss_factor}
+\end{equation}
+In impedance form,
+\begin{equation}
+\kappa_k
+=
+\frac{c}{\pi}
+\int_0^\infty
+\Re[Z_k(k)]\,h(k)\,dk,
+\label{eq:kappa_imp}
+\end{equation}
+where $h(k)=\tilde\lambda_h(k)\tilde\lambda_h^*(k)$ is the spectral power density. Thus, the centroid shift is directly controlled by the real part of the impedance. 
+
+The peak position $z_m$ of the bunch profile is defined by $d\lambda_h/dz=0$. Zhou obtains
+\begin{equation}
+z_m(I)=I\sigma_{z0}W_k(z_m),
+\label{eq:peak_shift}
+\end{equation}
+and shows that the peak shift rate at zero current depends only on the real part of the impedance for a Gaussian bunch. This is valuable experimentally because the peak position can be inferred from BPM zero-crossings or streak-camera profiles. Again, a direct bridge appears between measurable bunch-shape distortion and the machine impedance. 
+
+Finally, the rms bunch length is
+\begin{equation}
+\sigma_z^2
+=
+\int_{-\infty}^{\infty}
+(z-z_c)^2\lambda_h(z)\,dz.
+\label{eq:bunch_length}
+\end{equation}
+Zhou derives the generalized bunch-lengthening equation
+\begin{equation}
+x^2-1-\frac{cI}{2\pi\sigma_{z0}}Z_k^{\mathrm{eq}}(x)=0,
+\qquad
+x=\frac{\sigma_z}{\sigma_{z0}},
+\label{eq:quadratic_blen}
+\end{equation}
+where the equivalent impedance is
+\begin{equation}
+Z_k^{\mathrm{eq}}(x)
+=
+\frac{2\pi}{c}
+\int_{-\infty}^{\infty}
+(z-z_c)\lambda_h(z)W_k(z)\,dz.
+\label{eq:zeq}
+\end{equation}
+This equation generalizes the traditional effective-inductance picture and shows that bunch lengthening is a derived self-consistent consequence of the stationary kinetic theory, rather than  a heuristic observable disconnected from the full impedance model. 
+
+\subsection{Collective instabilities}
+
+The wakefield and impedance formalism becomes operationally important because coherent beam modes couple to the machine impedance and may become unstable when the induced growth rate exceeds damping and stabilization mechanisms. In a simplified modal picture, one may write a coherent mode frequency as
+\begin{equation}
+\Omega_\ell
+=
+\omega_\beta+\ell\omega_s+\Delta\Omega_\ell,
+\end{equation}
+where $\omega_\beta$ is the betatron frequency, $\omega_s$ the synchrotron frequency, and $\Delta\Omega_\ell$ the coherent shift induced by impedance. Instability corresponds to a positive growth rate, that is, to a sign convention in which the imaginary part of $\Omega_\ell$ becomes positive. This language underlies both analytical mode-coupling theories and macroparticle tracking approaches \cite{metral_wake_2021-1}.
+
+In the transverse single-bunch case, a major threshold mechanism is the transverse mode coupling instability (TMCI), where coherent head-tail modes merge and become unstable. In the multibunch case, low-frequency resistive-wall impedance can drive fast coupled-bunch growth. Recent FCC-ee studies show that these are central constraints both in the collider rings and in the HEB. In particular, the resistive wall is a dominant low-frequency driver, and the HEB at injection energy is especially sensitive to such growth because damping is weak compared with the impedance-driven growth times \cite{ghribi_impact_nodate,gibellieri_impact_nodate}.
+
+Métral also emphasizes that one should not think of collective instabilities as isolated textbook categories only. In practice, beam stability often results from the interplay between impedance, feedback systems, optics nonlinearities, space charge, electron cloud, ion effects, and other mechanisms. This point is especially important for surrogate modeling, a single useful reduced model must either isolate one mechanism very carefully, or represent a complicated effective map produced by several interacting effects at once \cite{metral_wake_2021-1}.
+
+
+Even when no full Vlasov solver is used, high-fidelity collective-effects studies usually require multi-particle tracking, multi-turn evolution, and in many cases multi-bunch simulations. That computational burden is precisely why surrogate models are attractive, they aim to learn a map that is much cheaper to evaluate while still preserving enough of the relevant structure to be predictive. This broad motivation is well aligned with current ML usage in accelerator physics, where surrogates, inverse models, and differentiable approximations are increasingly used for diagnostics, optimization, and simulation acceleration \cite{arpaia_machine_2021}. The same logic also appears in recent beam-dynamics surrogate work using HenonNets, where the stated goal is fast prediction with embedded physical structure \cite{huang_symplectic_2024}.
+
+
+
+
+
+\subsection{Machine learning for surrogate modeling of collective effects}
+
+Because high-fidelity collective-effects simulations are computationally demanding, machine learning has emerged as a natural candidate for building surrogate models as fast approximations of expensive maps that preserve, at least partially, the relevant physical structure. In accelerator physics, ML has already been used for diagnostics, optics correction, anomaly detection, beam optimization, and simulation post-processing. In the present context, the objective is clear: to learn maps related to collective beam dynamics quickly enough to enable parameter scans, inverse problems, or repeated evaluations in design studies \cite{arpaia_machine_2021}.
+
+From a supervised-learning viewpoint, one starts from a dataset
+\begin{equation}
+\mathcal D = \{(x_i,y_i)\}_{i=1}^{N},
+\end{equation}
+where $x_i$ collects the input variables, such as beam parameters, phase-space samples, machine settings or measured projections, and $y_i$ denotes the corresponding target, such as an evolved phase-space state, a reconstructed distribution, or a collective observable. A parametric model $F_{\theta}$ is then trained by minimizing an empirical loss,
+\begin{equation}
+\theta ^* =\argmin_{\theta} \frac{1}{N}\sum_{i=1}^{N}\ell\!\left(F_{\theta}(x_i),y_i\right),
+\label{eq:generic_ml_loss}
+\end{equation}
+possibly augmented with regularization or physical constraints. The crucial distinction between the different approaches discussed below lies in the type of object being learned, it can be a finite-dimensional symplectic map, a probability density in phase space, or an operator acting between function spaces.
+
+\subsubsection{HenonNets}
+
+When the target is a phase-space map
+\begin{equation}
+z_{n+1} = \Phi_\mu(z_n),
+\qquad z_n\in\mathbb R^{2N},
+\end{equation}
+it is natural to ask whether the learned surrogate should preserve symplectic structure. In the Hamiltonian limit the answer is yes, the true transport satisfies hamiltonian flow in phase space, and therefore the surrogate should ideally satisfy the symplectic condition. HenonNets are designed precisely for this purpose. 
+
+HenonNets are structure-preserving neural networks designed to approximate symplectic maps. Their motivation comes from Hamiltonian dynamics. In the absence of dissipation, as is the case for Vlasov equation, beam transport in phase space is naturally represented by symplectic maps, and preserving this structure is desirable when constructing surrogates for beam dynamics \cite{burby_fast_2021,huang_symplectic_2024}. If $\xi=(q,p)\in\mathbb R^{2N}$ denotes canonical phase-space coordinates, the Hamiltonian equations can be written as
+\begin{equation}
+\frac{d\xi}{dt} = \{\xi,H\},
+\end{equation}
+with Poisson bracket
+\begin{equation}
+\{f,g\}
+=
+\sum_{i,j}
+\frac{\partial f}{\partial \xi_i}
+J_{ij}
+\frac{\partial g}{\partial \xi_j},
+\qquad
+J=
+\begin{pmatrix}
+0 & I\\
+-I & 0
+\end{pmatrix}.
+\end{equation}
+A discrete transport map $\xi_{n+1}=M(\xi_n)$ is symplectic when
+\begin{equation}
+(\nabla M)^{\top}J(\nabla M)=J.
+\label{eq:symplectic_condition}
+\end{equation}
+
+The HenonNet architecture enforces this property at the layer level. In the parameter-dependent construction relevant for accelerator applications, the parametrized potential function is used to capture collective effects. More precisely, one defines a potential function
+\begin{equation}
+V_W:\mathbb R^N\times \mathcal P \to \mathbb R,
+\end{equation}
+where $W$ denotes trainable weights and $\mu\in\mathcal P\subset\mathbb R^m$ is a vector of physical parameters that are relevant for the observation of the desired physical phenomenta, as an example, the intensity (Bunch Charge) is a key parameter that defines the extent of the wakefields and their resulting collective effects. A basic H\'enon-type map $H:\mathbb R^{2N}\to\mathbb R^{2N}$ then takes the form
+\begin{equation}
+  H\begin{pmatrix}
+    p \\ q 
+  \end{pmatrix}
+     = \begin{pmatrix}\tilde{q} \\ \tilde{p} \end{pmatrix}
+      = \begin{pmatrix} p + \eta \\ -q + \nabla_p V_W(p;\mu) \end{pmatrix},
+      \label{eq:henon_basic}
+\end{equation}
+
+and a H\'enon layer is built as a composition of 4 such elementary maps. 
+
+\begin{equation}
+\mathcal H_L(\xi;\mu)
+=
+(H \circ H \circ H \circ H) (\xi;\mu).
+\end{equation}
+It is worth noting that for each layer, the same potential function is used in all four elementary maps, which means that the same trainable parameters $W$ are shared across those maps. This design choice allows the model to capture more complex dynamics while keeping the number of trainable parameters manageable.
+
+The full HenonNet is then a composition of layers,
+\begin{equation}
+\Phi_{\Theta}
+=
+\mathcal H_L^{(L)}
+\circ
+\cdots
+\circ
+\mathcal H_L^{(1)},
+\end{equation}
+which remains symplectic by construction \cite{huang_symplectic_2024,burby_fast_2021}.
+
+In the present context, the natural input is a pair $(z,\mu)$, where $z\in\mathbb R^{2N}$ denotes the beam phase-space coordinates and $\mu$ collects machine parameters, while the output is the transported state $z'$. Training is typically performed with a regression loss such as
+\begin{equation}
+\mathcal L_{\mathrm{Henon}}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left\|
+\Phi_{\Theta}(z_i,\mu_i)-z_i'
+\right\|^2.
+\end{equation}
+The main reason for including HenonNets in this work is that they provide a physically structured baseline for surrogate modeling of phase-space transport. Their limitation, however, is equally important. The network is designed to learn finite-dimensional maps between particle states, not directly distribution-to-distribution evolution operators. This challenge is under investigation since the addition of a parametrized potential in the Henon map reproduces effects such as space charge with some degree of accuracy \cite{huang_symplectic_2024,}. Furthermore, while it is true that the mapping is done in pointwise fashion for the phase space, the distribution transform can be obtained by pushing forward the initial distribution through the learned map, let $\psi$ be a distribution in the initial phase space, then the evolved distribution is given by
+\begin{equation}
+\psi' = \Phi_{\Theta\#}\psi,
+\end{equation}
+
+where $\#$ denotes the pushforward operation, and it acts on the phase space such that
+\begin{equation}
+  \int_A \psi'(z')\,dz' = \int_{\Phi_{\Theta}^{-1}(A)} \psi(z)\,dz,
+\end{equation}
+for any measurable set $A$ in the phase space due to Liouville's theorem.
+
+This means that, in principle, HenonNets can be used to learn the underlying particle transport map, and then the distribution evolution can be obtained by pushing forward the initial distribution through the learned map. However, this approach may not capture all the relevant collective effects, especially if the dynamics involves strong mixing, filamentation, or nontrivial phase-space structures that are not well represented by a finite-dimensional map. This study will face the question of how well HenonNets can capture the relevant dynamics in the presence of collective effects, and whether they can be used as a building block for more complex surrogate models that directly learn distribution evolution or operator maps, and how do they compare with other approaches such as neural operators or maximum-entropy tomography, as well as the usual vlasov solver approach.
+\subsubsection{Phase-space tomography reconstruction}
+
+A different problem is the reconstruction of an unknown beam distribution from a collection of measurements. Let $\rho(x)$ denote the unknown initial phase-space density and let $M_k$ be the known transport map associated with measurement configuration $k$. The transformed coordinates are
+\begin{equation}
+u_k = M_k(x),
+\end{equation}
+and the measured data are low-dimensional projections $g_k(u_{k,\parallel})$ of the transported density. This inverse problem is generally underdetermined in high dimension, which motivates regularized and information-theoretic approaches \cite{hoover_high-dimensional_2024}.
+
+A principled formulation is maximum-entropy tomography. Given a prior density $\rho_*(x)$, one seeks a posterior density $\rho(x)$ that maximizes the relative entropy
+\begin{equation}
+\mathcal H[\rho,\rho_*]
+=
+-\int \rho(x)\log\!\left(\frac{\rho(x)}{\rho_*(x)}\right)\,dx
+\label{eq:relative_entropy}
+\end{equation}
+subject to measurement constraints and normalization. Symbolically,
+\begin{equation}
+\max_{\rho}\; \mathcal H[\rho,\rho_*]
+\qquad
+\text{subject to}
+\qquad
+\mathcal P_k[\rho]=g_k,\;\;
+\int \rho(x)\,dx=1,
+\label{eq:ment_problem}
+\end{equation}
+where $\mathcal P_k$ denotes the projection operator associated with the $k$-th measurement setting \cite{hoover_high-dimensional_2024}.
+
+In high-dimensional phase space, it is advantageous to represent $\rho$ with a normalizing flow. Let $\xi\sim p_0$ be a latent variable drawn from a simple base density and let $T_{\theta}$ be an invertible neural map. Then
+\begin{equation}
+x = T_{\theta}(\xi),
+\end{equation}
+and the induced density is
+\begin{equation}
+\rho_{\theta}(x)
+=
+p_0\!\left(T_{\theta}^{-1}(x)\right)
+\left|
+\det \nabla_x T_{\theta}^{-1}(x)
+\right|.
+\label{eq:flow_density}
+\end{equation}
+The training problem then becomes one of matching the projected model predictions to the measurements while regularizing by entropy or by an equivalent likelihood-based objective. In the present report, this framework is relevant because it provides a mathematically coherent route for reconstructing beam distributions when the object of interest is not a single-particle map but a full phase-space density. 
+
+In high dimensions, exact entropy-based tomography becomes prohibitive, so Hoover and Wong use normalizing flows to represent the density flexibly and train it against the projection constraints. This is conceptually very relevant here because collective-effects studies often care about the evolution or reconstruction of the full phase-space density, not just of individual trajectories. 
+
+Furthermore, this approach follows a closer alignment with the underlying physics and measurement techniques in accelerator physics, where the full information about. abeam is recovered by simultaneosly measuring projections of the phase space distribution \cite{hoover_high-dimensional_2024}.
+
+\subsubsection{Neural operators}
+
+A third and, in many respects, more natural setting for collective-effects surrogate modeling arises when the object to be learned is not a finite-dimensional particle map, but a map between functions. This viewpoint is particularly appropriate in accelerator physics because many central quantities are inherently functional. The initial line density \(\lambda(z)\), the wake function \(W(z)\), the impedance spectrum \(Z(\omega)\), the stationary Ha\"issinski profile, the bunch wake potential, or even a reduced phase-space density. In such cases, the relevant target is not a map between vectors of fixed dimension in phase space, but an operator
+\begin{equation}
+\mathcal G^\dagger : \mathcal A \to \mathcal U,
+\label{eq:NO_operator_target}
+\end{equation}
+where \(\mathcal A\) and \(\mathcal U\) are function spaces, typically Banach spaces of scalar- or vector-valued fields \cite{kovachki_neural_nodate,kossaifi_library_2026}.
+
+This functional perspective is especially compelling for collective beam dynamics because the governing equations are themselves written in operator form. For instance, the wake potential is the image of the bunch profile under a convolution operator
+
+\begin{equation}
+V_{\parallel}(z)
+=
+\int_{-\infty}^{\infty} W_{\parallel}(z-z')\,\lambda(z')\,dz',
+\label{eq:NO_wake_conv}
+\end{equation}
+while the Ha\"issinski equation defines a nonlinear self-consistent map from a wake kernel \(W\) and an intensity parameter \(I\) to a stationary line density \(\lambda_h\). Likewise, the Vlasov-Fokker-Planck equation generates, for fixed machine parameters, a time-evolution operator that maps an initial phase-space density to its later state. From this standpoint, learning collective beam dynamics is naturally an operator-learning problem rather than merely a pointwise regression problem.
+
+Formally, given training pairs
+\begin{equation}
+\{(a_j,u_j)\}_{j=1}^{N},
+\qquad
+a_j \in \mathcal A,\;\; u_j \in \mathcal U,
+\end{equation}
+the objective is to approximate \(\mathcal G^\dagger\) by a parameterized operator \(\mathcal G_\theta\) through empirical minimization,
+\begin{equation}
+\theta^* = \argmin_{\theta}
+\frac{1}{N}
+\sum_{j=1}^{N}
+\left\|
+\mathcal G_{\theta}(a_j)-u_j
+\right\|_{\mathcal U}^{2}.
+\label{eq:NO_training}
+\end{equation}
+More generally, one may replace the \(L^2\)-type norm above by weighted Sobolev norms, multi-resolution losses, or physics-informed penalties if derivatives or conservation constraints are important. In particular, if the target output contains sharp gradients, phase-space filamentation, or oscillatory structure, it can be advantageous to train with
+\begin{equation}
+\mathcal L(\theta)
+=
+\frac{1}{N}\sum_{j=1}^{N}
+\left(
+\alpha_0 \| \mathcal G_\theta(a_j)-u_j\|_{L^2}^2
++
+\alpha_1 \|\nabla(\mathcal G_\theta(a_j)-u_j)\|_{L^2}^2
+\right),
+\label{eq:NO_sobolev_loss}
+\end{equation}
+or similar Sobolev-type criteria, so that the model learns not only the field values but also part of their local structure.
+
+The key conceptual contribution of neural operators is that the architecture is built directly on function spaces. In the formulation of Kovachki et al., the model is discretization-invariant. Standard neural networks on fixed grids generally fail this property because their weights are tied to a specific discretization, whereas neural operators are designed so that the same trained operator can be applied to different meshes and resolutions \cite{kovachki_neural_nodate}. This feature is particularly important in accelerator modeling, where simulation data may be generated on different grids, with different bunch samplings, spectral truncations, or histogram resolutions.
+
+At the architectural level, a neural operator is usually written as a composition of a lifting map, several operator layers, and a projection map. If \(a(x)\) is the input function, one first lifts it pointwise into a latent channel space,
+\begin{equation}
+v_0(x) = P(a(x),x),
+\label{eq:NO_lift}
+\end{equation}
+where it is often useful to include the coordinates \(x\) themselves as part of the lifted input, so that geometric information is explicitly available to the model. Kovachki et al.\ note that including \(x\) and possibly smoothed or differentiated versions of the input can materially improve learning, since the geometry of the domain is then encoded directly in the representation \cite{kovachki_neural_nodate}. One then applies \(T\) operator layers of the generic form
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma\!\left(
+Wv_t(x)
++
+\int_D \kappa_{\theta}(x,y)\,v_t(y)\,d\mu(y)
++
+b(x)
+\right),
+\qquad t=0,\dots,T-1,
+\label{eq:NO_layer_full}
+\end{equation}
+where \(W\) is a local linear map, \(b(x)\) is a bias term, \(\kappa_\theta(x,y)\) is a learned kernel, and \(\sigma\) is a pointwise nonlinearity. Finally, one projects back to the target space,
+\begin{equation}
+u(x) = Q(v_T(x)).
+\label{eq:NO_project}
+\end{equation}
+Because the nonlocal term is an integral operator, this architecture is naturally suited to physical systems whose solution operators exhibit nonlocality, even when the underlying governing equations are local differential equations. This is one of the main reasons neural operators have proven effective for PDE solution maps \cite{kovachki_neural_nodate,kossaifi_library_2026}.
+
+A major advantage of this formulation is that it matches the structure of collective beam equations rather closely. The wake operator in Eq.~\eqref{eq:NO_wake_conv} is already nonlocal. The Ha\"issinski problem is a nonlinear fixed-point problem involving such an operator. If \(\mathcal H\) denotes the nonlinear map sending a candidate density \(\lambda\) to the corresponding normalized right-hand side of the Ha\"issinski equation, then the stationary solution satisfies
+\begin{equation}
+\lambda_h = \mathcal H[\lambda_h;W,I,\mu],
+\label{eq:NO_haissinski_fixedpoint}
+\end{equation}
+where \(\mu\) denotes machine parameters. A neural operator may therefore be viewed as learning either the fixed-point solution map
+\begin{equation}
+\mathcal G^\dagger_{\mathrm H} : (W,I,\mu) \mapsto \lambda_h,
+\label{eq:NO_haissinski_operator}
+\end{equation}
+or a time-evolution map
+\begin{equation}
+\mathcal G^\dagger_t : (\rho_0,W,\mu) \mapsto \rho_t
+\label{eq:NO_VFP_operator}
+\end{equation}
+for the Vlasov-Fokker-Planck dynamics. 
+
+Several concrete parameterizations of the operator layer are possible. The most generic is the graph neural operator (GNO), where the kernel \(\kappa_\theta(x,y)\) is learned directly on arbitrary discretizations. A low-rank neural operator (LNO) imposes a low-rank factorization on the kernel, which reduces complexity and can be effective when the target operator has approximately low-rank structure. Multi-pole graph neural operators (MGNOs) introduce hierarchical multi-scale structure inspired by fast multipole ideas. Finally, the most widely used variant is the Fourier neural operator (FNO), where the integral operator is represented spectrally \cite{kovachki_neural_nodate}. In the FNO case one writes
+\begin{equation}
+\mathcal K(v)
+=
+\mathcal F^{-1}\!\bigl(
+R_{\theta}(k)\,\mathcal F(v)(k)
+\bigr),
+\label{eq:FNO_core}
+\end{equation}
+so that the layer becomes
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma\!\left(
+Wv_t(x)
++
+\mathcal F^{-1}\!\bigl(
+R_{\theta}(k)\,\mathcal F(v_t)(k)
+\bigr)(x)
+\right).
+\label{eq:FNO_layer}
+\end{equation}
+Here \(R_\theta(k)\) is a learned Fourier multiplier, typically truncated to low-frequency modes. This makes the computation quasi-linear in the number of discretization points and naturally captures long-range interactions, which is particularly appealing in wakefield problems where the physical coupling is intrinsically nonlocal \cite{kovachki_neural_nodate,kossaifi_library_2026}.
+
+More explicitly, if only \(K_{\max}\) modes are retained, one may write
+\begin{equation}
+\mathcal F(v)(k) = \hat v(k), \qquad |k|\le K_{\max},
+\end{equation}
+and
+\begin{equation}
+\hat v_{t+1}(k)
+=
+R_\theta(k)\,\hat v_t(k)
+\quad\text{for } |k|\le K_{\max},
+\end{equation}
+while the remaining modes are set to zero or treated by the local branch \(Wv_t\). This separation between learned low-frequency nonlocal transport and local correction is often physically meaningful in beam dynamics, where the dominant collective response may be concentrated in a limited spectral band.
+
+An important theoretical point is that neural operators are not merely heuristics. Kovachki et al.\ prove that neural operators with a fixed number of parameters are discretization-invariant and are universal approximators of continuous operators on compact subsets of Banach spaces \cite{kovachki_neural_nodate}. They also give a useful decomposition of the total error into discretization error and approximation error:
+\begin{equation}
+\|\hat{\mathcal G}_\theta(D_L,a|_{D_L})-\mathcal G^\dagger(a)\|_{\mathcal U}
+\le
+\underbrace{\|\hat{\mathcal G}_\theta(D_L,a|_{D_L})-\mathcal G_\theta(a)\|_{\mathcal U}}_{\text{discretization error}}
++
+\underbrace{\|\mathcal G_\theta(a)-\mathcal G^\dagger(a)\|_{\mathcal U}}_{\text{approximation error}}.
+\label{eq:NO_error_decomp}
+\end{equation}
+This decomposition is very useful in the present context. It separates the error coming from the learned functional approximation itself from the error due to the particular numerical representation of the beam distribution, impedance spectrum, or wake kernel used in the training data. In other words, it provides a mathematically clean way to talk about generalization across different resolutions.
+
+For collective-effects applications, several operator-learning formulations are plausible.
+
+\paragraph{ Stationary longitudinal profile learning.}
+One may learn the map
+\begin{equation}
+\mathcal G^\dagger_{\mathrm stat}:
+(W_{\parallel},I,\mu)
+\mapsto
+\lambda_h,
+\label{eq:NO_statmap}
+\end{equation}
+where \(W_{\parallel}\) is the longitudinal wake function, \(I\) the intensity parameter, and \(\mu\) machine parameters such as synchrotron tune, momentum compaction, damping time, and energy spread. The output is the stationary Ha\"issinski profile. This would give a fast surrogate for self-consistent equilibrium calculations.
+
+\paragraph{ Time-dependent density evolution.}
+One may instead learn a time-stepper
+\begin{equation}
+\mathcal G^\dagger_{\Delta t}:
+(\rho_t,W,Z,\mu)
+\mapsto
+\rho_{t+\Delta t},
+\label{eq:NO_timestepping}
+\end{equation}
+which approximates the action of the Vlasov-Fokker-Planck semigroup. Such a model would behave like a learned reduced solver.
+
+\paragraph{ Observable operator learning.}
+Sometimes the full output density is not needed. One may directly learn
+\begin{equation}
+\mathcal G^\dagger_{\mathrm{obs}}:
+(\lambda_0,W,Z,\mu)
+\mapsto
+\bigl(z_c,\sigma_z,\kappa,\text{growth rates},\dots\bigr),
+\label{eq:NO_obs}
+\end{equation}
+that is, a map from functional beam/environment data to a reduced observable vector. This is attractive when the goal is design-space scanning or optimization.
+
+\paragraph{ Transverse collective surrogate.}
+In a similar spirit, one may define an operator from an initial transverse phase-space density and a transverse impedance model to a later projected density or to coherent modal information:
+\begin{equation}
+\mathcal G^\dagger_{\perp}:
+(\rho_{\perp,0}, Z_\perp,\mu)
+\mapsto
+\rho_{\perp,t}
+\quad\text{or}\quad
+\{\Omega_\ell\}_\ell .
+\label{eq:NO_transverse}
+\end{equation}
+This would be especially relevant for transverse coupled-bunch or single-bunch instability studies.
+
+These formulations also clarify the distinction with the other ML approaches discussed earlier. A HenonNet is best suited when the target is a finite-dimensional transport map on particle coordinates. Tomography with normalizing flows is best suited when one wants to reconstruct a phase-space density from projections. Neural operators become the natural tool when one wants to learn the law of evolution or the functional response itself. Since collective beam dynamics is fundamentally formulated in terms of wake operators, kinetic evolution operators, and self-consistent density maps, neural operators offer a particularly promising language for surrogate modeling beyond the single-particle level \cite{kovachki_neural_nodate,hoover_high-dimensional_2024}.
+
+There has been already a discussion on the benefits of neural operators. Their limitations should also be stated clearly. First, they require large and representative datasets if the operator to be learned depends on many machine parameters. Second, the distinction between discretization error and approximation error does not remove the practical difficulty of optimization and finite-data generalization. Third, sharp phase-space filamentation or strongly multimodal distributions may require richer latent representations or multi-scale architectures. Nonetheless, because collective beam dynamics is intrinsically functional and nonlocal, neural operators appear to be one of the most principled frameworks for surrogate modeling of collective effects.
+
+\subsection{Summary}
+The theoretical hierarchy developed above suggests a natural hierarchy of surrogates.
+
+First, one may learn a pointwise phase-space map using a structured model such as a HenonNet. This is mathematically appropriate when the dominant target is transport and when preserving symplectic geometry is desirable. Second, one may learn or reconstruct a phase-space density from indirect measurements using maximum-entropy tomography and normalizing flows. Third, one may directly learn a function-space operator using a neural operator when the target is the evolution law of densities, wake potentials, or related functional observables.
+
+In the context of collective effects, these are not competing ideas so much as different levels of description. Pointwise maps are closest to particle tracking, tomography is closest to diagnostic inversion, and neural operators are closest to the full distributional viewpoint implicit in the Vlasov-Fokker-Planck and Ha\"issinski frameworks. Precisely because collective beam physics naturally moves between these three levels, machine learning here serves as a flexible language for approximating the right mathematical object at the right level of description with different caveats and trade-offs. The next step is to implement these ideas concretely in the context of a specific collective-effect problem.
+
+
+
+
+\subsection{Learning parameterized transport and collective operators for beam dynamics}
+\label{subsec:operator_learning_beam_dynamics}
+
+We model a beam as either a cloud of particles in six-dimensional phase space,
+\begin{equation}
+ z = (x,y,\zeta,p_x,p_y,\delta) \in \mathbb{R}^6,
+\end{equation}
+or as a phase-space probability measure or density
+\begin{equation}
+ \rho \in \mathcal{P}(\mathbb{R}^6),
+\end{equation}
+where $\mathcal{P}(\mathbb{R}^6)$ denotes a suitable set of probability measures or densities on phase space.
+For a lattice section parameterized by machine settings
+\begin{equation}
+ \mu \in \mathcal{M} \subset \mathbb{R}^m,
+\end{equation}
+we distinguish three related maps.
+
+At the microscopic level, the dynamics are described by a parameterized particle map
+\begin{equation}
+ \Phi_\mu : \mathbb{R}^6 \to \mathbb{R}^6,
+ \qquad
+ z_{\mathrm{out}} = \Phi_\mu(z_{\mathrm{in}}).
+ \label{eq:microscopic-map}
+\end{equation}
+In the present Xsuite baseline, $m=3$ and
+\begin{equation}
+ \mu = (k_{f1},k_{d1},k_{f2}),
+\end{equation}
+corresponding to the strengths of the three quadrupoles in the line.
+
+At the mesoscopic level, the corresponding density transport is the pushforward
+\begin{equation}
+ \mathcal{T}_\mu[\rho] := (\Phi_\mu)_\# \rho,
+ \label{eq:pushforward-operator}
+\end{equation}
+which is characterized weakly by
+\begin{equation}
+ \int_{\mathbb{R}^6} \varphi(z)\, d\mathcal{T}_\mu[\rho](z)
+ =
+ \int_{\mathbb{R}^6} \varphi(\Phi_\mu(z))\, d\rho(z),
+ \qquad \forall \varphi \in C_c(\mathbb{R}^6).
+ \label{eq:pushforward-weak}
+\end{equation}
+
+When collective effects are included, the section map becomes density dependent. The evolution is then described by a nonlinear operator
+\begin{equation}
+ \mathcal{G}_{\Delta s,\mu} : \rho(s,\cdot) \mapsto \rho(s+\Delta s,\cdot),
+ \label{eq:nonlinear-operator-section}
+\end{equation}
+which is the object of genuine operator learning.
+
+\paragraph{Continuum formulation.}
+A generic Vlasov--Fokker--Planck-type model can be written as
+\begin{equation}
+ \partial_s \rho
+ + \nabla_z \cdot \big(F_{\mathrm{ext}}(z,s,\mu)\,\rho\big)
+ + \nabla_z \cdot \big(F_{\mathrm{coll}}[\rho](z,s,\mu)\,\rho\big)
+ = \mathcal{D}[\rho],
+ \label{eq:vfp-generic}
+\end{equation}
+where $F_{\mathrm{ext}}$ is the known external lattice force, $F_{\mathrm{coll}}[\rho]$ is the collective self-consistent force, and $\mathcal{D}$ is a damping--diffusion operator. In the absence of collective effects, $F_{\mathrm{coll}} \equiv 0$ and $\mathcal{D}\equiv 0$, so that the evolution reduces to the pushforward \eqref{eq:pushforward-operator} induced by the single-particle map \eqref{eq:microscopic-map}.
+
+A convenient operator splitting for one lattice section is
+\begin{equation}
+ \rho_{j+1}
+ \approx
+ \exp(\Delta s\,\mathcal{D}_j)
+ \exp\big(\Delta s\,\mathcal{C}_j[\rho_j]\big)
+ (M_{j,\mu_j})_\#\rho_j,
+ \label{eq:section-splitting}
+\end{equation}
+where $M_{j,\mu_j}$ denotes the external transport map over section $j$ and $\mathcal{C}_j[\rho]$ denotes the collective part of the generator.
+
+\paragraph{Steady state as a fixed point.}
+If the lattice is divided into $N$ sections, the one-turn operator is
+\begin{equation}
+ \mathcal{T}_{\mathrm{ring},\mu}
+ :=
+ \mathcal{G}_{N,\mu_N}\circ \cdots \circ \mathcal{G}_{1,\mu_1}.
+ \label{eq:ring-map}
+\end{equation}
+The equilibrium distribution is then a fixed point of the composed operator:
+\begin{equation}
+ \rho^\star = \mathcal{T}_{\mathrm{ring},\mu}[\rho^\star].
+ \label{eq:fixed-point-equilibrium}
+\end{equation}
+This fixed-point perspective is the natural place where steady-state models such as Ha\"issinski-type equilibria enter the framework.
+
+\subsubsection{Operator-learning formulation}
+\label{subsubsec:operator-learning-formulation}
+
+Let $A$ and $U$ be Banach spaces of functions or densities. The learning target is a continuous operator
+\begin{equation}
+ G^\dagger : A \times \mathcal{M} \to U,
+ \qquad
+ (a,\mu) \mapsto u,
+ \label{eq:true-operator}
+\end{equation}
+where $a$ denotes the input state and $u$ the output state. In the present application, representative choices are:
+\begin{align}
+ a &= \rho_{\mathrm{in}}, & u &= \rho_{\mathrm{out}}, \\
+ a &= \lambda_{\mathrm{in}}, & u &= \lambda_{\mathrm{out}}, \\
+ a &= \lambda_{\mathrm{in}}, & u &= V_{\mathrm{ind}}, \\
+ a &= \rho_{\mathrm{in}}, & u &= F_{\mathrm{coll}}[\rho_{\mathrm{in}}].
+\end{align}
+
+A neural operator is then a parameterized map
+\begin{equation}
+ G_\theta : A \times \mathcal{M} \to U,
+ \qquad \theta \in \Theta \subset \mathbb{R}^p,
+ \label{eq:learned-operator}
+\end{equation}
+trained to approximate $G^\dagger$ on a compact subset $K \subset A \times \mathcal{M}$.
+
+Following the neural operator framework of Kovachki \emph{et al.}, the architecture can be written abstractly as
+\begin{equation}
+ G_\theta
+ =
+ Q \circ
+ \sigma_T(W_{T-1}+K_{T-1}+b_{T-1})
+ \circ \cdots \circ
+ \sigma_1(W_0 + K_0 + b_0)
+ \circ P,
+ \label{eq:neural-operator-abstract}
+\end{equation}
+where $P$ is a lifting map, $Q$ is a projection map, $W_t$ are local linear maps, $K_t$ are nonlocal operator layers, and $\sigma_t$ are pointwise nonlinearities \cite{kovachki_neural_nodate}.
+
+A representative operator layer has the form
+\begin{equation}
+ v_{t+1}(x)
+ =
+ \sigma_{t+1}
+ \left(
+ W_t v_t(x)
+ + \int_D \kappa_t(x,y) v_t(y)\,dy
+ + b_t(x)
+ \right).
+ \label{eq:operator-layer}
+\end{equation}
+For a translation-invariant kernel, $\kappa_t(x,y)=\kappa_t(x-y)$, this becomes a convolution operator.
+
+\subsubsection{Fourier neural operator specialization}
+\label{subsubsec:fno-specialization}
+
+For reduced longitudinal problems on a uniform grid, a Fourier neural operator is a natural choice. Let $v : D \to \mathbb{R}^n$ with periodic domain $D=\mathbb{T}^d$ and denote by $\mathcal{F}$ the Fourier transform. Then the Fourier layer is parameterized spectrally as
+\begin{equation}
+ u(x) = \mathcal{F}^{-1}\!\left(R_\phi \cdot \mathcal{F}(v)\right)(x),
+ \label{eq:fno-spectral-layer}
+\end{equation}
+with a truncated tensor of low-frequency modes $R_\phi$ \cite{kovachki_neural_nodate}. In practice only a finite number of modes $k_{\max}$ are retained, which yields quasi-linear computational cost when the discretization is uniform and FFTs are available.
+
+For a reduced line-density model, one may define
+\begin{equation}
+ \lambda(z) = \int \rho(x,y,z,p_x,p_y,\delta)\,dx\,dy\,dp_x\,dp_y\,d\delta,
+ \label{eq:line-density}
+\end{equation}
+and train an operator
+\begin{equation}
+ \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto \lambda_{\mathrm{out}}
+ \quad \text{or} \quad
+ \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto V_{\mathrm{ind}}.
+ \label{eq:reduced-operator}
+\end{equation}
+This is especially natural when the physics contains a convolutional impedance or wake model,
+\begin{equation}
+ V_{\mathrm{ind}}(z) = (W * \lambda)(z),
+ \qquad
+ \widehat{V}_{\mathrm{ind}}(\omega) = Z(\omega)\,\widehat{\lambda}(\omega).
+ \label{eq:impedance-form}
+\end{equation}
+
+\subsubsection{Data representation and discretization}
+\label{subsubsec:data-representation}
+
+The raw simulation output is a particle cloud
+\begin{equation}
+ Z=
+ \begin{bmatrix}
+ z_1^\top\\
+ \vdots\\
+ z_N^\top
+ \end{bmatrix}
+ \in \mathbb{R}^{N\times 6},
+ \label{eq:particle-cloud}
+\end{equation}
+which defines the empirical measure
+\begin{equation}
+ \rho^N = \frac{1}{N} \sum_{i=1}^N \delta_{z_i}.
+ \label{eq:empirical-measure}
+\end{equation}
+The baseline Xsuite dataset therefore consists of tuples
+\begin{equation}
+ (Z_{\mathrm{in}}^{(s)}, Z_{\mathrm{out}}^{(s)}, \mu^{(s)}),
+ \qquad s=1,\dots,N_s,
+ \label{eq:cloud-dataset}
+\end{equation}
+with
+\begin{equation}
+ Z_{\mathrm{in}}^{(s)} \in \mathbb{R}^{N_p\times 6},
+ \qquad
+ Z_{\mathrm{out}}^{(s)} \in \mathbb{R}^{N_p\times 6},
+ \qquad
+ \mu^{(s)} \in \mathbb{R}^3.
+ \label{eq:dataset-shapes}
+\end{equation}
+
+To train a reduced operator, the cloud is projected to a fixed discretization. In the simplest longitudinal setup, a histogram or kernel density estimate on a uniform grid
+\begin{equation}
+ z_j \in [z_{\min}, z_{\max}],
+ \qquad j=1,\dots,N_z,
+ \label{eq:uniform-grid}
+\end{equation}
+defines a discretized line density
+\begin{equation}
+ \lambda^h = (\lambda(z_1),\dots,\lambda(z_{N_z})) \in \mathbb{R}^{N_z}.
+ \label{eq:lambda-grid}
+\end{equation}
+The reduced training dataset is then
+\begin{equation}
+ (\lambda^{h,(s)}_{\mathrm{in}},\lambda^{h,(s)}_{\mathrm{out}},\mu^{(s)}),
+ \qquad s=1,\dots,N_s.
+ \label{eq:reduced-dataset}
+\end{equation}
+
+This reduced object is the natural input to a 1D FNO.
+
+\subsubsection{Data-generation strategy with Xsuite}
+\label{subsubsec:data-generation-strategy}
+
+The synthetic data generator should sample both machine parameters and input beam families.
+For each sample index $s$:
+\begin{enumerate}
+    \item draw machine settings
+    \begin{equation}
+    \mu^{(s)}=(k_{f1}^{(s)},k_{d1}^{(s)},k_{f2}^{(s)}) \sim \nu_{\mu},
+    \end{equation}
+    where $\nu_\mu$ is typically uniform over a prescribed parameter box;
+    \item draw an input beam family $\eta^{(s)}$ from a finite library of prototypes;
+    \item sample a particle cloud
+    \begin{equation}
+    Z_{\mathrm{in}}^{(s)} = \{z_i^{(s)}\}_{i=1}^{N_p} \sim \rho_{\eta^{(s)}},
+    \end{equation}
+    where $\rho_{\eta}$ may be Gaussian, correlated Gaussian, core--halo, Gaussian mixture, or mismatched;
+    \item track the cloud through Xsuite with parameters $\mu^{(s)}$ to obtain
+    \begin{equation}
+    Z_{\mathrm{out}}^{(s)} = \Phi_{\mu^{(s)}}\left(Z_{\mathrm{in}}^{(s)}\right);
+    \end{equation}
+    \item optionally compute reduced objects such as $\lambda_{\mathrm{in}}^{h,(s)}$, $\lambda_{\mathrm{out}}^{h,(s)}$, and moments.
+\end{enumerate}
+
+This produces a Monte Carlo approximation of the operator graph,
+\begin{equation}
+ \{(\rho_{\mathrm{in}}^{N,(s)},\mu^{(s)},\rho_{\mathrm{out}}^{N,(s)})\}_{s=1}^{N_s}.
+ \label{eq:operator-graph-montecarlo}
+\end{equation}
+A crucial point is that operator learning requires variation in both the machine settings and the input distribution family; training only on one nominal Gaussian cloud is insufficient to identify a transport operator on a nontrivial admissible class.
+
+\subsubsection{Learning objectives}
+\label{subsubsec:learning-objectives}
+
+At the point-map level, a standard one-step supervised objective is
+\begin{equation}
+ \mathcal{L}_{\mathrm{point}}
+ =
+ \frac{1}{N}
+ \sum_{i=1}^{N}
+ \left\|
+ \widehat{\Phi}_\theta(z_i,\mu)-z_i'
+ \right\|_2^2.
+ \label{eq:loss-point}
+\end{equation}
+
+At the operator level, a natural reduced loss is
+\begin{equation}
+ \mathcal{L}_{\lambda}
+ =
+ \|\widehat{\lambda}_{\mathrm{out}}^h - \lambda_{\mathrm{out}}^h\|_{L^2_h}^2,
+ \label{eq:loss-density}
+\end{equation}
+where $L^2_h$ denotes the discrete $L^2$ norm on the chosen grid.
+
+To constrain physically relevant observables, one can augment the loss with moment penalties:
+\begin{equation}
+ \mathcal{L}_{\mathrm{mom}}
+ =
+ \|\widehat{m}-m\|_2^2
+ + \|\widehat{\Sigma}-\Sigma\|_F^2,
+ \label{eq:loss-moments}
+\end{equation}
+where $m$ and $\Sigma$ are the centroid and covariance matrix of the cloud or reduced distribution.
+
+If the microscopic architecture is symplectic or nearly symplectic, one may also include a structure-preserving term
+\begin{equation}
+ \mathcal{L}_{\mathrm{symp}}
+ =
+ \|J_{\widehat{\Phi}}^\top \Omega J_{\widehat{\Phi}} - \Omega\|_F^2,
+ \label{eq:loss-symplectic}
+\end{equation}
+where $\Omega$ is the canonical symplectic matrix.
+
+The rollout loss over $K$ section compositions is
+\begin{equation}
+ \mathcal{L}_{\mathrm{roll}}
+ =
+ \sum_{k=1}^{K}
+ \beta_k
+d\big(
+ \widehat{\mathcal{G}}_\theta^{(k)}(\rho_0,\mu),
+ \mathcal{G}^{(k)}(\rho_0,\mu)
+ \big),
+ \label{eq:loss-rollout}
+\end{equation}
+where $d$ is a suitable discrepancy, for example $L^2$, Wasserstein, or sliced Wasserstein.
+
+\subsubsection{Key theoretical guarantees}
+\label{subsubsec:key-theorems}
+
+The mathematical justification for operator learning rests on three central facts.
+
+\begin{theorem}[Discretization invariance, informal; \cite{kovachki_neural_nodate}]
+Let $G : A \times \Theta \to U$ be a neural operator class on Banach spaces. Then there exist discretized realizations $\widehat{G}_L$ such that for every compact subset $K \subset A$ and every fixed parameter value $\theta \in \Theta$,
+\begin{equation}
+ \lim_{L\to\infty}
+ \sup_{a\in K}
+ \|\widehat{G}_L(D_L,a|_{D_L},\theta) - G(a,\theta)\|_U = 0.
+ \label{eq:theorem-discretization-invariance}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Universal approximation of continuous operators, informal; \cite{kovachki_neural_nodate}]
+Let $G^\dagger : A \to U$ be a continuous operator between suitable Banach spaces and let $K \subset A$ be compact. Then for every $\varepsilon>0$ there exists a neural operator $G_\theta$ such that
+\begin{equation}
+ \sup_{a\in K}
+ \|G_\theta(a)-G^\dagger(a)\|_U < \varepsilon.
+ \label{eq:theorem-universal-operator}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Approximation by H\'enon compositions; Turaev, informal; \cite{burby_fast_2021}]
+Let $\Phi : U \to \mathbb{R}^{2n}$ be a $C^{r+1}$ symplectic map and let $C\subset U$ be compact. Then for every $\varepsilon>0$ there exist a smooth scalar potential $V$, a constant shift $\eta$, and an integer $N$ such that the composition of H\'enon maps approximates $\Phi$ within $\varepsilon$ on $C$ in the $C^r$ topology.
+\end{theorem}
+
+The first theorem motivates testing the learned model across changing discretizations or particle numbers. The second theorem justifies learning maps between distributions or reduced observables directly as operators. The third theorem motivates the use of structure-preserving H\'enon-type cores for the external Hamiltonian transport.
+
+In particular, the neural-operator framework yields a useful error decomposition:
+\begin{equation}
+ \|\widehat{G}_\theta(D_L,a|_{D_L}) - G^\dagger(a)\|_U
+ \le
+ \underbrace{\|\widehat{G}_\theta(D_L,a|_{D_L}) - G_\theta(a)\|_U}_{\text{discretization error}}
+ +
+ \underbrace{\|G_\theta(a)-G^\dagger(a)\|_U}_{\text{approximation error}}.
+ \label{eq:error-decomposition}
+\end{equation}
+This decomposition should guide the empirical validation strategy.
+
+\subsubsection{Performance indicators and validation}
+\label{subsubsec:kpis-validation}
+
+The validation protocol should include at least the following metrics.
+
+\paragraph{Point-map fidelity.}
+\begin{align}
+ \mathrm{RMSE}_z
+ &=
+ \left(
+ \frac{1}{N}
+ \sum_{i=1}^{N}
+ \|\widehat{z}_i-z_i\|_2^2
+ \right)^{1/2}, \\
+ \mathrm{RelL2}_z
+ &=
+ \left(
+ \frac{\sum_i \|\widehat{z}_i-z_i\|_2^2}{\sum_i \|z_i\|_2^2 + \varepsilon}
+ \right)^{1/2}.
+\end{align}
+
+\paragraph{Distribution fidelity.}
+\begin{equation}
+ \|\widehat{\lambda}-\lambda\|_{L^1_h},
+ \qquad
+ \|\widehat{\lambda}-\lambda\|_{L^2_h},
+ \qquad
+ W_1(\widehat{\rho},\rho),
+ \qquad
+ SW(\widehat{\rho},\rho),
+ \label{eq:distribution-kpis}
+\end{equation}
+where $W_1$ is the 1-Wasserstein distance and $SW$ the sliced Wasserstein distance.
+
+\paragraph{Beam-physics observables.}
+\begin{equation}
+ \|\widehat{m}-m\|_2,
+ \qquad
+ \|\widehat{\Sigma}-\Sigma\|_F,
+ \qquad
+ |\widehat{\varepsilon}_x-\varepsilon_x|,
+ \qquad
+ |\widehat{\varepsilon}_y-\varepsilon_y|,
+ \qquad
+ |\widehat{\varepsilon}_z-\varepsilon_z|.
+ \label{eq:beam-kpis}
+\end{equation}
+
+\paragraph{Structure preservation.}
+\begin{equation}
+ \mathrm{SympDefect} = \|J_{\widehat{\Phi}}^\top\Omega J_{\widehat{\Phi}} - \Omega\|_F,
+ \qquad
+ \mathrm{MassError} = \left|\int \widehat{\lambda}(z)\,dz - \int \lambda(z)\,dz\right|.
+ \label{eq:structure-kpis}
+\end{equation}
+
+\paragraph{Validation tests.}
+The empirical validation should include:
+\begin{enumerate}
+    \item in-distribution one-step prediction on held-out random samples;
+    \item out-of-distribution generalization in machine-parameter space $\mu$;
+    \item out-of-distribution generalization across beam families;
+    \item resolution transfer across different particle counts or grid sizes;
+    \item multi-step composition or rollout validation;
+    \item fixed-point or equilibrium validation when a ring map is considered.
+\end{enumerate}
+
+\subsubsection{Recommended staged deployment}
+\label{subsubsec:staged-deployment}
+
+The practical deployment should proceed in stages.
+
+\paragraph{Stage 1: parameterized point map.}
+Learn a surrogate
+\begin{equation}
+ \widehat{\Phi}_\theta : (z,\mu) \mapsto z'
+ \label{eq:stage1}
+\end{equation}
+from Xsuite clouds. This validates parameterization, normalization, and structure-preserving design.
+
+\paragraph{Stage 2: reduced operator.}
+Project each cloud to a line density and train
+\begin{equation}
+ \widehat{\mathcal{T}}_\theta : (\lambda,\mu) \mapsto \lambda'.
+ \label{eq:stage2}
+\end{equation}
+A 1D FNO is the minimal baseline for this stage.
+
+\paragraph{Stage 3: learned collective closure.}
+Once collective effects are included in the data generator, learn either
+\begin{equation}
+ \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto V_{\mathrm{ind}}
+ \label{eq:stage3a}
+\end{equation}
+or
+\begin{equation}
+ \widehat{\mathcal{K}}_\theta : (\rho,\mu) \mapsto F_{\mathrm{coll}}[\rho].
+ \label{eq:stage3b}
+\end{equation}
+This closure may then be embedded into a known solver.
+
+\paragraph{Stage 4: sectionwise composition and equilibrium.}
+Finally, learn section operators and compose them to approximate the full ring map. This enables rollout validation and fixed-point studies via \eqref{eq:fixed-point-equilibrium}.
+
+\paragraph{Summary.}
+The present framework therefore treats beam-dynamics learning as approximation of parameterized maps between phase-space states. This viewpoint is mathematically consistent with the neural-operator literature, computationally compatible with Xsuite-generated data, and extensible from microscopic single-particle transport to nonlinear collective beam evolution.
+
+\subsection{Illustrative generated samples and first baseline results}
+\label{subsec:generated_data_results}
+
+In order to complement the abstract operator-learning formulation introduced above, it is useful to display representative realizations of the synthetic dataset and the first outputs of the baseline models.
+The purpose of this subsection is twofold. First, it documents concretely the type of beam states produced by the Xsuite data-generation pipeline. Second, it provides a first qualitative and quantitative assessment of whether the chosen reduced representations are suitable for learning parameterized transport maps. In the present setting, the raw state is a cloud of particles in six-dimensional phase space,
+\begin{equation}
+Z = \{z_i\}_{i=1}^{N_p}, \qquad z_i=(x_i,y_i,\zeta_i,p_{x,i},p_{y,i},\delta_i)\in\mathbb{R}^6,
+\end{equation}
+together with the machine-parameter vector
+\begin{equation}
+\mu=(k_{f1},k_{d1},k_{f2}) \in \mathbb{R}^3.
+\end{equation}
+For each generated sample, the simulation therefore produces an input cloud $Z_{\mathrm{in}}$, an output
+cloud $Z_{\mathrm{out}}=\Phi_{\mu}(Z_{\mathrm{in}})$, and, after reduction on a uniform longitudinal mesh,
+the corresponding line densities $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$.
+
+\subsubsection{Representative phase-space projections}
+A first sanity check consists in visualizing the projected clouds in the canonical pairs
+$(x,p_x)$, $(y,p_y)$ and $(\zeta,\delta)$. These plots provide immediate information on the geometry
+of the transported beam, the preservation or distortion of the cloud shape, and the qualitative effect of the sampled quadrupole strengths on the phase-space transport. Since the current synthetic baseline contains only external transport, these figures should mainly reflect parameterized linear and weakly nonlinear lattice effects. In later stages, the same visualization will remain useful after collective effects are included, since it will make visible whether the learned surrogate reproduces phase-space deformation, tilt, mismatch, or filamentation.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.92\textwidth]{images/generated/sample_phase_space_projections.png}
+    \caption{Representative input and output phase-space projections for one generated Xsuite sample.
+    The three canonical projections $(x,p_x)$, $(y,p_y)$ and $(\zeta,\delta)$ are shown before and after transport for a sampled parameter vector $\mu=(k_{f1},k_{d1},k_{f2})$. Such figures are useful both as a validation of the data-generation pipeline and as a qualitative reference for later surrogate-model
+    predictions.}
+    \label{fig:sample_phase_space_projections}
+\end{figure}
+
+To highlight the dependence on the machine settings, one may also display several samples corresponding to different parameter vectors. This makes it possible to verify visually that the dataset spans a nontrivial family of transports rather than a single nominal map. In practice, it is useful to choose one focusing-dominated, one defocusing-dominated, and one intermediate configuration, so that the qualitative diversity of the generated states is immediately visible.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.95\textwidth]{images/generated/sample_varying_kf.png}
+    \caption{Comparison of several generated samples for different values of
+    $\mu=(k_{f1},k_{d1},k_{f2})$. A figure of this type documents the coverage of the data-generation procedure in the space of transport maps and provides a visual benchmark against which the surrogate
+    predictions can later be compared.}
+    \label{fig:multi_sample_phase_space_grid}
+\end{figure}
+
+\subsubsection{Reduced longitudinal representation}
+Since the first operator-learning baseline is formulated on a reduced longitudinal representation, it is important to visualize explicitly the map from particle clouds to discretized line densities. Let $\{ \zeta_j \}_{j=1}^{N_\zeta}$ be a uniform grid on the longitudinal interval $[\zeta_{\min},\zeta_{\max}]$. From the cloud $Z$, one constructs the reduced observable
+
+\begin{equation}
+\lambda^h = \bigl(\lambda(\zeta_1),\ldots,\lambda(\zeta_{N_\zeta})\bigr)\in\mathbb{R}^{N_\zeta},
+\end{equation}
+using either histogram binning or a kernel density estimate. The corresponding input and output reduced states are then used as training pairs for the first Fourier neural operator baseline,
+\begin{equation}
+\widehat{\mathcal T}_{\theta} : (\lambda_{\mathrm{in}},\mu) \mapsto \lambda_{\mathrm{out}}.
+\end{equation}
+Plotting $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$ for representative samples is therefore an essential consistency check: it confirms that the reduction retains a meaningful imprint of the underlying transport and that the reduced problem is not trivially close to the identity.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.82\textwidth]{images/generated/sampling_kf.png}
+    \caption{Examples of reduced longitudinal profiles obtained from the particle clouds. For each sample,
+    the input line density $\lambda_{\mathrm{in}}$ and the transported line density
+    $\lambda_{\mathrm{out}}$ are shown on the same longitudinal mesh. These reduced observables define the
+    training targets for the first one-dimensional operator-learning baseline.}
+    \label{fig:reduced_longitudinal_profiles}
+\end{figure}
+
+\subsubsection{Coverage of the sampled parameter space}
+Besides visualizing the beam states themselves, it is important to verify that the generated dataset covers
+the parameter domain in a sufficiently uniform and nondegenerate way. In the present implementation, the
+parameter vector $\mu=(k_{f1},k_{d1},k_{f2})$ is sampled in a rectangular box,
+\begin{equation}
+k_{f1}\in [k_{f1}^{\min},k_{f1}^{\max}], \qquad
+k_{d1}\in [k_{d1}^{\min},k_{d1}^{\max}], \qquad
+k_{f2}\in [k_{f2}^{\min},k_{f2}^{\max}],
+\end{equation}
+and it is therefore natural to visualize both the one-dimensional marginal histograms and the pairwise
+scatter plots of the sampled values. This confirms that the train/validation/test splits are not accidentally
+concentrated in a narrow subregion of the parameter space.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.86\textwidth]{images/generated/sample_varying_kf.png}
+    \caption{Distribution of sampled quadrupole parameters in the generated dataset. Such a figure is useful
+    to verify that the sampled parameter vectors $\mu=(k_{f1},k_{d1},k_{f2})$ cover the prescribed box
+    without strong clustering or accidental degeneracy.}
+    \label{fig:parameter_sampling}
+\end{figure}
+
+\subsubsection{First baseline results}
+A minimal first benchmark is obtained by training a one-dimensional Fourier neural operator on the reduced
+map
+\begin{equation}
+\widehat{\mathcal T}_{\theta} : (\lambda_{\mathrm{in}},\mu) \mapsto \lambda_{\mathrm{out}}.
+\end{equation}
+At this stage, the objective is not yet to reproduce the full six-dimensional beam dynamics, but rather to
+test whether a reduced functional representation already captures enough information to learn a nontrivial
+parameterized transport. The most informative diagnostics are then: the training and validation losses as
+functions of the epoch number, representative predictions on unseen samples, and quantitative errors on the
+held-out test set.
+
+\paragraph{Training curves.}
+The evolution of training and validation losses provides a first indication of model stability and of possible
+underfitting or overfitting. In a satisfactory first experiment, one expects both curves to decrease to a stable
+plateau, with a moderate train--validation gap. A persistent large gap would suggest insufficient coverage of
+the training set or an overly expressive model, whereas uniformly high losses would rather indicate that the
+reduced observable or the chosen architecture is too poor for the task.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.72\textwidth]{images/generated/sample_varying_kf.png}
+    \caption{Training and validation losses for the first reduced operator-learning baseline. The figure should
+    be interpreted as a first indicator of whether the chosen representation
+    $(\lambda_{\mathrm{in}},\mu)\mapsto\lambda_{\mathrm{out}}$ is learnable with the present dataset size and model
+    complexity.}
+    \label{fig:fno_training_curves}
+\end{figure}
+
+\paragraph{Prediction versus reference profiles.}
+A more physically readable diagnostic is the direct comparison between predicted and reference output line
+densities on unseen samples. In addition to the pointwise profile comparison, it is often useful to plot the
+difference profile $\widehat{\lambda}_{\mathrm{out}}-\lambda_{\mathrm{out}}$, since small but systematic shifts in the centroid,
+width, or tails may otherwise remain hidden.
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.88\textwidth]{images/generated/sample_varying_kf.png}
+    \caption{Examples of reduced test-set predictions for the baseline Fourier neural operator.
+    For each case, the predicted profile $\widehat{\lambda}_{\mathrm{out}}$ is compared with the reference
+    profile $\lambda_{\mathrm{out}}$ obtained from the Xsuite-generated data. The bottom panels may display the
+    residuals in order to reveal systematic discrepancies.}
+    \label{fig:fno_prediction_examples}
+\end{figure}
+
+\paragraph{Quantitative summary.}
+Finally, the baseline should be summarized with a small table of metrics measured on the held-out test set.
+Typical quantities include the relative discrete $L^2$ error on the line density, the absolute centroid error,
+the bunch-length error, and, if appropriate, a Wasserstein-type discrepancy between the predicted and
+reference reduced distributions. Such a summary is useful because it complements the visual agreement in
+the figures with a scale-independent quantitative benchmark.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Example template for the quantitative evaluation of the first baseline model on the held-out test set.
+    Replace the entries with the measured values from the trained model.}
+    \label{tab:baseline_metrics}
+    \begin{tabular}{lcc}
+        \hline
+        Metric & Symbol & Value \\
+        \hline
+        Relative line-density error & $\|\widehat{\lambda}-\lambda\|_{L_h^2}/\|\lambda\|_{L_h^2}$ & --- \\
+        Mean absolute centroid error & $|\widehat{\zeta}_c-\zeta_c|$ & --- \\
+        Mean absolute bunch-length error & $|\widehat{\sigma}_{\zeta}-\sigma_{\zeta}|$ & --- \\
+        Sliced Wasserstein distance & $\mathrm{SW}(\widehat{\lambda},\lambda)$ & --- \\
+        Inference time per sample & $t_{\mathrm{inf}}$ & --- \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Taken together, the figures and metrics proposed in this subsection serve as the first empirical layer of the
+study. They document the actual geometry of the generated dataset, justify the reduced representation used
+for the first operator-learning experiments, and provide a baseline against which later, more physically rich
+models can be compared. In particular, once collective effects are incorporated in the simulator, the same
+structure of figures can be reused to compare the external-transport baseline with the genuinely collective
+surrogate models.
+
+
+
+
+
+
+
+\newpage
+\section{Conclusion et perspectives}
+\label{conclusion}
+
+
+
+
+\newpage
+\nocite{*}
+\printbibliography % [title={Whole bibliography}]
+
+%\bibliographystyle{IEEEtran}
+% \bibliography{bibfile}
+
+
+
+
+
+\newpage
+\appendix % macro
+
+\section{Annexe}
+\label{Annexe}
+%% write as you write sections
+
+\subsection{Parametrized H\'enon Maps}
+For a Parametrized H\'enon Map, the potential is a function of the phase space coordinates only, $V_W(p)$, and the map takes the form
+\begin{equation}
+\begin{aligned}
+\tilde q &= p + \eta,\\
+\tilde p &= -q + \nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+This map is symp-lectic by construction, and the proof will be given by considering a differential-geometric formulation. For a given map $F$, it is said to be symplectic if it preserves the symplectic form, that is,
+\begin{equation*}
+F^* \omega = \omega,
+\end{equation*}
+where $\omega$ is the symplectic form on the phase space. In canonical coordinates, the symplectic form is given by
+\begin{equation}
+\omega = \sum_{i=1}^N \mathrm{d}q_i \wedge \mathrm{d}p_i.
+\end{equation}
+and $F^*$ denotes the pullback of the map $F$, defined as $F^* \omega = \omega(F(\xi))$, where $\xi$ are the coordinates in the original phase space, such that it suffices to show that $\omega(F(\xi)) = \omega(\xi)$ for all $\xi$ in the phase space.
+Let $\xi=(q,p)$ and $\tilde \xi = (\tilde q,\tilde p) = (X,Y)$, the map can be written as 
+\begin{equation}
+\begin{aligned}
+X &= p + \eta,\\
+Y &= -q + \nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+by taking $\mathrm{d}$ as the exterior derivative and using Einstein notation, we have that for each degree of freedom $i$,
+\begin{equation}
+\begin{aligned}
+\mathrm{d}X_i &= \mathrm{d}p_i,\\
+\mathrm{d}Y_i &= -\mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_j,
+\end{aligned}
+\end{equation}
+where $V_{ij} = \frac{\partial^2 V_W}{\partial p_i \partial p_j}$ is the Hessian of the potential, it whorth noting that this term is symmetric for analytical potentials. The symplectic form is given by
+\begin{equation}
+\begin{aligned}
+F^*\omega &= \mathrm{d}X_i \wedge \mathrm{d}Y_i
+=
+\mathrm{d}p_i \wedge \left(-\mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_j\right)\\
+&=
+-\mathrm{d}p_i \wedge \mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_i \wedge \mathrm{d}p_j\\
+&=
+\mathrm{d}q_i \wedge \mathrm{d}p_i,
+\end{aligned}
+\end{equation}
+where we have used the antisymmetry of the wedge product and the symmetry of the Hessian to conclude that the second term vanishes. This shows that the map preserves the symplectic form, and therefore is symplectic.
+
+
+\subsection{Reconstruction of the Longitudinal Wake Function from Ha\"issinski Profiles}
+
+Let $q=z/\sigma_{z0}$ denote the normalized longitudinal coordinate and let $\lambda(q)$ be the normalized Ha\"issinski profile, with
+\begin{equation}
+\int_{-\infty}^{\infty} \lambda(q)\,dq = 1.
+\end{equation}
+Following the usual derivation from the stationary Vlasov--Fokker--Planck equation, the equilibrium profile satisfies
+\begin{equation}
+\frac{d\lambda}{dq} + \left[q - F(q,\lambda)\right]\lambda(q)=0,
+\end{equation}
+with collective wakefield 
+\begin{equation}
+F(q,\lambda)= I \int_{-\infty}^{\infty} W(q-q')\lambda(q')\,dq'.
+\label{eq:continuous_convolution}
+\end{equation}
+Here $I$ is the normalized bunch current and $W$ is the longitudinal wake function to be reconstructed.
+
+A convenient identity is obtained by dividing the stationary equation by $\lambda(q)$:
+\begin{equation}
+F(q)=\frac{d}{dq}\log \lambda(q)+q.
+\label{eq:F_from_lambda}
+\end{equation}
+Hence, if several Ha\"issinski profiles are available at different currents $I^{(n)}$, one may reconstruct $W$ from the family of pairs
+\begin{equation}
+\left\{\left(I^{(n)},\lambda^{(n)}\right)\right\}_{n=1}^M.
+\end{equation}
+Funkner et al. \cite{Funkner_2025} formulates this inverse problem as a discretized linear system, solved with a Tikhonov-regularized pseudoinverse. The present note rewrites the same inverse problem as a trainable operator-learning model, in which the wake kernel itself is learned by gradient-based optimization.\footnote{This follows the same discrete structure described in \cite{Funkner_2025} the force is computed from $\log\lambda$, the convolution is discretized on a grid, several currents are stacked into an overdetermined system, and regularization is used to stabilize the inversion.}
+
+
+Let
+\begin{equation}
+q_i = q_{\min} + i\,\Delta q, \qquad i=0,\dots,N-1,
+\end{equation}
+be a uniform grid. For each current $I^{(n)}$, define the sampled profile and force by
+\begin{equation}
+\lambda^{(n)}_i \approx \lambda^{(n)}(q_i),
+\qquad
+F^{(n)}_i \approx F^{(n)}(q_i).
+\end{equation}
+Using the convolution structure in \eqref{eq:continuous_convolution}, the discrete forward map reads
+\begin{equation}
+F^{(n)}_i \approx I^{(n)}\Delta q \sum_{j=0}^{N-1} K_{ij}\lambda^{(n)}_j,
+\label{eq:generic_discrete_operator}
+\end{equation}
+where $K_{ij}$ is the discrete interaction kernel.
+
+Under the physically natural assumption that the wake depends only on the linear distance between the source and test particles, that is,
+\begin{equation}
+K_{ij}=W(q_i-q_j),
+\end{equation}
+the matrix is Toeplitz. Writing
+\begin{equation}
+w_{\ell} := W(\ell\,\Delta q), \qquad \ell = -(N-1),\dots,(N-1),
+\end{equation}
+we obtain
+\begin{equation}
+K_{ij} = w_{i-j},
+\qquad
+F^{(n)}_i \approx I^{(n)}\Delta q\sum_{j=0}^{N-1} w_{i-j}\lambda^{(n)}_j.
+\label{eq:toeplitz_forward}
+\end{equation}
+Thus the unknown object is the response vector
+\begin{equation}
+\bm{w}=(w_{-(N-1)},\dots,w_0,\dots,w_{N-1})\in\mathbb{R}^{2N-1},
+\end{equation}
+
+\subsubsection{Dataset}
+The minimal dataset for training is
+\begin{equation}
+\mathcal{D} = \left\{\left(\lambda^{(n)}, I^{(n)}, F^{(n)}\right)\right\}_{n=1}^{M},
+\end{equation}
+with
+\begin{equation}
+\lambda^{(n)}\in\mathbb{R}^{N},
+\qquad
+I^{(n)}\in\mathbb{R},
+\qquad
+F^{(n)}\in\mathbb{R}^{N}.
+\end{equation}
+If $F^{(n)}$ is not directly available, it can be constructed from the measured profile using \eqref{eq:F_from_lambda}. On the grid, one may use a centered finite-difference approximation,
+\begin{equation}
+F^{(n)}_i \approx \frac{\log\lambda^{(n)}_{i+1}-\log\lambda^{(n)}_{i-1}}{2\Delta q}+q_i,
+\qquad i=1,\dots,N-2,
+\end{equation}
+with one-sided differences at the boundaries. In practice, one should clip very small values of $\lambda$ before taking the logarithm in order to avoid numerical singularities.
+
+A simple wrapper therefore stores:
+\begin{align}
+&\texttt{q} \in \mathbb{R}^{N}, \\
+&\texttt{currents} \in \mathbb{R}^{M}, \\
+&\texttt{lambdas} \in \mathbb{R}^{M\times N}, \\
+&\texttt{F\_targets} \in \mathbb{R}^{M\times N} \quad \text{(optional)}.
+\end{align}
+If \texttt{F\_targets} is omitted, it is generated from \texttt{lambdas} and \texttt{q} using \eqref{eq:F_from_lambda}.
+
+
+The simplest machine-learning model is a differentiable realization of \eqref{eq:toeplitz_forward}. Let $\bm{w}_{\theta}\in\mathbb{R}^{2N-1}$ be a trainable parameter vector. Then the model prediction is
+\begin{equation}
+\widehat{F}^{(n)}_i(\theta) = I^{(n)}\Delta q \sum_{j=0}^{N-1} (w_{\theta})_{i-j}\lambda^{(n)}_j.
+\label{eq:model_prediction}
+\end{equation}
+Equivalently, one may view this as a one-dimensional convolution,
+\begin{equation}
+\widehat{\bm{F}}^{(n)}(\theta)=I^{(n)}\Delta q\,T(\bm{w}_{\theta})\,\bm{\lambda}^{(n)},
+\end{equation}
+where $T(\bm{w}_{\theta})$ is the Toeplitz matrix induced by the kernel.
+
+This model has several attractive properties:
+\begin{enumerate}[label=(\roman*)]
+\item it preserves the physics of the discretized Ha\"issinski equation,
+\item it uses only $2N-1$ trainable parameters instead of $N^2$,
+\item it is directly interpretable, since the learned parameters are the wake samples themselves,
+\item it can be optimized with standard stochastic-gradient methods.
+\end{enumerate}
+
+
+The empirical data fidelity term is
+\begin{equation}
+\mathcal{L}_{\mathrm{data}}(\theta)=\frac{1}{M}\sum_{n=1}^{M}
+\norm{\widehat{\bm{F}}^{(n)}(\theta)-\bm{F}^{(n)}}_2^2.
+\end{equation}
+Since inverse problems are ill-conditioned, regularization is essential. A discrete smoothness penalty is naturally imposed through second differences of the wake samples,
+\begin{equation}
+\mathcal{L}_{\mathrm{smooth}}(\theta)=\norm{D^2\bm{w}_{\theta}}_2^2,
+\end{equation}
+where $D^2$ is the standard second-difference matrix. One may also include an $\ell^2$ penalty,
+\begin{equation}
+\mathcal{L}_{\mathrm{ridge}}(\theta)=\norm{\bm{w}_{\theta}}_2^2.
+\end{equation}
+The total loss becomes
+\begin{equation}
+\mathcal{L}(\theta)=
+\mathcal{L}_{\mathrm{data}}(\theta)
++\alpha\,\mathcal{L}_{\mathrm{smooth}}(\theta)
++\beta\,\mathcal{L}_{\mathrm{ridge}}(\theta),
+\label{eq:total_loss}
+\end{equation}
+with hyperparameters $\alpha,\beta\ge 0$.
+
+Equation \eqref{eq:total_loss} is the machine-learned analogue of Tikhonov regularization: if the model is linear in the parameters and one trains to convergence, the resulting estimator is conceptually very close to the regularized inverse used in the classical formulation.
+
+
+If one wishes to relax exact shift invariance, then the discrete kernel may be modeled as a full matrix $K\in\mathbb{R}^{N\times N}$. A structured alternative is a low-rank factorization,
+\begin{equation}
+K \approx UV^{\top},
+\qquad
+U,V\in\mathbb{R}^{N\times r},
+\end{equation}
+where $r\ll N$. The forward model then becomes
+\begin{equation}
+\widehat{\bm{F}}^{(n)} = I^{(n)}\Delta q\,U\left(V^{\top}\bm{\lambda}^{(n)}\right).
+\end{equation}
+This may absorb discretization artifacts, finite-window effects, or mild violations of perfect translation invariance. However, it is less interpretable than the Toeplitz model and introduces more parameters.
+
+
+A potential weakness of the fully supervised approach is that the target force $F$ is itself obtained by differentiating $\log\lambda$, which may amplify noise. A more robust alternative is to optimize the discrete Ha\"issinski residual directly. For each sample, define
+\begin{equation}
+\mathcal{R}^{(n)}_i(\theta)=
+\frac{\log\lambda^{(n)}_{i+1}-\log\lambda^{(n)}_{i-1}}{2\Delta q}
++q_i
+-I^{(n)}\Delta q\sum_{j=0}^{N-1}(w_{\theta})_{i-j}\lambda^{(n)}_j.
+\end{equation}
+Then one may minimize
+\begin{equation}
+\mathcal{L}_{\mathrm{phys}}(\theta)=\frac{1}{M}\sum_{n=1}^{M}\sum_{i=1}^{N-2}
+\left|\mathcal{R}^{(n)}_i(\theta)\right|^2
++\alpha\norm{D^2\bm{w}_{\theta}}_2^2
++\beta\norm{\bm{w}_{\theta}}_2^2.
+\end{equation}
+This preserves the governing equation more directly and avoids treating the numerically differentiated force as an externally fixed label.
+
+
+A practical training loop is summarized below.
+
+\begin{algorithm}[h]
+\caption{Training a Toeplitz wake model from Ha\"issinski profiles}
+\begin{algorithmic}[1]
+\Require grid $\bm{q}$, currents $\{I^{(n)}\}_{n=1}^{M}$, profiles $\{\bm{\lambda}^{(n)}\}_{n=1}^{M}$
+\State Build or load targets $\bm{F}^{(n)}$ using \eqref{eq:F_from_lambda}
+\State Initialize trainable wake vector $\bm{w}_{\theta}$
+\For{epoch $=1,\dots,E$}
+    \For{mini-batch $\mathcal{B}$}
+        \For{each sample $n\in\mathcal{B}$}
+            \State Compute prediction $\widehat{\bm{F}}^{(n)}$ from \eqref{eq:model_prediction}
+        \EndFor
+        \State Compute total loss \eqref{eq:total_loss}
+        \State Update $\theta$ with Adam or another optimizer
+    \EndFor
+    \State Monitor training and validation errors
+    \State Apply early stopping if the validation loss stagnates
+\EndFor
+\State Return learned wake samples $\bm{w}_{\theta}$
+\end{algorithmic}
+\end{algorithm}
+
+
+A lightweight implementation can be organized around four components.
+
+Inputs:
+\begin{align}
+&\texttt{lambdas}: \text{array of shape } (M,N),\\
+&\texttt{currents}: \text{array of shape } (M,),\\
+&\texttt{q}: \text{array of shape } (N,),\\
+&\texttt{F\_targets}: \text{optional array of shape } (M,N).
+\end{align}
+Outputs per sample:
+\begin{equation}
+(\bm{\lambda}^{(n)}, I^{(n)}, \bm{F}^{(n)}).
+\end{equation}
+
+From a mathematical point of view, the key observation is that the inverse reconstruction of the wake from multiple Ha\"issinski distributions is already a structured operator-learning problem. The classical pseudoinverse approach and the trainable-convolution approach differ mainly in how the prior is imposed. The former uses explicit matrix inversion with Tikhonov stabilization; the latter uses a differentiable parameterization together with smoothness penalties, early stopping, and potentially richer structural assumptions.
+
+For a first implementation, the Toeplitz model is the most natural choice. It matches the discretized physics exactly, remains interpretable, and uses very few parameters. Only after this baseline is validated should one move to low-rank kernels or more expressive neural operator architectures.
+
+
+\begin{enumerate}
+\item The grid should be uniform if one wants to use the simple Toeplitz convolution exactly as written.
+\item Since $\log\lambda$ appears explicitly, one must prevent numerical underflow in regions where the profile is very small.
+\item If the measured profiles are noisy, pre-smoothing or a residual-based formulation is often preferable.
+\item If the physical wake is expected to satisfy one-sided support or causality constraints, these can be enforced directly on $\bm{w}_{\theta}$ by masking or parameterization.
+\end{enumerate}
+
+% \newpage
+% \section{Codes}
+
+
+% % add codes
+% \subsection{Traitement et Audit des Données par séries temporelles}
+% \inputminted[linenos=true, breaklines=true]{python}{codes/time_series_analysis.py}
+
+\end{sloppypar}
+
+\end{document}
