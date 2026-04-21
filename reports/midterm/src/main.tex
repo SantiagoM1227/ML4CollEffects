@@ -1345,11 +1345,8 @@ Plotting $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$ for representative
 \begin{figure}[htbp]
     \centering
     % Replace with the actual path to your figure
-    \includegraphics[width=0.82\textwidth]{images/generated/sampling_kf.png}
-    \caption{Examples of reduced longitudinal profiles obtained from the particle clouds. For each sample,
-    the input line density $\lambda_{\mathrm{in}}$ and the transported line density
-    $\lambda_{\mathrm{out}}$ are shown on the same longitudinal mesh. These reduced observables define the
-    training targets for the first one-dimensional operator-learning baseline.}
+    \includegraphics[width=0.82\textwidth]{images/generated/lambda_k_variation.png}
+    \caption{Reduced longitudinal profiles for different parameter values after particle transport through the lattice with different parametrizations.}
     \label{fig:reduced_longitudinal_profiles}
 \end{figure}
 
@@ -1369,7 +1366,7 @@ concentrated in a narrow subregion of the parameter space.
 \begin{figure}[htbp]
     \centering
     % Replace with the actual path to your figure
-    \includegraphics[width=0.86\textwidth]{images/generated/sample_varying_kf.png}
+    \includegraphics[width=0.86\textwidth]{images/generated/parameter_space_mu.png}
     \caption{Distribution of sampled quadrupole parameters in the generated dataset. Such a figure is useful
     to verify that the sampled parameter vectors $\mu=(k_{f1},k_{d1},k_{f2})$ cover the prescribed box
     without strong clustering or accidental degeneracy.}
