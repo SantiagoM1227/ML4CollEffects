@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.22)  17 APR 2026 11:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.22)  17 APR 2026 14:33
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1442,28 +1442,29 @@ File: images/generated/sample_varying_kf.png Graphic file (type png)
 <use images/generated/sample_varying_kf.png>
 Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1326.
 (pdftex.def)             Requested size: 418.96548pt x 113.9602pt.
-<images/generated/sampling_kf.png, id=667, 1091.277pt x 369.2997pt>
-File: images/generated/sampling_kf.png Graphic file (type png)
-<use images/generated/sampling_kf.png>
-Package pdftex.def Info: images/generated/sampling_kf.png  used on input line 1348.
-(pdftex.def)             Requested size: 361.63776pt x 122.38205pt.
+<images/generated/lambda_k_variation.png, id=667, 1091.9997pt x 297.0297pt>
+File: images/generated/lambda_k_variation.png Graphic file (type png)
+<use images/generated/lambda_k_variation.png>
+Package pdftex.def Info: images/generated/lambda_k_variation.png  used on input line 1348.
+(pdftex.def)             Requested size: 361.63776pt x 98.36908pt.
 
 
 [25 <./images/generated/sample_varying_kf.png>]
-File: images/generated/sample_varying_kf.png Graphic file (type png)
-<use images/generated/sample_varying_kf.png>
-Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1372.
-(pdftex.def)             Requested size: 379.27551pt x 103.16426pt.
+<images/generated/parameter_space_mu.png, id=678, 875.1897pt x 586.1097pt>
+File: images/generated/parameter_space_mu.png Graphic file (type png)
+<use images/generated/parameter_space_mu.png>
+Package pdftex.def Info: images/generated/parameter_space_mu.png  used on input line 1369.
+(pdftex.def)             Requested size: 379.27551pt x 253.98978pt.
 
 
-[26 <./images/generated/sampling_kf.png>]
+[26 <./images/generated/lambda_k_variation.png> <./images/generated/parameter_space_mu.png>]
 File: images/generated/sample_varying_kf.png Graphic file (type png)
 <use images/generated/sample_varying_kf.png>
-Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1401.
+Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1398.
 (pdftex.def)             Requested size: 317.5333pt x 86.37207pt.
 File: images/generated/sample_varying_kf.png Graphic file (type png)
 <use images/generated/sample_varying_kf.png>
-Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1418.
+Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1415.
 (pdftex.def)             Requested size: 388.09775pt x 105.56638pt.
 
 
@@ -1472,13 +1473,13 @@ Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input l
 [28]
 
 [29]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1473.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1470.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
 [30]
-Underfull \hbox (badness 2884) in paragraph at lines 1474--1474
+Underfull \hbox (badness 2884) in paragraph at lines 1471--1471
 []\T1/lmr/m/n/10.95 Jing Liu et al. \T1/lmr/m/it/10.95 A Sur-vey on Dif-fu-sion Mod-els for Anomaly De-tec-tion\T1/lmr/m/n/10.95 . en.
  []
 
@@ -1488,9 +1489,9 @@ Underfull \hbox (badness 2884) in paragraph at lines 1474--1474
 
 [32]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 1561.
+(Font)              <9> on input line 1558.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 1561.
+(Font)              <5> on input line 1558.
 
 
 [33]
@@ -1498,7 +1499,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [34]
 
 [35]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1710.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1707.
 
 
 [36]
@@ -1523,18 +1524,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 43197 strings out of 473190
- 829253 string characters out of 5715799
- 1750615 words of memory out of 5000000
- 65458 multiletter control sequences out of 15000+600000
+ 43204 strings out of 473190
+ 829623 string characters out of 5715799
+ 1750426 words of memory out of 5000000
+ 65465 multiletter control sequences out of 15000+600000
  663700 words of font info for 119 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  107i,16n,110p,2571b,2518s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/bbold-type1/bbold10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/bbold-type1/bbold7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (40 pages, 1422501 bytes).
+Output written on main.pdf (40 pages, 1466102 bytes).
 PDF statistics:
- 1038 PDF objects out of 1200 (max. 8388607)
+ 1040 PDF objects out of 1200 (max. 8388607)
  914 compressed objects within 10 object streams
  312 named destinations out of 1000 (max. 500000)
- 513 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 518 words of extra memory for PDF output out of 10000 (max. 10000000)
 
