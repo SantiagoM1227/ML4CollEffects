@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 10, in <module>
+    from data_generator_pycolleff import (
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/data_generator_pycolleff.py", line 596, in <module>
+    param_ranges = ParameterRanges(
+TypeError: ParameterRanges.__init__() got an unexpected keyword argument 'gap_voltage_V'
+srun: error: ccwslurm0323: task 0: Exited with exit code 1

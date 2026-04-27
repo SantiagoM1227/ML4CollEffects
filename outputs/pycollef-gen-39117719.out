@@ -1,0 +1,27 @@
+**********************************************************************
+*                         SLURM Batch System                         *
+*              IN2P3 Computing Centre, Villeurbanne FR               *
+**********************************************************************
+* Date:                 Thu Apr 23 03:09:30 PM CEST 2026
+* Job name:             pycollef-gen
+* Job id:               39117719
+* User:                 smartinez
+* Account:              ganil
+* Submit host:          cca012
+* Partition:            htc
+* Quality of service:   normal
+* Nodelist:             ccwslurm0323
+* Operating System:     Red Hat Enterprise Linux release 9.7 (Plow)
+* Architecture:         x86_64
+**********************************************************************
+****************************************************************
+*                      SLURM Batch System                      *
+*           IN2P3 Computing Centre, Villeurbanne FR            *
+****************************************************************
+Date: Thu Apr 23 03:09:40 PM CEST 2026
+Job informations can be found using these commands:
+Accounting:
+sacct -j 39117719
+Efficiency:
+seff 39117719
+****************************************************************

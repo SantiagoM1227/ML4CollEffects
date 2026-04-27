@@ -1,0 +1,5 @@
+/pbs/home/s/smartinez/miniconda3/envs/xsuite-py310/lib/python3.10/site-packages/joblib/externals/loky/process_executor.py:782: UserWarning: A worker stopped while some jobs were given to the executor. This can be caused by a too short worker timeout or by a memory leak.
+  warnings.warn(
+[2026-04-21T22:33:26.032] error: *** STEP 38627323.0 ON ccwslurm2054 CANCELLED AT 2026-04-21T22:33:26 DUE TO TIME LIMIT ***
+[2026-04-21T22:33:26.033] error: *** JOB 38627323 ON ccwslurm2054 CANCELLED AT 2026-04-21T22:33:26 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

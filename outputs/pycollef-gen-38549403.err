@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 3, in <module>
+    from generate_pycollef_dataset import generate_dataset_parallel, save_dataset, DatasetConfig, GridConfig, RingConfig, ParameterRanges, ResonatorConfig, RelaxationConfig
+ModuleNotFoundError: No module named 'generate_pycollef_dataset'
+srun: error: ccwslurm0370: task 0: Exited with exit code 1

@@ -9,7 +9,7 @@
     "val_fraction": 0.1
   },
   "grid_config": {
-    "nz": 256,
+    "nz": 2048,
     "sigmas": 6.0
   },
   "ring_config": {
@@ -25,17 +25,17 @@
     "total_current_A": 0.1
   },
   "parameter_ranges": {
-    "en_lost_rad_eV": [
-      800000.0,
-      900000.0
+    "I_bunch": [
+      200,
+      300
     ],
-    "gap_voltage_V": [
-      2000000.0,
-      5000000.0
+    "radius": [
+      0.005,
+      0.012
     ],
-    "total_current_A": [
-      0.2,
-      0.3
+    "neg_thickness": [
+      1e-06,
+      3e-06
     ]
   },
   "resonator_config": {
@@ -44,8 +44,8 @@
     "harm_rf": 3
   },
   "relaxation_config": {
-    "n_steps": 3,
-    "mix": 0.7
+    "n_steps": 1,
+    "mix": 0.1
   },
   "mu_semantics": [
     "en_lost_rad_eV",
