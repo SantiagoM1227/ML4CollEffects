@@ -1082,6 +1082,84 @@ This produces a Monte Carlo approximation of the operator graph,
 \end{equation}
 A crucial point is that operator learning requires variation in both the machine settings and the input distribution family; training only on one nominal Gaussian cloud is insufficient to identify a transport operator on a nontrivial admissible class.
 
+\subsubsection{Data-generation strategy with pycolleff}
+\label{subsubsec:data-generation-pycolleff}
+
+In contrast to single-particle tracking, longitudinal collective effects require modeling the evolution of beam distributions under self-consistent electromagnetic interactions. In this work, synthetic data is generated using the \texttt{pycolleff} framework, which provides a numerical approximation of the longitudinal equilibrium operator including wakefield effects.
+
+
+
+For each sample index $s$, we draw a set of machine and material parameters
+\begin{equation}
+\mu^{(s)} = \big(I_b^{(s)}, R^{(s)}, t_{\mathrm{neg}}^{(s)}\big) \sim \nu_\mu,
+\end{equation}
+where $I_b$ is the bunch current, $R$ the vacuum chamber radius, and $t_{\mathrm{neg}}$ the thickness of a resistive coating. The distribution $\nu_\mu$ is taken uniform over a prescribed parameter domain.
+
+
+Instead of sampling particle clouds directly, we first draw an input longitudinal density
+\begin{equation}
+\lambda_{\mathrm{in}}^{(s)}(z) \sim \nu_\lambda,
+\end{equation}
+where $\nu_\lambda$ is a finite mixture of parametric families (Gaussian, shifted Gaussian, Gaussian mixtures, and modulated profiles). Each sampled density is normalized such that
+\begin{equation}
+\int \lambda_{\mathrm{in}}^{(s)}(z)\,dz = 1.
+\end{equation}
+
+
+The longitudinal dynamics is modeled through a self-consistent voltage equation
+\begin{equation}
+V_{\mathrm{tot}}(z) = V_{\mathrm{RF}}(z) + V_{\mathrm{ind}}[\lambda](z),
+\end{equation}
+where $V_{\mathrm{RF}}$ is the external RF voltage and $V_{\mathrm{ind}}$ is the induced voltage arising from the beam impedance. The latter can be written in the frequency domain as
+\begin{equation}
+V_{\mathrm{ind}}(z) = - \mathcal{F}^{-1} \left[ Z_{\parallel}(\omega)\,\hat{\lambda}(\omega) \right],
+\end{equation}
+with $Z_{\parallel}(\omega)$ the longitudinal impedance and $\hat{\lambda}$ the Fourier transform of the line density.
+
+Given a total voltage, the stationary distribution satisfies a Boltzmann-type relation
+\begin{equation}
+\lambda(z) \propto \exp\left(-\frac{e\,V_{\mathrm{tot}}(z)}{E_0 \sigma_\delta^2}\right),
+\end{equation}
+where $E_0$ is the beam energy and $\sigma_\delta$ the energy spread.
+
+
+Rather than solving the full nonlinear fixed-point problem, we define a truncated relaxation operator
+\begin{equation}
+\lambda^{(k+1)} = (1-\alpha)\,\lambda^{(k)} + \alpha\,\mathcal{T}_\mu(\lambda^{(k)}),
+\end{equation}
+where $\mathcal{T}_\mu$ denotes the distribution update induced by $V_{\mathrm{tot}}$, and $\alpha \in (0,1)$ is an under-relaxation parameter. After a small number of iterations $K$, we define
+\begin{equation}
+\lambda_{\mathrm{out}}^{(s)} = \Phi_{\mu^{(s)}}\big(\lambda_{\mathrm{in}}^{(s)}\big),
+\end{equation}
+which approximates the action of the full collective-effect operator while preserving dependence on the input profile.
+
+
+To connect with particle-based models, we sample macroparticle clouds from the densities
+\begin{equation}
+z_i^{(s)} \sim \lambda_{\mathrm{in}}^{(s)}, 
+\qquad
+\tilde{z}_i^{(s)} \sim \lambda_{\mathrm{out}}^{(s)},
+\end{equation}
+using inverse transform sampling. These are embedded into a six-dimensional phase space as
+\begin{equation}
+X_{\mathrm{in}}^{(s)} = \{(0,0,z_i^{(s)},0,0,0)\}_{i=1}^{N_p}, 
+\qquad
+X_{\mathrm{out}}^{(s)} = \{(0,0,\tilde{z}_i^{(s)},0,0,0)\}_{i=1}^{N_p}.
+\end{equation}
+
+The resulting dataset provides paired observations
+\begin{equation}
+\left\{
+\big(\lambda_{\mathrm{in}}^{(s)}, \mu^{(s)}, \lambda_{\mathrm{out}}^{(s)}\big)
+\right\}_{s=1}^{N_s},
+\end{equation}
+as well as their particle representations. This constitutes a Monte Carlo approximation of a nonlinear operator
+\begin{equation}
+\Phi_\mu : \lambda(z) \mapsto \lambda'(z),
+\end{equation}
+acting on a class of admissible longitudinal distributions.
+
+
 \subsubsection{Learning objectives}
 \label{subsubsec:learning-objectives}
 

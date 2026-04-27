@@ -19,7 +19,7 @@ from data_generator_pycolleff import (
 )
 
 def main():
-    dataset_cfg = DatasetConfig(n_samples=128, particles_per_sample=4096, seed=42, output_dir="/pbs/home/s/smartinez/ML4CollEffects/data/neural")
+    dataset_cfg = DatasetConfig(n_samples=1024, particles_per_sample=4096, seed=42, output_dir="/pbs/home/s/smartinez/ML4CollEffects/data/neural")
     grid_cfg = GridConfig(nz=4096)
     ring_cfg = RingConfig()
     param_ranges = ParameterRanges(I_bunch=(200,400), radius=(5e-3,12e-3),neg_thickness=(1e-6,5e-6))
