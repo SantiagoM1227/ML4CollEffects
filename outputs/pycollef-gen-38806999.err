@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 10, in <module>
+    from data_generator_pycolleff import (
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/data_generator_pycolleff.py", line 604, in <module>
+    data = generate_dataset(
+  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/data_generator_pycolleff.py", line 381, in generate_dataset
+    leq = calculate_longitudinal_equilibrium(
+  File "/pbs/home/s/smartinez/miniconda3/envs/xsuite-py310/lib/python3.10/site-packages/numba/core/dispatcher.py", line 424, in _compile_for_args
+    error_rewrite(e, 'typing')
+  File "/pbs/home/s/smartinez/miniconda3/envs/xsuite-py310/lib/python3.10/site-packages/numba/core/dispatcher.py", line 365, in error_rewrite
+    raise e.with_traceback(None)
+numba.core.errors.TypingError: Failed in nopython mode pipeline (step: nopython frontend)
+Untyped global name 'LongitudinalEquilibrium': Cannot determine Numba type of <class 'type'>
+
+File "ML4CollEffects/scripts/data_generator_pycolleff.py", line 40:
+def calculate_longitudinal_equilibrium(ring, impedance_sources, fill=None):
+    <source elided>
+        fill = np.ones(ring.harm_num) / ring.harm_num
+    longeq = LongitudinalEquilibrium(
+    ^
+
+During: Pass nopython_type_inference 
+
+This error may have been caused by the following argument(s):
+- argument 0: Cannot determine Numba type of <class 'pycolleff.colleff.Ring'>
+- argument 1: Cannot type list element type <class 'pycolleff.longitudinal_equilibrium.ImpedanceSource'>
+
+srun: error: ccwslurm0374: task 0: Exited with exit code 1

@@ -1,114 +1,56 @@
 {
-  "phase_space_labels": [
-    "x",
-    "y",
-    "zeta",
-    "px",
-    "py",
-    "delta"
-  ],
+  "generator": "pycolleff",
   "dataset_config": {
-    "n_samples": 512,
+    "n_samples": 128,
     "particles_per_sample": 4096,
     "seed": 42,
-    "output_dir": "./data/neural",
-    "save_cloud_dataset": true,
-    "save_density_dataset": true,
-    "save_moments": true,
+    "output_dir": "/pbs/home/s/smartinez/ML4CollEffects/data/neural",
     "train_fraction": 0.8,
     "val_fraction": 0.1
   },
-  "density_grid_config": {
-    "nz": 256,
-    "zeta_min": -0.005,
-    "zeta_max": 0.005,
-    "normalize_density": true
+  "grid_config": {
+    "nz": 4096,
+    "sigmas": 6.0
+  },
+  "ring_config": {
+    "energy_eV": 3000000000.0,
+    "rf_freq_Hz": 500000000.0,
+    "harm_num": 1,
+    "mom_comp": 0.00017,
+    "sync_tune": 0.004,
+    "espread": 0.0008,
+    "bunlen_m": 0.004,
+    "en_lost_rad_eV": 800000.0,
+    "gap_voltage_V": 3000000.0,
+    "total_current_A": 0.1
   },
   "parameter_ranges": {
-    "kf1_range": [
-      0.1,
-      2.0
+    "I_bunch": [
+      200,
+      400
     ],
-    "kd1_range": [
-      -4.5,
-      -0.05
+    "radius": [
+      0.005,
+      0.012
     ],
-    "kf2_range": [
-      0.1,
-      2.0
+    "neg_thickness": [
+      1e-06,
+      5e-06
     ]
   },
-  "beam_families": [
-    {
-      "family": "gaussian",
-      "x_sigma": 0.001,
-      "y_sigma": 0.001,
-      "zeta_sigma": 0.001,
-      "px_sigma": 0.001,
-      "py_sigma": 0.001,
-      "delta_sigma": 0.0001,
-      "halo_scale": 4.0,
-      "halo_fraction": 0.15,
-      "mismatch_scale": 2.0,
-      "corr_strength": 0.45,
-      "mixture_shift_scale": 1.2
-    },
-    {
-      "family": "correlated_gaussian",
-      "x_sigma": 0.001,
-      "y_sigma": 0.001,
-      "zeta_sigma": 0.001,
-      "px_sigma": 0.001,
-      "py_sigma": 0.001,
-      "delta_sigma": 0.0001,
-      "halo_scale": 4.0,
-      "halo_fraction": 0.15,
-      "mismatch_scale": 2.0,
-      "corr_strength": 0.45,
-      "mixture_shift_scale": 1.2
-    },
-    {
-      "family": "core_halo",
-      "x_sigma": 0.001,
-      "y_sigma": 0.001,
-      "zeta_sigma": 0.001,
-      "px_sigma": 0.001,
-      "py_sigma": 0.001,
-      "delta_sigma": 0.0001,
-      "halo_scale": 4.0,
-      "halo_fraction": 0.15,
-      "mismatch_scale": 2.0,
-      "corr_strength": 0.45,
-      "mixture_shift_scale": 1.2
-    },
-    {
-      "family": "mixture",
-      "x_sigma": 0.001,
-      "y_sigma": 0.001,
-      "zeta_sigma": 0.001,
-      "px_sigma": 0.001,
-      "py_sigma": 0.001,
-      "delta_sigma": 0.0001,
-      "halo_scale": 4.0,
-      "halo_fraction": 0.15,
-      "mismatch_scale": 2.0,
-      "corr_strength": 0.45,
-      "mixture_shift_scale": 1.2
-    },
-    {
-      "family": "mismatched",
-      "x_sigma": 0.001,
-      "y_sigma": 0.001,
-      "zeta_sigma": 0.001,
-      "px_sigma": 0.001,
-      "py_sigma": 0.001,
-      "delta_sigma": 0.0001,
-      "halo_scale": 4.0,
-      "halo_fraction": 0.15,
-      "mismatch_scale": 2.0,
-      "corr_strength": 0.45,
-      "mixture_shift_scale": 1.2
-    }
+  "resonator_config": {
+    "Q": 10000.0,
+    "wr_scale_to_rf": 3.0,
+    "harm_rf": 3
+  },
+  "relaxation_config": {
+    "n_steps": 7,
+    "mix": 0.001
+  },
+  "mu_semantics": [
+    "I_bunch",
+    "radius",
+    "neg_thickness"
   ],
   "keys": [
     "MU",
@@ -116,11 +58,6 @@
     "X_lambda",
     "Y_cloud",
     "Y_lambda",
-    "centroid_in",
-    "centroid_out",
-    "cov_in",
-    "cov_out",
-    "family_id",
     "test",
     "train",
     "val",
