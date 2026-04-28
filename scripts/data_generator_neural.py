@@ -1,20 +1,14 @@
-"""Xsuite-based data generator for operator learning in beam dynamics.
+"""
+Generate Xsuite datasets for neural operator learning with simplified collective effects.
 
-This script extends a simple point-map dataset into a more useful operator-learning
-pipeline. It can export:
+mu = [Q_bunch, pipe_radius, impedance_scale]
 
-1. Particle cloud data:
-   (Z_in, Z_out, mu) with shapes [Ns, Np, 6], [Ns, Np, 6], [Ns, 3]
-2. Reduced 1D density data for longitudinal operator learning:
-   (lambda_in, lambda_out, mu) with shapes [Ns, Nz], [Ns, Nz], [Ns, 3]
-3. Optional per-sample moments and metadata.
+The generator includes:
+- external transport (linear optics)
+- simple longitudinal collective kick (wake-like model)
 
-The reduced density representation is deliberately minimal so that it can be fed to a
-1D Fourier Neural Operator (FNO) baseline.
-
-The present generator models external transport only. Collective effects can later be
-added by augmenting the line and/or replacing the one-step transport by a sectionwise
-collective solver.
+Designed for operator learning:
+    lambda_out = G(lambda_in, mu)
 """
 
 from __future__ import annotations
@@ -64,12 +58,19 @@ class LatticeConfig:
     qd1_at: float = 2.0
     qf2_at: float = 3.0
 
+@dataclass
+class WakeConfig:
+    kind: Literal["gaussian", "exponential", "resonator"] = "gaussian"
+    strength: float = 1.0
+    sigma: float = 1e-3
+    decay: float = 1e3
+    freq: float = 1e10
 
 @dataclass
 class ParameterRanges:
-    kf1_range: Tuple[float, float] = (0.1, 2.0)
-    kd1_range: Tuple[float, float] = (-4.5, -0.05)
-    kf2_range: Tuple[float, float] = (0.1, 2.0)
+    bunch_charge_range: Tuple[float, float] = (0.1e-9, 3e-9)   # Coulombs
+    pipe_radius_range: Tuple[float, float] = (5e-3, 30e-3)     # meters
+    impedance_scale_range: Tuple[float, float] = (0.1, 10.0)   # dimensionless
 
 
 @dataclass
@@ -91,6 +92,27 @@ class DatasetConfig:
     save_moments: bool = True
     train_fraction: float = 0.8
     val_fraction: float = 0.1
+
+def build_wake_kernel(zeta_grid, wake_cfg):
+    z = zeta_grid - zeta_grid.mean()
+
+    if wake_cfg.kind == "gaussian":
+        W = np.exp(-0.5 * (z / wake_cfg.sigma)**2)
+
+    elif wake_cfg.kind == "exponential":
+        W = np.exp(-wake_cfg.decay * np.maximum(z, 0.0))
+
+    elif wake_cfg.kind == "resonator":
+        W = np.sin(2*np.pi*wake_cfg.freq*z) * np.exp(-np.abs(z)/wake_cfg.sigma)
+
+    else:
+        raise ValueError
+
+    return wake_cfg.strength * W / (np.abs(W).sum() + 1e-12)
+
+def apply_wake(lambda_z, W):
+    n = len(lambda_z)
+    return np.convolve(lambda_z, W, mode="same")
 
 
 def build_line(lattice_cfg: LatticeConfig) -> Tuple[xt.Line, xt.Environment]:
@@ -209,19 +231,18 @@ def sample_parameters(
 ) -> np.ndarray:
     return np.array(
         [
-            rng.uniform(*param_ranges.kf1_range),
-            rng.uniform(*param_ranges.kd1_range),
-            rng.uniform(*param_ranges.kf2_range),
+            rng.uniform(*param_ranges.bunch_charge_range),
+            rng.uniform(*param_ranges.pipe_radius_range),
+            rng.uniform(*param_ranges.impedance_scale_range),
         ],
         dtype=np.float64,
     )
 
-
-def set_lattice_parameters(env: xt.Environment, mu: np.ndarray) -> None:
+"""def set_lattice_parameters(env: xt.Environment, mu: np.ndarray) -> None:
     env["kf1"] = float(mu[0])
     env["kd1"] = float(mu[1])
     env["kf2"] = float(mu[2])
-
+"""
 
 def track_cloud(line: xt.Line, z0: np.ndarray) -> np.ndarray:
     p = line.build_particles(
@@ -234,6 +255,56 @@ def track_cloud(line: xt.Line, z0: np.ndarray) -> np.ndarray:
     )
     line.track(p)
     return particles_to_6d(p)
+
+def track_with_collective_effects(
+    line: xt.Line,
+    z0: np.ndarray,
+    mu: np.ndarray,
+    density_cfg: DensityGridConfig,
+    wake_cfg: Optional["WakeConfig"],
+) -> np.ndarray:
+    """
+    mu = [Q_bunch, pipe_radius, impedance_scale]
+    """
+
+    Q, a, Z_scale = mu
+
+    # --- track externally
+    p = line.build_particles(
+        x=z0[:, 0],
+        y=z0[:, 1],
+        zeta=z0[:, 2],
+        px=z0[:, 3],
+        py=z0[:, 4],
+        delta=z0[:, 5],
+    )
+    line.track(p)
+
+    z1 = particles_to_6d(p)
+
+    if wake_cfg is None:
+        return z1
+
+    # --- density
+    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+
+    # --- wake kernel
+    W = build_wake_kernel(zeta_grid, wake_cfg)
+
+    # --- convolution
+    wake_conv = np.fft.ifft(
+        np.fft.fft(lambda_z) * np.fft.fft(W)
+    ).real
+
+    # --- interpolate to particles
+    delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
+
+    # --- scaling
+    delta_kick *= Q * Z_scale / (a**2 + 1e-12)
+
+    z1[:, 5] += delta_kick
+
+    return z1
 
 
 def cloud_moments(z: np.ndarray) -> Dict[str, np.ndarray]:
@@ -270,6 +341,8 @@ def build_datasets(
     density_cfg: DensityGridConfig,
     param_ranges: ParameterRanges,
     beam_families: Iterable[BeamFamilyConfig],
+    use_collective: bool,
+    wake_cfg: Optional[WakeConfig]
 ) -> Dict[str, np.ndarray]:
     rng = np.random.default_rng(dataset_cfg.seed)
     families = list(beam_families)
@@ -285,10 +358,26 @@ def build_datasets(
     for _ in range(dataset_cfg.n_samples):
         beam_cfg = families[rng.integers(0, len(families))]
         mu = sample_parameters(rng, param_ranges)
-        set_lattice_parameters(env, mu)
+        
+        z0 = sample_initial_conditions(
+            dataset_cfg.particles_per_sample,
+            rng,
+            beam_cfg
+        )
 
-        z0 = sample_initial_conditions(dataset_cfg.particles_per_sample, rng, beam_cfg)
-        z1 = track_cloud(line, z0)
+        if use_collective:
+            z1 = track_with_collective_effects(
+                line,
+                z0,
+                mu,
+                density_cfg,
+                wake_cfg,
+            )
+        else:
+            z1 = track_cloud(line, z0)
+
+        
+       
 
         if dataset_cfg.save_cloud_dataset:
             cloud_in.append(z0.astype(np.float32))
@@ -376,7 +465,9 @@ def save_dataset_bundle(
     rng = np.random.default_rng(dataset_cfg.seed + 17)
     split = split_indices(n_samples, dataset_cfg.train_fraction, dataset_cfg.val_fraction, rng)
 
-    np.savez(out_dir / "xsuite_neural_dataset.npz", **data, **split)
+    time_of_generation = np.datetime64("now").astype(str)
+    filename = f"neural_xsuite_dataset_{time_of_generation}.npz"
+    np.savez(out_dir / filename, **data, **split)
 
     metadata = {
         "phase_space_labels": PHASE_SPACE_LABELS,
@@ -410,16 +501,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--nz", type=int, default=256)
     parser.add_argument("--zeta-min", type=float, default=-5e-3)
     parser.add_argument("--zeta-max", type=float, default=5e-3)
-    parser.add_argument("--kf1-min", type=float, default=0.1)
-    parser.add_argument("--kf1-max", type=float, default=2.0)
-    parser.add_argument("--kd1-min", type=float, default=-4.5)
-    parser.add_argument("--kd1-max", type=float, default=-0.05)
-    parser.add_argument("--kf2-min", type=float, default=0.1)
-    parser.add_argument("--kf2-max", type=float, default=2.0)
+    parser.add_argument("--Q-min", type=float, default=0.1e-9)
+    parser.add_argument("--Q-max", type=float, default=3e-9)
+    parser.add_argument("--pipe-radius-min", type=float, default=5e-3)
+    parser.add_argument("--pipe-radius-max", type=float, default=30e-3)
+    parser.add_argument("--impedance-min", type=float, default=0.1)
+    parser.add_argument("--impedance-max", type=float, default=10.0)
     parser.add_argument("--train-fraction", type=float, default=0.8)
     parser.add_argument("--val-fraction", type=float, default=0.1)
     parser.add_argument("--skip-cloud", action="store_true")
     parser.add_argument("--skip-density", action="store_true")
+    parser.add_argument("--no-collective", action="store_true")
+
+    # wake
+    parser.add_argument("--wake-type", type=str, default="gaussian")
+    parser.add_argument("--wake-strength", type=float, default=1.0)
+    parser.add_argument("--wake-sigma", type=float, default=1e-3)
+    parser.add_argument("--wake-decay", type=float, default=1e3)
+    parser.add_argument("--wake-freq", type=float, default=1e10)
     return parser.parse_args()
 
 
@@ -442,10 +541,15 @@ def main() -> None:
         zeta_min=args.zeta_min,
         zeta_max=args.zeta_max,
     )
+    wake_cfg = WakeConfig(
+        kind="exponential",     # "gaussian" | "exponential" | "resonator"
+        strength=1.0,
+        sigma=1e-3,
+    )
     param_ranges = ParameterRanges(
-        kf1_range=(args.kf1_min, args.kf1_max),
-        kd1_range=(args.kd1_min, args.kd1_max),
-        kf2_range=(args.kf2_min, args.kf2_max),
+        bunch_charge_range=(args.Q_min, args.Q_max),
+        pipe_radius_range=(args.pipe_radius_min, args.pipe_radius_max),
+        impedance_scale_range=(args.impedance_min, args.impedance_max),
     )
     beam_families = default_beam_families()
 
@@ -457,6 +561,8 @@ def main() -> None:
         density_cfg=density_cfg,
         param_ranges=param_ranges,
         beam_families=beam_families,
+        use_collective= True,
+        wake_cfg= wake_cfg
     )
     save_dataset_bundle(
         data=data,
