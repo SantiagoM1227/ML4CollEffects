@@ -20,37 +20,27 @@
 \contentsline {paragraph}{\numberline {2.3.3.3} Observable operator learning.}{15}{paragraph.2.3.3.3}%
 \contentsline {paragraph}{\numberline {2.3.3.4} Transverse collective surrogate.}{15}{paragraph.2.3.3.4}%
 \contentsline {subsection}{\numberline {2.4}Summary}{16}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Learning parameterized transport and collective operators for beam dynamics}{16}{subsection.2.5}%
-\contentsline {paragraph}{\numberline {2.5.0.1}Continuum formulation.}{17}{paragraph.2.5.0.1}%
-\contentsline {paragraph}{\numberline {2.5.0.2}Steady state as a fixed point.}{17}{paragraph.2.5.0.2}%
-\contentsline {subsubsection}{\numberline {2.5.1}Operator-learning formulation}{18}{subsubsection.2.5.1}%
-\contentsline {subsubsection}{\numberline {2.5.2}Fourier neural operator specialization}{18}{subsubsection.2.5.2}%
-\contentsline {subsubsection}{\numberline {2.5.3}Data representation and discretization}{19}{subsubsection.2.5.3}%
-\contentsline {subsubsection}{\numberline {2.5.4}Data-generation strategy with Xsuite}{19}{subsubsection.2.5.4}%
-\contentsline {subsubsection}{\numberline {2.5.5}Learning objectives}{20}{subsubsection.2.5.5}%
-\contentsline {subsubsection}{\numberline {2.5.6}Key theoretical guarantees}{21}{subsubsection.2.5.6}%
-\contentsline {subsubsection}{\numberline {2.5.7}Performance indicators and validation}{21}{subsubsection.2.5.7}%
-\contentsline {paragraph}{\numberline {2.5.7.1}Point-map fidelity.}{21}{paragraph.2.5.7.1}%
-\contentsline {paragraph}{\numberline {2.5.7.2}Distribution fidelity.}{21}{paragraph.2.5.7.2}%
-\contentsline {paragraph}{\numberline {2.5.7.3}Beam-physics observables.}{22}{paragraph.2.5.7.3}%
-\contentsline {paragraph}{\numberline {2.5.7.4}Structure preservation.}{22}{paragraph.2.5.7.4}%
-\contentsline {paragraph}{\numberline {2.5.7.5}Validation tests.}{22}{paragraph.2.5.7.5}%
-\contentsline {subsubsection}{\numberline {2.5.8}Recommended staged deployment}{22}{subsubsection.2.5.8}%
-\contentsline {paragraph}{\numberline {2.5.8.1}Stage 1: parameterized point map.}{22}{paragraph.2.5.8.1}%
-\contentsline {paragraph}{\numberline {2.5.8.2}Stage 2: reduced operator.}{22}{paragraph.2.5.8.2}%
-\contentsline {paragraph}{\numberline {2.5.8.3}Stage 3: learned collective closure.}{23}{paragraph.2.5.8.3}%
-\contentsline {paragraph}{\numberline {2.5.8.4}Stage 4: sectionwise composition and equilibrium.}{23}{paragraph.2.5.8.4}%
-\contentsline {paragraph}{\numberline {2.5.8.5}Summary.}{23}{paragraph.2.5.8.5}%
-\contentsline {subsection}{\numberline {2.6}Illustrative generated samples and first baseline results}{23}{subsection.2.6}%
-\contentsline {subsubsection}{\numberline {2.6.1}Representative phase-space projections}{24}{subsubsection.2.6.1}%
-\contentsline {subsubsection}{\numberline {2.6.2}Reduced longitudinal representation}{25}{subsubsection.2.6.2}%
-\contentsline {subsubsection}{\numberline {2.6.3}Coverage of the sampled parameter space}{25}{subsubsection.2.6.3}%
-\contentsline {subsubsection}{\numberline {2.6.4}First baseline results}{26}{subsubsection.2.6.4}%
-\contentsline {paragraph}{\numberline {2.6.4.1}Training curves.}{27}{paragraph.2.6.4.1}%
-\contentsline {paragraph}{\numberline {2.6.4.2}Prediction versus reference profiles.}{27}{paragraph.2.6.4.2}%
-\contentsline {paragraph}{\numberline {2.6.4.3}Quantitative summary.}{28}{paragraph.2.6.4.3}%
-\contentsline {section}{\numberline {3}Conclusion et perspectives}{29}{section.3}%
-\contentsline {section}{\numberline {A}Annexe}{32}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Parametrized H\'enon Maps}{32}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Reconstruction of the Longitudinal Wake Function from Ha\"issinski Profiles}{33}{subsection.A.2}%
-\contentsline {subsubsection}{\numberline {A.2.1}Dataset}{34}{subsubsection.A.2.1}%
+\contentsline {section}{\numberline {3}Machine Learning Workflow}{16}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Continuum Formulation}{17}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Operator-learning formulation}{18}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Fourier neural operator specialization}{19}{subsubsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.3}Data representation and discretization}{19}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Data-generation strategy with Xsuite}{20}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Data-generation strategy with pycolleff}{21}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Learning objectives}{22}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}Performance indicators and validation}{23}{subsubsection.3.3.4}%
+\contentsline {paragraph}{\numberline {3.3.4.1}Summary.}{23}{paragraph.3.3.4.1}%
+\contentsline {subsection}{\numberline {3.4}Illustrative generated samples and first baseline results}{23}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Representative phase-space projections}{24}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Reduced longitudinal representation}{24}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Coverage of the sampled parameter space}{26}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}First baseline results}{27}{subsubsection.3.4.4}%
+\contentsline {paragraph}{\numberline {3.4.4.1}Training curves.}{27}{paragraph.3.4.4.1}%
+\contentsline {paragraph}{\numberline {3.4.4.2}Prediction versus reference profiles.}{28}{paragraph.3.4.4.2}%
+\contentsline {paragraph}{\numberline {3.4.4.3}Quantitative summary.}{28}{paragraph.3.4.4.3}%
+\contentsline {section}{\numberline {4}Conclusion et perspectives}{30}{section.4}%
+\contentsline {section}{\numberline {A}Annexe}{33}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Parametrized H\'enon Maps}{33}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Reconstruction of the Longitudinal Wake Function from Ha\"issinski Profiles}{34}{subsection.A.2}%
+\contentsline {subsubsection}{\numberline {A.2.1}Dataset}{35}{subsubsection.A.2.1}%
+\contentsline {section}{\numberline {B}Key theoretical guarantees}{38}{appendix.B}%
