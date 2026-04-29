@@ -2418,12 +2418,12 @@
     <bcf:citekey order="33" intorder="2">hoover_high-dimensional_2024</bcf:citekey>
     <bcf:citekey order="34" intorder="1">kovachki_neural_nodate</bcf:citekey>
     <bcf:citekey order="35" intorder="1">kovachki_neural_nodate</bcf:citekey>
-    <bcf:citekey order="36" intorder="1">kovachki_neural_nodate</bcf:citekey>
-    <bcf:citekey order="37" intorder="1">kovachki_neural_nodate</bcf:citekey>
-    <bcf:citekey order="38" intorder="1">burby_fast_2021</bcf:citekey>
-    <bcf:citekey order="39" intorder="1" nocite="1">*</bcf:citekey>
-    <bcf:citekey order="40" intorder="1">Funkner_2025</bcf:citekey>
-    <bcf:citekey order="41" intorder="1">Funkner_2025</bcf:citekey>
+    <bcf:citekey order="36" intorder="1" nocite="1">*</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">Funkner_2025</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">Funkner_2025</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">kovachki_neural_nodate</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">kovachki_neural_nodate</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">burby_fast_2021</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
