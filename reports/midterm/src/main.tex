@@ -822,10 +822,8 @@ First, one may learn a pointwise phase-space map using a structured model such a
 In the context of collective effects, these are not competing ideas so much as different levels of description. Pointwise maps are closest to particle tracking, tomography is closest to diagnostic inversion, and neural operators are closest to the full distributional viewpoint implicit in the Vlasov-Fokker-Planck and Ha\"issinski frameworks. Precisely because collective beam physics naturally moves between these three levels, machine learning here serves as a flexible language for approximating the right mathematical object at the right level of description with different caveats and trade-offs. The next step is to implement these ideas concretely in the context of a specific collective-effect problem.
 
 
+\section{Machine Learning Workflow}
 
-
-\subsection{Learning parameterized transport and collective operators for beam dynamics}
-\label{subsec:operator_learning_beam_dynamics}
 
 We model a beam as either a cloud of particles in six-dimensional phase space,
 \begin{equation}
@@ -849,11 +847,15 @@ At the microscopic level, the dynamics are described by a parameterized particle
  z_{\mathrm{out}} = \Phi_\mu(z_{\mathrm{in}}).
  \label{eq:microscopic-map}
 \end{equation}
-In the present Xsuite baseline, $m=3$ and
+In the present Xsuite baseline for the preliminary study of the machine learning workflow, $m=3$ and
 \begin{equation}
  \mu = (k_{f1},k_{d1},k_{f2}),
 \end{equation}
-corresponding to the strengths of the three quadrupoles in the line.
+corresponding to the strengths of the three quadrupoles in the line. In the context of collective effects, the parameter vector $\mu$ will be defined with physical parameters correlated direcly with the intensity of the collective effects such as the bunch charge, the synchrotron tune, the vacuum pipe radius, the material, and more to be discussed. Following Ha\"issinski equation, the first parameter vector to be defined in the study of collective effects will be 
+\begin{equation}
+    \mu = (I_b, r_v, R_{\text{material}} ),
+\end{equation}
+where $I_b$ is the bunch current, $r_v$ is the vacuum pipe radius, and $R_{\text{material}}$ is the material resistivity.
 
 At the mesoscopic level, the corresponding density transport is the pushforward
 \begin{equation}
@@ -876,7 +878,7 @@ When collective effects are included, the section map becomes density dependent.
 \end{equation}
 which is the object of genuine operator learning.
 
-\paragraph{Continuum formulation.}
+\subsection{Continuum Formulation}
 A generic Vlasov--Fokker--Planck-type model can be written as
 \begin{equation}
  \partial_s \rho
@@ -887,51 +889,52 @@ A generic Vlasov--Fokker--Planck-type model can be written as
 \end{equation}
 where $F_{\mathrm{ext}}$ is the known external lattice force, $F_{\mathrm{coll}}[\rho]$ is the collective self-consistent force, and $\mathcal{D}$ is a damping--diffusion operator. In the absence of collective effects, $F_{\mathrm{coll}} \equiv 0$ and $\mathcal{D}\equiv 0$, so that the evolution reduces to the pushforward \eqref{eq:pushforward-operator} induced by the single-particle map \eqref{eq:microscopic-map}.
 
-A convenient operator splitting for one lattice section is
+By using Baker-Campbell-Hausdorff formula in the context of this operator equation, a convenient operator splitting for one lattice section is given by
 \begin{equation}
  \rho_{j+1}
- \approx
+=
  \exp(\Delta s\,\mathcal{D}_j)
  \exp\big(\Delta s\,\mathcal{C}_j[\rho_j]\big)
  (M_{j,\mu_j})_\#\rho_j,
  \label{eq:section-splitting}
 \end{equation}
-where $M_{j,\mu_j}$ denotes the external transport map over section $j$ and $\mathcal{C}_j[\rho]$ denotes the collective part of the generator.
-
-\paragraph{Steady state as a fixed point.}
-If the lattice is divided into $N$ sections, the one-turn operator is
+where $M_{j,\mu_j}$ denotes the external transport map over section $j$ and $\mathcal{C}_j[\rho]$ denotes the collective part of the generator. It is direct from this equation that if the lattice is divided into $N$ sections, the one-turn operator is
 \begin{equation}
  \mathcal{T}_{\mathrm{ring},\mu}
  :=
  \mathcal{G}_{N,\mu_N}\circ \cdots \circ \mathcal{G}_{1,\mu_1}.
  \label{eq:ring-map}
 \end{equation}
-The equilibrium distribution is then a fixed point of the composed operator:
+This formulation allows to give a precise description of the equlibrium problem as a fixed-point problem for the one-turn operator. A stationary distribution $\rho^\star$ must satisfy
 \begin{equation}
  \rho^\star = \mathcal{T}_{\mathrm{ring},\mu}[\rho^\star].
  \label{eq:fixed-point-equilibrium}
 \end{equation}
 This fixed-point perspective is the natural place where steady-state models such as Ha\"issinski-type equilibria enter the framework.
 
-\subsubsection{Operator-learning formulation}
+\subsection{Operator-learning formulation}
 \label{subsubsec:operator-learning-formulation}
 
-Let $A$ and $U$ be Banach spaces of functions or densities. The learning target is a continuous operator
+For the given context in working with distributions of particles as a continuum, it is important to check the properties of the functional spaces to be mapped. Let $A$ and $U$ be Banach spaces of functions or densities. The learning target is a continuous operator
 \begin{equation}
- G^\dagger : A \times \mathcal{M} \to U,
- \qquad
- (a,\mu) \mapsto u,
+    \begin{split}
+         G^\dagger : A \times \mathcal{M} &\to U\\
+                    (a,\mu) &\mapsto u
+    \end{split}
  \label{eq:true-operator}
 \end{equation}
-where $a$ denotes the input state and $u$ the output state. In the present application, representative choices are:
-\begin{align}
- a &= \rho_{\mathrm{in}}, & u &= \rho_{\mathrm{out}}, \\
- a &= \lambda_{\mathrm{in}}, & u &= \lambda_{\mathrm{out}}, \\
- a &= \lambda_{\mathrm{in}}, & u &= V_{\mathrm{ind}}, \\
- a &= \rho_{\mathrm{in}}, & u &= F_{\mathrm{coll}}[\rho_{\mathrm{in}}].
-\end{align}
+where $a$ denotes the input state and $u$ the output state. In the present application, representative choices are given by the different funcitonals to be trained on and to be used as surrogates. For instance, one may have the following operator-learning problems:
+\begin{equation}
+    \begin{split}
+        (a,u) &= (\rho_{\mathrm{in}},  \rho_{\mathrm{out}}), \\
+        (a,u) &= (\lambda_{\mathrm{in}},  \lambda_{\mathrm{out}}), \\
+        (a,u) &= (\lambda_{\mathrm{in}},  V_{\mathrm{ind}}), \\
+        (a,u) &= (\rho_{\mathrm{in}},  F_{\mathrm{coll}}[\rho_{\mathrm{in}}]).
+    \end{split}
+\end{equation}
+where each pair corresponds to a different operator-learning problem. The first is the most general, where the input and output are full phase-space densities. The second is a reduced line-density model, where the input and output are one-dimensional functions of the longitudinal coordinate. The third is a direct learning of the wake convolution operator, where the input is the line density and the output is the induced voltage. The fourth is a learning of the collective force as a functional of the input density.
 
-A neural operator is then a parameterized map
+Given this set of possibilities, it is now important to specify the particular operator framework to be used. A neural operator is defined by a $\theta$-parameterized family of maps
 \begin{equation}
  G_\theta : A \times \mathcal{M} \to U,
  \qquad \theta \in \Theta \subset \mathbb{R}^p,
@@ -976,30 +979,10 @@ For reduced longitudinal problems on a uniform grid, a Fourier neural operator i
 \end{equation}
 with a truncated tensor of low-frequency modes $R_\phi$ \cite{kovachki_neural_nodate}. In practice only a finite number of modes $k_{\max}$ are retained, which yields quasi-linear computational cost when the discretization is uniform and FFTs are available.
 
-For a reduced line-density model, one may define
-\begin{equation}
- \lambda(z) = \int \rho(x,y,z,p_x,p_y,\delta)\,dx\,dy\,dp_x\,dp_y\,d\delta,
- \label{eq:line-density}
-\end{equation}
-and train an operator
-\begin{equation}
- \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto \lambda_{\mathrm{out}}
- \quad \text{or} \quad
- \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto V_{\mathrm{ind}}.
- \label{eq:reduced-operator}
-\end{equation}
-This is especially natural when the physics contains a convolutional impedance or wake model,
-\begin{equation}
- V_{\mathrm{ind}}(z) = (W * \lambda)(z),
- \qquad
- \widehat{V}_{\mathrm{ind}}(\omega) = Z(\omega)\,\widehat{\lambda}(\omega).
- \label{eq:impedance-form}
-\end{equation}
-
-\subsubsection{Data representation and discretization}
+\subsection{Data representation and discretization}
 \label{subsubsec:data-representation}
 
-The raw simulation output is a particle cloud
+In the context of a machine learning workflow, the training data is generated by a high-fidelity simulator such as Xsuite or pycolleff. This is a crucial step because the quality, diversity, and representativeness of the training data directly affect the performance and generalization of the learned surrogate. The data must be generated in a way that captures the relevant physics, spans the parameter space of interest, and is compatible with the chosen operator-learning framework. Also the generated data must cover a sufficiently wide range of machine settings and input beam distributions to ensure that the learned operator can generalize beyond the training set and cover a compact subspace near the true solution. The raw simulation output is a particle cloud
 \begin{equation}
  Z=
  \begin{bmatrix}
@@ -1010,7 +993,7 @@ The raw simulation output is a particle cloud
  \in \mathbb{R}^{N\times 6},
  \label{eq:particle-cloud}
 \end{equation}
-which defines the empirical measure
+which defines the empirical distribution
 \begin{equation}
  \rho^N = \frac{1}{N} \sum_{i=1}^N \delta_{z_i}.
  \label{eq:empirical-measure}
@@ -1057,22 +1040,22 @@ This reduced object is the natural input to a 1D FNO.
 The synthetic data generator should sample both machine parameters and input beam families.
 For each sample index $s$:
 \begin{enumerate}
-    \item draw machine settings
+    \item Draw machine settings
     \begin{equation}
-    \mu^{(s)}=(k_{f1}^{(s)},k_{d1}^{(s)},k_{f2}^{(s)}) \sim \nu_{\mu},
+    \mu^{(s)} \sim \nu_{\mu},
     \end{equation}
     where $\nu_\mu$ is typically uniform over a prescribed parameter box;
-    \item draw an input beam family $\eta^{(s)}$ from a finite library of prototypes;
-    \item sample a particle cloud
+    \item Draw an input beam family $\eta^{(s)}$ from a finite library of prototypes;
+    \item Sample a particle cloud
     \begin{equation}
     Z_{\mathrm{in}}^{(s)} = \{z_i^{(s)}\}_{i=1}^{N_p} \sim \rho_{\eta^{(s)}},
     \end{equation}
-    where $\rho_{\eta}$ may be Gaussian, correlated Gaussian, core--halo, Gaussian mixture, or mismatched;
-    \item track the cloud through Xsuite with parameters $\mu^{(s)}$ to obtain
+    where $\rho_{\eta}$ is given by a test function such as a Gaussian, a shifted Gaussian, a Gaussian mixture, or a modulated profile, in order to capture a variety of beam shapes and distributions;
+    \item Track the cloud through Xsuite with parameters $\mu^{(s)}$ to obtain
     \begin{equation}
     Z_{\mathrm{out}}^{(s)} = \Phi_{\mu^{(s)}}\left(Z_{\mathrm{in}}^{(s)}\right);
     \end{equation}
-    \item optionally compute reduced objects such as $\lambda_{\mathrm{in}}^{h,(s)}$, $\lambda_{\mathrm{out}}^{h,(s)}$, and moments.
+    \item If necessary, compute reduced objects such as $\lambda_{\mathrm{in}}^{h,(s)}$, $\lambda_{\mathrm{out}}^{h,(s)}$, and moments.
 \end{enumerate}
 
 This produces a Monte Carlo approximation of the operator graph,
@@ -1217,53 +1200,12 @@ d\big(
 \end{equation}
 where $d$ is a suitable discrepancy, for example $L^2$, Wasserstein, or sliced Wasserstein.
 
-\subsubsection{Key theoretical guarantees}
-\label{subsubsec:key-theorems}
-
-The mathematical justification for operator learning rests on three central facts.
-
-\begin{theorem}[Discretization invariance, informal; \cite{kovachki_neural_nodate}]
-Let $G : A \times \Theta \to U$ be a neural operator class on Banach spaces. Then there exist discretized realizations $\widehat{G}_L$ such that for every compact subset $K \subset A$ and every fixed parameter value $\theta \in \Theta$,
-\begin{equation}
- \lim_{L\to\infty}
- \sup_{a\in K}
- \|\widehat{G}_L(D_L,a|_{D_L},\theta) - G(a,\theta)\|_U = 0.
- \label{eq:theorem-discretization-invariance}
-\end{equation}
-\end{theorem}
-
-\begin{theorem}[Universal approximation of continuous operators, informal; \cite{kovachki_neural_nodate}]
-Let $G^\dagger : A \to U$ be a continuous operator between suitable Banach spaces and let $K \subset A$ be compact. Then for every $\varepsilon>0$ there exists a neural operator $G_\theta$ such that
-\begin{equation}
- \sup_{a\in K}
- \|G_\theta(a)-G^\dagger(a)\|_U < \varepsilon.
- \label{eq:theorem-universal-operator}
-\end{equation}
-\end{theorem}
-
-\begin{theorem}[Approximation by H\'enon compositions; Turaev, informal; \cite{burby_fast_2021}]
-Let $\Phi : U \to \mathbb{R}^{2n}$ be a $C^{r+1}$ symplectic map and let $C\subset U$ be compact. Then for every $\varepsilon>0$ there exist a smooth scalar potential $V$, a constant shift $\eta$, and an integer $N$ such that the composition of H\'enon maps approximates $\Phi$ within $\varepsilon$ on $C$ in the $C^r$ topology.
-\end{theorem}
-
-The first theorem motivates testing the learned model across changing discretizations or particle numbers. The second theorem justifies learning maps between distributions or reduced observables directly as operators. The third theorem motivates the use of structure-preserving H\'enon-type cores for the external Hamiltonian transport.
-
-In particular, the neural-operator framework yields a useful error decomposition:
-\begin{equation}
- \|\widehat{G}_\theta(D_L,a|_{D_L}) - G^\dagger(a)\|_U
- \le
- \underbrace{\|\widehat{G}_\theta(D_L,a|_{D_L}) - G_\theta(a)\|_U}_{\text{discretization error}}
- +
- \underbrace{\|G_\theta(a)-G^\dagger(a)\|_U}_{\text{approximation error}}.
- \label{eq:error-decomposition}
-\end{equation}
-This decomposition should guide the empirical validation strategy.
-
 \subsubsection{Performance indicators and validation}
 \label{subsubsec:kpis-validation}
 
-The validation protocol should include at least the following metrics.
+The validation protocol must be designed to assess the surrogate's performance on multiple levels. For instance it is possible to define performance indicators such as pointwise error, distribution fidelity, beam-physics observables, and structure preservation.
 
-\paragraph{Point-map fidelity.}
+Pointwise error can be measured by the root mean squared error (RMSE) or the relative $L^2$ error:
 \begin{align}
  \mathrm{RMSE}_z
  &=
@@ -1279,7 +1221,7 @@ The validation protocol should include at least the following metrics.
  \right)^{1/2}.
 \end{align}
 
-\paragraph{Distribution fidelity.}
+Distribution fidelity can be measured by the $L^1$ or $L^2$ distance between the predicted and true densities, or by more sophisticated metrics such as the Wasserstein distance:
 \begin{equation}
  \|\widehat{\lambda}-\lambda\|_{L^1_h},
  \qquad
@@ -1292,78 +1234,16 @@ The validation protocol should include at least the following metrics.
 \end{equation}
 where $W_1$ is the 1-Wasserstein distance and $SW$ the sliced Wasserstein distance.
 
-\paragraph{Beam-physics observables.}
-\begin{equation}
- \|\widehat{m}-m\|_2,
- \qquad
- \|\widehat{\Sigma}-\Sigma\|_F,
- \qquad
- |\widehat{\varepsilon}_x-\varepsilon_x|,
- \qquad
- |\widehat{\varepsilon}_y-\varepsilon_y|,
- \qquad
- |\widehat{\varepsilon}_z-\varepsilon_z|.
- \label{eq:beam-kpis}
-\end{equation}
 
-\paragraph{Structure preservation.}
+Given the importance of structure preservation in beam dynamics, it is also useful to define a symplectic defect and a mass conservation error:
 \begin{equation}
- \mathrm{SympDefect} = \|J_{\widehat{\Phi}}^\top\Omega J_{\widehat{\Phi}} - \Omega\|_F,
- \qquad
- \mathrm{MassError} = \left|\int \widehat{\lambda}(z)\,dz - \int \lambda(z)\,dz\right|.
+    \begin{split}
+         \mathrm{SympDefect} &= \|J_{\widehat{\Phi}}^\top\Omega J_{\widehat{\Phi}} - \Omega\|_F \\
+ \mathrm{MassError} &= \left|\int \widehat{\lambda}(z)\,dz - \int \lambda(z)\,dz\right|.
+    \end{split}
  \label{eq:structure-kpis}
 \end{equation}
 
-\paragraph{Validation tests.}
-The empirical validation should include:
-\begin{enumerate}
-    \item in-distribution one-step prediction on held-out random samples;
-    \item out-of-distribution generalization in machine-parameter space $\mu$;
-    \item out-of-distribution generalization across beam families;
-    \item resolution transfer across different particle counts or grid sizes;
-    \item multi-step composition or rollout validation;
-    \item fixed-point or equilibrium validation when a ring map is considered.
-\end{enumerate}
-
-\subsubsection{Recommended staged deployment}
-\label{subsubsec:staged-deployment}
-
-The practical deployment should proceed in stages.
-
-\paragraph{Stage 1: parameterized point map.}
-Learn a surrogate
-\begin{equation}
- \widehat{\Phi}_\theta : (z,\mu) \mapsto z'
- \label{eq:stage1}
-\end{equation}
-from Xsuite clouds. This validates parameterization, normalization, and structure-preserving design.
-
-\paragraph{Stage 2: reduced operator.}
-Project each cloud to a line density and train
-\begin{equation}
- \widehat{\mathcal{T}}_\theta : (\lambda,\mu) \mapsto \lambda'.
- \label{eq:stage2}
-\end{equation}
-A 1D FNO is the minimal baseline for this stage.
-
-\paragraph{Stage 3: learned collective closure.}
-Once collective effects are included in the data generator, learn either
-\begin{equation}
- \widehat{\mathcal{K}}_\theta : (\lambda,\mu) \mapsto V_{\mathrm{ind}}
- \label{eq:stage3a}
-\end{equation}
-or
-\begin{equation}
- \widehat{\mathcal{K}}_\theta : (\rho,\mu) \mapsto F_{\mathrm{coll}}[\rho].
- \label{eq:stage3b}
-\end{equation}
-This closure may then be embedded into a known solver.
-
-\paragraph{Stage 4: sectionwise composition and equilibrium.}
-Finally, learn section operators and compose them to approximate the full ring map. This enables rollout validation and fixed-point studies via \eqref{eq:fixed-point-equilibrium}.
-
-\paragraph{Summary.}
-The present framework therefore treats beam-dynamics learning as approximation of parameterized maps between phase-space states. This viewpoint is mathematically consistent with the neural-operator literature, computationally compatible with Xsuite-generated data, and extensible from microscopic single-particle transport to nonlinear collective beam evolution.
 
 \subsection{Illustrative generated samples and first baseline results}
 \label{subsec:generated_data_results}
@@ -1373,18 +1253,18 @@ The purpose of this subsection is twofold. First, it documents concretely the ty
 \begin{equation}
 Z = \{z_i\}_{i=1}^{N_p}, \qquad z_i=(x_i,y_i,\zeta_i,p_{x,i},p_{y,i},\delta_i)\in\mathbb{R}^6,
 \end{equation}
-together with the machine-parameter vector
-\begin{equation}
-\mu=(k_{f1},k_{d1},k_{f2}) \in \mathbb{R}^3.
-\end{equation}
+together with the machine-parameter vector $\mu \in \mathbb{R}^3$ that represent physical observables such as beam charge, vacuum pole radius, and material properties relevant to the impedance model. The transport map $\Phi_\mu$ is then defined by tracking the input cloud through the lattice with the given machine settings.
+
 For each generated sample, the simulation therefore produces an input cloud $Z_{\mathrm{in}}$, an output
 cloud $Z_{\mathrm{out}}=\Phi_{\mu}(Z_{\mathrm{in}})$, and, after reduction on a uniform longitudinal mesh,
 the corresponding line densities $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$.
 
 \subsubsection{Representative phase-space projections}
-A first sanity check consists in visualizing the projected clouds in the canonical pairs
+A first check consists in visualizing the projected clouds in the canonical pairs
 $(x,p_x)$, $(y,p_y)$ and $(\zeta,\delta)$. These plots provide immediate information on the geometry
-of the transported beam, the preservation or distortion of the cloud shape, and the qualitative effect of the sampled quadrupole strengths on the phase-space transport. Since the current synthetic baseline contains only external transport, these figures should mainly reflect parameterized linear and weakly nonlinear lattice effects. In later stages, the same visualization will remain useful after collective effects are included, since it will make visible whether the learned surrogate reproduces phase-space deformation, tilt, mismatch, or filamentation.
+of the transported beam, the preservation or distortion of the cloud shape, and the qualitative effect of the sampled physical parameters on the phase-space transport. Since the current synthetic baseline contains external transport, these figures should mainly reflect parameterized linear and nonlinear lattice effects. In later stages, the same visualization will remain useful after collective effects are included, since it will make visible whether the learned surrogate reproduces phase-space deformation, tilt, mismatch, or filamentation.
+
+As a first exploratory step it is useful to check the behaviour of the machine learning pipeline in a fully known setting, such as simple transport through a FODO lattice. In this case, the input and output clouds are related by a known linear symplectic map, so that the expected phase-space projections can be computed analytically. The generated samples should then be compared against these analytical predictions to verify that the data-generation pipeline is correctly implemented and that the sampled parameter vectors $\mu$ produce the expected qualitative effects on the beam transport.
 
 \begin{figure}[htbp]
     \centering
@@ -1418,7 +1298,7 @@ using either histogram binning or a kernel density estimate. The corresponding i
 \begin{equation}
 \widehat{\mathcal T}_{\theta} : (\lambda_{\mathrm{in}},\mu) \mapsto \lambda_{\mathrm{out}}.
 \end{equation}
-Plotting $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$ for representative samples is therefore an essential consistency check: it confirms that the reduction retains a meaningful imprint of the underlying transport and that the reduced problem is not trivially close to the identity.
+Plotting $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$ for representative samples is therefore an essential consistency check. Reduction must retain a meaningful imprint of the underlying transport and that the reduced problem is not trivially close to the identity.
 
 \begin{figure}[htbp]
     \centering
@@ -1430,12 +1310,10 @@ Plotting $\lambda_{\mathrm{in}}$ and $\lambda_{\mathrm{out}}$ for representative
 
 \subsubsection{Coverage of the sampled parameter space}
 Besides visualizing the beam states themselves, it is important to verify that the generated dataset covers
-the parameter domain in a sufficiently uniform and nondegenerate way. In the present implementation, the
-parameter vector $\mu=(k_{f1},k_{d1},k_{f2})$ is sampled in a rectangular box,
+the parameter domain in a sufficiently uniform and nondegenerate way. In this first iteration, the
+parameter vector $\mu=(k_{f1},k_{d1},k_{f2})$ given by the quadrupole strengths is sampled in a uniform rectangular box,
 \begin{equation}
-k_{f1}\in [k_{f1}^{\min},k_{f1}^{\max}], \qquad
-k_{d1}\in [k_{d1}^{\min},k_{d1}^{\max}], \qquad
-k_{f2}\in [k_{f2}^{\min},k_{f2}^{\max}],
+k_{fi}\in [k_{fi}^{\min},k_{fi}^{\max}]
 \end{equation}
 and it is therefore natural to visualize both the one-dimensional marginal histograms and the pairwise
 scatter plots of the sampled values. This confirms that the train/validation/test splits are not accidentally
@@ -1453,20 +1331,20 @@ concentrated in a narrow subregion of the parameter space.
 
 \subsubsection{First baseline results}
 A minimal first benchmark is obtained by training a one-dimensional Fourier neural operator on the reduced
-map
+map that takes the input line density $\lambda_{\mathrm{in}}$ and the machine parameters $\mu$ to the output line density as the relaxed equilibrium state after transport through the lattice,
 \begin{equation}
 \widehat{\mathcal T}_{\theta} : (\lambda_{\mathrm{in}},\mu) \mapsto \lambda_{\mathrm{out}}.
 \end{equation}
 At this stage, the objective is not yet to reproduce the full six-dimensional beam dynamics, but rather to
 test whether a reduced functional representation already captures enough information to learn a nontrivial
-parameterized transport. The most informative diagnostics are then: the training and validation losses as
+parameterized transport. The most informative diagnostics are then the training and validation losses as
 functions of the epoch number, representative predictions on unseen samples, and quantitative errors on the
 held-out test set.
 
 \paragraph{Training curves.}
 The evolution of training and validation losses provides a first indication of model stability and of possible
 underfitting or overfitting. In a satisfactory first experiment, one expects both curves to decrease to a stable
-plateau, with a moderate train--validation gap. A persistent large gap would suggest insufficient coverage of
+plateau, with a moderate train-validation gap. A persistent large gap would suggest insufficient coverage of
 the training set or an overly expressive model, whereas uniformly high losses would rather indicate that the
 reduced observable or the chosen architecture is too poor for the task.
 
@@ -1490,13 +1368,25 @@ width, or tails may otherwise remain hidden.
 \begin{figure}[htbp]
     \centering
     % Replace with the actual path to your figure
-    \includegraphics[width=0.88\textwidth]{images/generated/sample_varying_kf.png}
+    \includegraphics[width=0.88\textwidth]{images/generated/line_pred_truth_xsuite.png}
     \caption{Examples of reduced test-set predictions for the baseline Fourier neural operator.
     For each case, the predicted profile $\widehat{\lambda}_{\mathrm{out}}$ is compared with the reference
-    profile $\lambda_{\mathrm{out}}$ obtained from the Xsuite-generated data. The bottom panels may display the
-    residuals in order to reveal systematic discrepancies.}
+    profile $\lambda_{\mathrm{out}}$ obtained from the Xsuite-generated data.}
     \label{fig:fno_prediction_examples}
 \end{figure}
+
+Training the implementation of the collective effects via pycolleff library follows a similar structure, with the difference that the reduced map is now a nonlinear operator that includes self-consistent interactions. The same diagnostics can be used to assess the quality of the generated data and of the first surrogate models trained on this data.
+
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.88\textwidth]{images/generated/training_pycolleff.png}
+    \caption{Example training curves for the pycolleff implementation. The error is plotted in log scale to better visualize the convergence behavior.}
+    \label{fig:fno_prediction_pycolleff}
+\end{figure}
+
+
 
 \paragraph{Quantitative summary.}
 Finally, the baseline should be summarized with a small table of metrics measured on the held-out test set.
@@ -1831,6 +1721,48 @@ For a first implementation, the Toeplitz model is the most natural choice. It ma
 
 % \newpage
 % \section{Codes}
+
+\section{Key theoretical guarantees}
+\label{subsubsec:key-theorems}
+
+The mathematical justification for operator learning rests on three central facts.
+
+\begin{theorem}[Discretization invariance, informal; \cite{kovachki_neural_nodate}]
+Let $G : A \times \Theta \to U$ be a neural operator class on Banach spaces. Then there exist discretized realizations $\widehat{G}_L$ such that for every compact subset $K \subset A$ and every fixed parameter value $\theta \in \Theta$,
+\begin{equation}
+ \lim_{L\to\infty}
+ \sup_{a\in K}
+ \|\widehat{G}_L(D_L,a|_{D_L},\theta) - G(a,\theta)\|_U = 0.
+ \label{eq:theorem-discretization-invariance}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Universal approximation of continuous operators, informal; \cite{kovachki_neural_nodate}]
+Let $G^\dagger : A \to U$ be a continuous operator between suitable Banach spaces and let $K \subset A$ be compact. Then for every $\varepsilon>0$ there exists a neural operator $G_\theta$ such that
+\begin{equation}
+ \sup_{a\in K}
+ \|G_\theta(a)-G^\dagger(a)\|_U < \varepsilon.
+ \label{eq:theorem-universal-operator}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Approximation by H\'enon compositions; Turaev, informal; \cite{burby_fast_2021}]
+Let $\Phi : U \to \mathbb{R}^{2n}$ be a $C^{r+1}$ symplectic map and let $C\subset U$ be compact. Then for every $\varepsilon>0$ there exist a smooth scalar potential $V$, a constant shift $\eta$, and an integer $N$ such that the composition of H\'enon maps approximates $\Phi$ within $\varepsilon$ on $C$ in the $C^r$ topology.
+\end{theorem}
+
+The first theorem motivates testing the learned model across changing discretizations or particle numbers. The second theorem justifies learning maps between distributions or reduced observables directly as operators. The third theorem motivates the use of structure-preserving H\'enon-type cores for the external Hamiltonian transport.
+
+In particular, the neural-operator framework yields a useful error decomposition:
+\begin{equation}
+ \|\widehat{G}_\theta(D_L,a|_{D_L}) - G^\dagger(a)\|_U
+ \le
+ \underbrace{\|\widehat{G}_\theta(D_L,a|_{D_L}) - G_\theta(a)\|_U}_{\text{discretization error}}
+ +
+ \underbrace{\|G_\theta(a)-G^\dagger(a)\|_U}_{\text{approximation error}}.
+ \label{eq:error-decomposition}
+\end{equation}
+This decomposition should guide the empirical validation strategy.
+
 
 
 % % add codes
