@@ -495,7 +495,7 @@ def default_beam_families() -> List[BeamFamilyConfig]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate Xsuite datasets for neural operator learning.")
     parser.add_argument("--n-samples", type=int, default=512)
-    parser.add_argument("--particles-per-sample", type=int, default=4096)
+    parser.add_argument("--particles-per-sample", type=int, default=1024)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=str, default="./data/neural")
     parser.add_argument("--nz", type=int, default=256)
