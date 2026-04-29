@@ -841,8 +841,8 @@
       \strng{authornamehash}{58b6ed94da0786035e6bb05eecdc144d}
       \strng{authorfullhash}{0a67fd46de53b7cdb1715023617e6988}
       \strng{authorfullhashraw}{0a67fd46de53b7cdb1715023617e6988}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{In order to investigate the influence of nonuniform thickness of the coating on the impedances, the analytical expressions of the resistive-wall impedances for the elliptical multilayer beam pipe, considering the confocal interfaces, are studied in the ultrarelativistic limit. The form factors are calculated and benchmarked with the Yokoya form factors. The influences of the nonuniform thickness of non-evaporable getter coating (NEG) coating in angular direction on the impedances are discussed.}
@@ -987,8 +987,8 @@
       \strng{authornamehash}{7efd382febc5a58bac7e41968cd593fb}
       \strng{authorfullhash}{1c4ebbca2f4390e21e1ae9e9215c53db}
       \strng{authorfullhashraw}{1c4ebbca2f4390e21e1ae9e9215c53db}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
       \field{abstract}{Xsuite is a newly developed modular simulation package combining in a single flexible and modern framework the capabilities of different tools developed at CERN in the past decades, notably Sixtrack, Sixtracklib, COMBI and PyHEADTAIL. The suite consists of a set of Python modules (Xobjects, Xpart, Xtrack, Xcoll, Xfields, Xdeps) that can be flexibly combined together and with other acceleratorspecific and general-purpose python tools to study complex simulation scenarios. The code allows for symplectic modeling of the particle dynamics, combined with the effect of synchrotron radiation, impedances, feedbacks, space charge, electron cloud, beam-beam, beamstrahlung, and electron lenses. For collimation studies, beam-matter interaction is simulated using the K2 scattering model or interfacing Xsuite with the BDSIM/Geant4 library. Tools are available to compute the accelerator optics functions from the tracking model and to generate particle distributions matched to the optics. Different computing platforms are supported, including conventional CPUs, as well as GPUs from different vendors.}
@@ -1698,8 +1698,8 @@
       \strng{authorfullhash}{691ace29e7044c51a206d2a59dd1cf4d}
       \strng{authorfullhashraw}{691ace29e7044c51a206d2a59dd1cf4d}
       \field{extraname}{2}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{JACoW}
