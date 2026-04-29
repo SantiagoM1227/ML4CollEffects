@@ -9,9 +9,9 @@
   ],
   "dataset_config": {
     "n_samples": 512,
-    "particles_per_sample": 4096,
+    "particles_per_sample": 512,
     "seed": 42,
-    "output_dir": "./data/neural",
+    "output_dir": "/pbs/home/s/smartinez/ML4CollEffects/data/neural",
     "save_cloud_dataset": true,
     "save_density_dataset": true,
     "save_moments": true,
@@ -19,7 +19,7 @@
     "val_fraction": 0.1
   },
   "density_grid_config": {
-    "nz": 256,
+    "nz": 512,
     "zeta_min": -0.005,
     "zeta_max": 0.005,
     "normalize_density": true
