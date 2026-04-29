@@ -602,6 +602,11 @@ INPUT ./images/generated/line_pred_truth_xsuite.png
 INPUT ./images/generated/line_pred_truth_xsuite.png
 INPUT ./images/generated/line_pred_truth_xsuite.png
 INPUT ./images/generated/line_pred_truth_xsuite.png
+INPUT ./images/generated/training_pycolleff.png
+INPUT ./images/generated/training_pycolleff.png
+INPUT ./images/generated/training_pycolleff.png
+INPUT ./images/generated/training_pycolleff.png
+INPUT ./images/generated/training_pycolleff.png
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmr9.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/rm-lmr9.tfm

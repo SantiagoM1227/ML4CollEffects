@@ -1,13 +1,13 @@
 # Fdb version 4
-["biber main"] 1777453362.31088 "main.bcf" "main.bbl" "main" 1777453822.67167 0
+["biber main"] 1777453362.31088 "main.bcf" "main.bbl" "main" 1777465130.29326 0
   "ML_collefects.bib" 1776412126.94587 34341 4ad21340fde5f8db654d301e33b4f934 ""
-  "main.bcf" 1777453822.30348 111655 88d424c9c15cd1306f4b1e940043de8e "pdflatex"
+  "main.bcf" 1777465129.91656 111655 88d424c9c15cd1306f4b1e940043de8e "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1777453816.95083 "/Users/santiagomartinez/Documents/caen/ml-collective-effects/reports/midterm/src/main.tex" "main.pdf" "main" 1777453822.67209 0
-  "/Users/santiagomartinez/Documents/caen/ml-collective-effects/reports/midterm/src/main.tex" 1777453815.13313 98068 95b8e2d80626be66f3b99307c958dc6a ""
+["pdflatex"] 1777465124.37469 "/Users/santiagomartinez/Documents/caen/ml-collective-effects/reports/midterm/src/main.tex" "main.pdf" "main" 1777465130.2938 0
+  "/Users/santiagomartinez/Documents/caen/ml-collective-effects/reports/midterm/src/main.tex" 1777465120.16354 98371 cc5f4f41f002cac2562ad1b9eff8931b ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1202520719 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
@@ -310,6 +310,7 @@
   "images/generated/parameter_space_mu.png" 1776429179.06584 95091 7f1d3d2ace3bc17647a667eebab089ff ""
   "images/generated/sample_phase_space_projections.png" 1776414862.56888 166583 6503068149836edd741e4375434f0f3a ""
   "images/generated/sample_varying_kf.png" 1776418326.89 78862 7b2a694ea7180d25eeb975cd4ea221e0 ""
+  "images/generated/training_pycolleff.png" 1777465055.27078 84296 c2982e94a58a58e6e3245e60aa13034f ""
   "images/logo/LogoGANIL.png" 1775722878.91605 11055 2147a076ec48137763de50f615262a12 ""
   "images/logo/Uniroma1.svg.png" 1775722936.30383 359551 e3d046f4ff1c9892c0a39a874e0f7e12 ""
   "images/logo/cnrs.png" 1775715236 143249 9f2a2df52640fab6fcfd84bcdb3eb0ce ""
@@ -319,12 +320,12 @@
   "images/logo/lund.png" 1775731692.56611 61113 936e6842fde159b834d528cc7e8bcc3d ""
   "images/logo/saclay.png" 1775715238 33519 0531d246f6f860ffd28217c1ee1c8ed7 ""
   "images/logo/szeged.png" 1775731514.10413 8353 03b0f9210f3d4d5725fb98f97b37792f ""
-  "main.aux" 1777453822.29023 26871 ae0c6c95b45d0c838aa569c0f0f72c4e "pdflatex"
+  "main.aux" 1777465129.90188 27213 f4732241cb6474d7a833d12ca086090b "pdflatex"
   "main.bbl" 1777453365.97007 86883 abcf2945a0a2f1c547c06c7572fd4feb "biber main"
-  "main.out" 1777453822.29876 10137 603430412eb15175f57cd92a6d4f8f10 "pdflatex"
-  "main.run.xml" 1777453822.30452 2308 b4d5af9a2f6297b1a51190e1e4135389 "pdflatex"
-  "main.tex" 1777453815.13313 98068 95b8e2d80626be66f3b99307c958dc6a ""
-  "main.toc" 1777453822.30467 4597 8d8e84454ad7675e812049579a311e1a "pdflatex"
+  "main.out" 1777465129.91192 10026 2be676f9700c08d838832edcc71a4176 "pdflatex"
+  "main.run.xml" 1777465129.91809 2308 b4d5af9a2f6297b1a51190e1e4135389 "pdflatex"
+  "main.tex" 1777465120.16354 98371 cc5f4f41f002cac2562ad1b9eff8931b ""
+  "main.toc" 1777465129.91826 4516 307c8dbe5f879d58e77bcfb951c6dc14 "pdflatex"
   "preamble.tex" 1776412300.09634 2277 5ce0519a510ad6a3a75f3f59973e4738 ""
   (generated)
   "main.aux"
