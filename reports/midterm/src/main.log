@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.22)  29 APR 2026 11:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.22)  29 APR 2026 14:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1303,49 +1303,49 @@ LaTeX Font Info:    Trying to load font information for U+rsfs on input line 51.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
-<images/logo/lascala.png, id=187, 687.56876pt x 222.8325pt>
+<images/logo/lascala.png, id=183, 687.56876pt x 222.8325pt>
 File: images/logo/lascala.png Graphic file (type png)
 <use images/logo/lascala.png>
 Package pdftex.def Info: images/logo/lascala.png  used on input line 52.
 (pdftex.def)             Requested size: 149.24074pt x 48.36958pt.
-<images/logo/ijclab.jpg, id=189, 501.875pt x 379.4175pt>
+<images/logo/ijclab.jpg, id=185, 501.875pt x 379.4175pt>
 File: images/logo/ijclab.jpg Graphic file (type jpg)
 <use images/logo/ijclab.jpg>
 Package pdftex.def Info: images/logo/ijclab.jpg  used on input line 53.
 (pdftex.def)             Requested size: 63.97481pt x 48.36958pt.
-<images/logo/LogoGANIL.png, id=190, 271.0125pt x 57.816pt>
+<images/logo/LogoGANIL.png, id=186, 271.0125pt x 57.816pt>
 File: images/logo/LogoGANIL.png Graphic file (type png)
 <use images/logo/LogoGANIL.png>
 Package pdftex.def Info: images/logo/LogoGANIL.png  used on input line 54.
 (pdftex.def)             Requested size: 106.69933pt x 22.76228pt.
-<images/logo/cnrs.png, id=191, 1204.5pt x 1204.5pt>
+<images/logo/cnrs.png, id=187, 1204.5pt x 1204.5pt>
 File: images/logo/cnrs.png Graphic file (type png)
 <use images/logo/cnrs.png>
 Package pdftex.def Info: images/logo/cnrs.png  used on input line 55.
 (pdftex.def)             Requested size: 48.35558pt x 48.36958pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 85.
-<images/logo/saclay.png, id=192, 178.68758pt x 80.76172pt>
+<images/logo/saclay.png, id=188, 178.68758pt x 80.76172pt>
 File: images/logo/saclay.png Graphic file (type png)
 <use images/logo/saclay.png>
 Package pdftex.def Info: images/logo/saclay.png  used on input line 86.
 (pdftex.def)             Requested size: 62.9533pt x 28.45274pt.
-<images/logo/Uniroma1.svg.png, id=193, 3854.4pt x 1157.32375pt>
+<images/logo/Uniroma1.svg.png, id=189, 3854.4pt x 1157.32375pt>
 File: images/logo/Uniroma1.svg.png Graphic file (type png)
 <use images/logo/Uniroma1.svg.png>
 Package pdftex.def Info: images/logo/Uniroma1.svg.png  used on input line 87.
 (pdftex.def)             Requested size: 94.74828pt x 28.45274pt.
-<images/logo/szeged.png, id=194, 345.29pt x 146.5475pt>
+<images/logo/szeged.png, id=190, 345.29pt x 146.5475pt>
 File: images/logo/szeged.png Graphic file (type png)
 <use images/logo/szeged.png>
 Package pdftex.def Info: images/logo/szeged.png  used on input line 88.
 (pdftex.def)             Requested size: 67.03886pt x 28.45274pt.
-<images/logo/lund.png, id=195, 401.5pt x 200.75pt>
+<images/logo/lund.png, id=191, 401.5pt x 200.75pt>
 File: images/logo/lund.png Graphic file (type png)
 <use images/logo/lund.png>
 Package pdftex.def Info: images/logo/lund.png  used on input line 89.
 (pdftex.def)             Requested size: 56.90189pt x 28.45274pt.
-<images/logo/erasmus.png, id=196, 770.88pt x 220.57407pt>
+<images/logo/erasmus.png, id=192, 770.88pt x 220.57407pt>
 File: images/logo/erasmus.png Graphic file (type png)
 <use images/logo/erasmus.png>
 Package pdftex.def Info: images/logo/erasmus.png  used on input line 90.
@@ -1428,56 +1428,61 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 [22]
 
 [23]
-<images/generated/sample_phase_space_projections.png, id=593, 874.467pt x 875.1897pt>
+<images/generated/sample_phase_space_projections.png, id=588, 874.467pt x 875.1897pt>
 File: images/generated/sample_phase_space_projections.png Graphic file (type png)
 <use images/generated/sample_phase_space_projections.png>
-Package pdftex.def Info: images/generated/sample_phase_space_projections.png  used on input line 1276.
+Package pdftex.def Info: images/generated/sample_phase_space_projections.png  used on input line 1272.
 (pdftex.def)             Requested size: 405.7355pt x 406.07762pt.
-<images/generated/sample_varying_kf.png, id=594, 1091.9997pt x 297.0297pt>
+<images/generated/sample_varying_kf.png, id=589, 1091.9997pt x 297.0297pt>
 File: images/generated/sample_varying_kf.png Graphic file (type png)
 <use images/generated/sample_varying_kf.png>
-Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1288.
+Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1284.
 (pdftex.def)             Requested size: 418.96548pt x 113.9602pt.
+<images/generated/lambda_k_variation.png, id=590, 1091.9997pt x 297.0297pt>
+File: images/generated/lambda_k_variation.png Graphic file (type png)
+<use images/generated/lambda_k_variation.png>
+Package pdftex.def Info: images/generated/lambda_k_variation.png  used on input line 1306.
+(pdftex.def)             Requested size: 361.63776pt x 98.36908pt.
 
 
 [24]
 
 [25 <./images/generated/sample_phase_space_projections.png>]
-<images/generated/lambda_k_variation.png, id=608, 1091.9997pt x 297.0297pt>
-File: images/generated/lambda_k_variation.png Graphic file (type png)
-<use images/generated/lambda_k_variation.png>
-Package pdftex.def Info: images/generated/lambda_k_variation.png  used on input line 1310.
-(pdftex.def)             Requested size: 361.63776pt x 98.36908pt.
-<images/generated/parameter_space_mu.png, id=609, 875.1897pt x 586.1097pt>
+
+[26 <./images/generated/sample_varying_kf.png> <./images/generated/lambda_k_variation.png>]
+<images/generated/parameter_space_mu.png, id=614, 875.1897pt x 586.1097pt>
 File: images/generated/parameter_space_mu.png Graphic file (type png)
 <use images/generated/parameter_space_mu.png>
-Package pdftex.def Info: images/generated/parameter_space_mu.png  used on input line 1329.
+Package pdftex.def Info: images/generated/parameter_space_mu.png  used on input line 1325.
 (pdftex.def)             Requested size: 379.27551pt x 253.98978pt.
 
 
-[26 <./images/generated/sample_varying_kf.png> <./images/generated/lambda_k_variation.png>]
+[27 <./images/generated/parameter_space_mu.png>]
 File: images/generated/sample_varying_kf.png Graphic file (type png)
 <use images/generated/sample_varying_kf.png>
-Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1358.
+Package pdftex.def Info: images/generated/sample_varying_kf.png  used on input line 1354.
 (pdftex.def)             Requested size: 317.5333pt x 86.37207pt.
-
-
-[27 <./images/generated/parameter_space_mu.png>]
-<images/generated/line_pred_truth_xsuite.png, id=629, 875.1897pt x 369.2997pt>
+<images/generated/line_pred_truth_xsuite.png, id=624, 875.1897pt x 369.2997pt>
 File: images/generated/line_pred_truth_xsuite.png Graphic file (type png)
 <use images/generated/line_pred_truth_xsuite.png>
-Package pdftex.def Info: images/generated/line_pred_truth_xsuite.png  used on input line 1375.
+Package pdftex.def Info: images/generated/line_pred_truth_xsuite.png  used on input line 1371.
 (pdftex.def)             Requested size: 388.09775pt x 163.76024pt.
 
 
 [28 <./images/generated/line_pred_truth_xsuite.png>]
+<images/generated/training_pycolleff.png, id=634, 875.1897pt x 369.2997pt>
+File: images/generated/training_pycolleff.png Graphic file (type png)
+<use images/generated/training_pycolleff.png>
+Package pdftex.def Info: images/generated/training_pycolleff.png  used on input line 1384.
+(pdftex.def)             Requested size: 388.09775pt x 163.76024pt.
 
-[29]
+
+[29 <./images/generated/training_pycolleff.png>]
 
 [30]
 
 [31]
-Underfull \hbox (badness 2884) in paragraph at lines 1430--1430
+Underfull \hbox (badness 2884) in paragraph at lines 1439--1439
 []\T1/lmr/m/n/10.95 Jing Liu et al. \T1/lmr/m/it/10.95 A Sur-vey on Dif-fu-sion Mod-els for Anomaly De-tec-tion\T1/lmr/m/n/10.95 . en.
  []
 
@@ -1487,9 +1492,9 @@ Underfull \hbox (badness 2884) in paragraph at lines 1430--1430
 
 [33]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 1517.
+(Font)              <9> on input line 1526.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 1517.
+(Font)              <5> on input line 1526.
 
 
 [34]
@@ -1497,7 +1502,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [35]
 
 [36]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1666.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 1675.
 
 
 [37]
@@ -1518,24 +1523,24 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 603430412EB15175F57CD92A6D4F8F10;10137.
+(rerunfilecheck)             Checksum: 2BE676F9700C08D838832EDCC71A4176;10026.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 43181 strings out of 473190
- 829447 string characters out of 5715799
- 1749534 words of memory out of 5000000
- 65455 multiletter control sequences out of 15000+600000
+ 43188 strings out of 473190
+ 829778 string characters out of 5715799
+ 1749698 words of memory out of 5000000
+ 65462 multiletter control sequences out of 15000+600000
  663700 words of font info for 119 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 107i,17n,110p,2571b,2518s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 107i,17n,110p,2571b,2500s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/bbold-type1/bbold10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/bbold-type1/bbold7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (42 pages, 1576645 bytes).
+Output written on main.pdf (42 pages, 1644344 bytes).
 PDF statistics:
- 993 PDF objects out of 1000 (max. 8388607)
- 864 compressed objects within 9 object streams
+ 991 PDF objects out of 1000 (max. 8388607)
+ 860 compressed objects within 9 object streams
  299 named destinations out of 1000 (max. 500000)
- 443 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 440 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1245,10 +1245,6 @@ Given the importance of structure preservation in beam dynamics, it is also usef
 \end{equation}
 
 
-
-\paragraph{Summary.}
-The present framework therefore treats beam-dynamics learning as approximation of parameterized maps between phase-space states. This viewpoint is mathematically consistent with the neural-operator literature, computationally compatible with Xsuite-generated and collective-effects-libraries-generated data, and extensible from microscopic single-particle transport to nonlinear collective beam evolution.
-
 \subsection{Illustrative generated samples and first baseline results}
 \label{subsec:generated_data_results}
 
@@ -1378,6 +1374,19 @@ width, or tails may otherwise remain hidden.
     profile $\lambda_{\mathrm{out}}$ obtained from the Xsuite-generated data.}
     \label{fig:fno_prediction_examples}
 \end{figure}
+
+Training the implementation of the collective effects via pycolleff library follows a similar structure, with the difference that the reduced map is now a nonlinear operator that includes self-consistent interactions. The same diagnostics can be used to assess the quality of the generated data and of the first surrogate models trained on this data.
+
+
+\begin{figure}[htbp]
+    \centering
+    % Replace with the actual path to your figure
+    \includegraphics[width=0.88\textwidth]{images/generated/training_pycolleff.png}
+    \caption{Example training curves for the pycolleff implementation. The error is plotted in log scale to better visualize the convergence behavior.}
+    \label{fig:fno_prediction_pycolleff}
+\end{figure}
+
+
 
 \paragraph{Quantitative summary.}
 Finally, the baseline should be summarized with a small table of metrics measured on the held-out test set.

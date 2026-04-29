@@ -29,15 +29,14 @@
 \contentsline {subsubsection}{\numberline {3.3.2}Data-generation strategy with pycolleff}{21}{subsubsection.3.3.2}%
 \contentsline {subsubsection}{\numberline {3.3.3}Learning objectives}{22}{subsubsection.3.3.3}%
 \contentsline {subsubsection}{\numberline {3.3.4}Performance indicators and validation}{23}{subsubsection.3.3.4}%
-\contentsline {paragraph}{\numberline {3.3.4.1}Summary.}{23}{paragraph.3.3.4.1}%
 \contentsline {subsection}{\numberline {3.4}Illustrative generated samples and first baseline results}{23}{subsection.3.4}%
 \contentsline {subsubsection}{\numberline {3.4.1}Representative phase-space projections}{24}{subsubsection.3.4.1}%
 \contentsline {subsubsection}{\numberline {3.4.2}Reduced longitudinal representation}{24}{subsubsection.3.4.2}%
-\contentsline {subsubsection}{\numberline {3.4.3}Coverage of the sampled parameter space}{26}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.3}Coverage of the sampled parameter space}{24}{subsubsection.3.4.3}%
 \contentsline {subsubsection}{\numberline {3.4.4}First baseline results}{27}{subsubsection.3.4.4}%
-\contentsline {paragraph}{\numberline {3.4.4.1}Training curves.}{27}{paragraph.3.4.4.1}%
+\contentsline {paragraph}{\numberline {3.4.4.1}Training curves.}{28}{paragraph.3.4.4.1}%
 \contentsline {paragraph}{\numberline {3.4.4.2}Prediction versus reference profiles.}{28}{paragraph.3.4.4.2}%
-\contentsline {paragraph}{\numberline {3.4.4.3}Quantitative summary.}{28}{paragraph.3.4.4.3}%
+\contentsline {paragraph}{\numberline {3.4.4.3}Quantitative summary.}{29}{paragraph.3.4.4.3}%
 \contentsline {section}{\numberline {4}Conclusion et perspectives}{30}{section.4}%
 \contentsline {section}{\numberline {A}Annexe}{33}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Parametrized H\'enon Maps}{33}{subsection.A.1}%
