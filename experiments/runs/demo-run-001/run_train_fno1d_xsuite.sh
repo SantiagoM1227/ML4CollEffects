@@ -24,5 +24,5 @@ export NUMEXPR_NUM_THREADS=8
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
 
-export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:26:38.npz
-srun python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-001/train_fno1d_xsuite.py
+export DATASET_PATH=/home/martinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-28T09_46_07.npz
+python -u /home/martinez/ML4CollEffects/experiments/runs/demo-run-001/train_fno1d_xsuite.py
