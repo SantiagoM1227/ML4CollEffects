@@ -24,7 +24,7 @@ export NUMEXPR_NUM_THREADS=8
 # Let wrapper know how many CPUs are allocated
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
-export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:26:38.npz
-export CKPT_PATH=/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-001/models/fno1d_lambda_best.pt
+export DATASET_PATH=/home/martinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-28T09_46_07.npz
+export CKPT_PATH=/home/martinez/ML4CollEffects/experiments/runs/demo-run-001/models/fno1d_lambda_best.pt
 
-srun python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-001/eval_fno1d_observables.py
+python -u /home/martinez/ML4CollEffects/experiments/runs/demo-run-001/eval_fno1d_observables.py
