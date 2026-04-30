@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 10, in <module>
-    from data_generator_pycolleff import (
-ImportError: cannot import name 'generate_dataset_parallel' from 'data_generator_pycolleff' (/pbs/home/s/smartinez/ML4CollEffects/scripts/data_generator_pycolleff.py)
-srun: error: ccwslurm2048: task 0: Exited with exit code 1

@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 34, in <module>
-    main()
-  File "/pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_parallel.py", line 30, in main
-    data = generate_dataset(dataset_cfg, grid_cfg, ring_cfg, param_ranges, resonator_cfg, relax_cfg, n_jobs=n_jobs)
-TypeError: generate_dataset() got an unexpected keyword argument 'n_jobs'
-srun: error: ccwslurm2049: task 0: Exited with exit code 1
