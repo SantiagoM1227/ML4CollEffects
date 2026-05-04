@@ -22,6 +22,15 @@ from typing import Dict, Iterable, List, Literal, Optional, Tuple
 import numpy as np
 import xtrack as xt
 
+
+import os
+import re
+from pathlib import Path
+from cpymad.madx import Madx
+
+INCLUDE_RE = re.compile(r'^\s*(?:call|include)\s*,\s*file\s*=\s*["\']?([^,"\']+)["\']?', flags=re.IGNORECASE | re.MULTILINE)
+
+
 PHASE_SPACE_DIM = 6
 PHASE_SPACE_LABELS = ("x", "y", "zeta", "px", "py", "delta")
 
@@ -114,6 +123,166 @@ def apply_wake(lambda_z, W):
     n = len(lambda_z)
     return np.convolve(lambda_z, W, mode="same")
 
+def build_wake_kernel(zeta_grid: np.ndarray, wake_cfg) -> np.ndarray:
+    """Fallback wake builder (keeps your earlier semantics)."""
+    z = zeta_grid - zeta_grid.mean()
+    kind = getattr(wake_cfg, "kind", "gaussian")
+    if kind == "gaussian":
+        W = np.exp(-0.5 * (z / wake_cfg.sigma) ** 2)
+    elif kind == "exponential":
+        W = np.exp(-wake_cfg.decay * np.maximum(z, 0.0))
+    elif kind == "resonator":
+        W = np.sin(2 * np.pi * wake_cfg.freq * z) * np.exp(-np.abs(z) / wake_cfg.sigma)
+    else:
+        raise ValueError(f"Unknown wake kind: {kind}")
+    W = float(getattr(wake_cfg, "strength", 1.0)) * W
+    # normalize (same normalization as before)
+    W = W / (np.abs(W).sum() + 1e-12)
+    return W
+
+
+def load_impedance(
+    impedance: Optional[Union[str, Tuple[np.ndarray, np.ndarray]]],
+    density_cfg,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Resolve an impedance/wake specification into (zeta_grid, W).
+    impedance may be:
+      - None: returns (None, None)
+      - tuple (zeta_grid, W)
+      - path to .npz (keys: 'zeta_grid' and 'W' or 'wake') or .npy (W only)
+      - 1D numpy array W (then zeta_grid from density_cfg is used)
+    """
+    if impedance is None:
+        return None, None
+
+    # tuple already
+    if isinstance(impedance, tuple) and len(impedance) == 2:
+        zg, W = impedance
+        return np.asarray(zg), np.asarray(W)
+
+    # numpy array directly
+    if isinstance(impedance, np.ndarray):
+        nz = density_cfg.nz
+        zg = np.linspace(density_cfg.zeta_min, density_cfg.zeta_max, nz)
+        return zg, impedance
+
+    # path string
+    if isinstance(impedance, str) or isinstance(impedance, Path):
+        p = Path(impedance)
+        if not p.exists():
+            raise FileNotFoundError(f"Impedance file not found: {impedance}")
+        if p.suffix == ".npz":
+            d = np.load(str(p))
+            # common keys
+            if "zeta_grid" in d and ("W" in d or "wake" in d):
+                zg = d["zeta_grid"]
+                W = d.get("W", d.get("wake"))
+                return np.asarray(zg), np.asarray(W)
+            # fallback: keys 'z' and 'Z' etc.
+            if "z" in d and "W" in d:
+                return np.asarray(d["z"]), np.asarray(d["W"])
+            raise RuntimeError(f".npz does not contain recognized keys (zeta_grid,W) in {p}")
+        elif p.suffix == ".npy":
+            W = np.load(str(p))
+            nz = density_cfg.nz
+            zg = np.linspace(density_cfg.zeta_min, density_cfg.zeta_max, nz)
+            return zg, np.asarray(W)
+        else:
+            raise RuntimeError(f"Unsupported impedance file extension: {p.suffix}")
+
+    raise RuntimeError("Unsupported impedance spec. Provide (zeta_grid,W), np.array(W), or filepath to .npz/.npy")
+
+
+def track_with_collective_effects(
+    line: xt.Line,
+    z0: np.ndarray,
+    mu: np.ndarray,
+    density_cfg,
+    wake_cfg: Optional[object] = None,
+    impedance: Optional[Union[str, Tuple[np.ndarray, np.ndarray], np.ndarray]] = None,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    """
+    Track a particle cloud through 'line' then apply a longitudinal collective kick
+    derived from either wake_cfg (fallback) or a provided impedance/wake model.
+
+    Parameters
+    ----------
+    line : xtrack.Line
+        Tracker line to use for external transport.
+    z0 : ndarray, shape [Np,6]
+        Input cloud.
+    mu : ndarray-like
+        Parameter vector [Q_bunch, pipe_radius, impedance_scale] (used for scaling).
+    density_cfg: object
+        An object with attributes nz, zeta_min, zeta_max (same as your DensityGridConfig).
+    wake_cfg : optional
+        If impedance is None, wake_cfg is used to build a kernel (build_wake_kernel).
+    impedance : optional
+        If provided, used in preference to wake_cfg. Accepts (zeta_grid,W) tuple, path to .npz/.npy, or W array.
+    eps : float
+        small numerical constant.
+
+    Returns
+    -------
+    z1 : ndarray shape [Np,6]
+        Tracked cloud after external transport and delta kicks applied.
+    """
+    Q, a, Z_scale = mu
+
+    p = line.build_particles(
+        x=z0[:, 0],
+        y=z0[:, 1],
+        zeta=z0[:, 2],
+        px=z0[:, 3],
+        py=z0[:, 4],
+        delta=z0[:, 5],
+    )
+    line.track(p)
+    z1 = np.column_stack(
+        [
+            np.asarray(p.x),
+            np.asarray(p.y),
+            np.asarray(p.zeta),
+            np.asarray(p.px),
+            np.asarray(p.py),
+            np.asarray(p.delta),
+        ]
+    ).astype(np.float64)
+
+    if impedance is None and wake_cfg is None:
+        return z1
+
+    nz = density_cfg.nz
+    zeta_grid, lambda_z = None, None
+    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+
+    zg_imp, W_imp = load_impedance(impedance, density_cfg)
+    if zg_imp is None:
+        if wake_cfg is None:
+            raise RuntimeError("No wake_cfg provided and impedance not given; cannot compute wake kernel.")
+        W = build_wake_kernel(zeta_grid, wake_cfg)
+        zg = zeta_grid
+    else:
+        zg = np.asarray(zg_imp)
+        W = np.asarray(W_imp)
+        if zg.shape != zeta_grid.shape or not np.allclose(zg, zeta_grid):
+            W = np.interp(zeta_grid, zg, W)
+            zg = zeta_grid
+
+    W = W / (np.abs(W).sum() + eps)
+
+    wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+
+    delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
+
+    delta_kick *= (Q * Z_scale) / (a ** 2 + eps)
+
+    z1[:, 5] += delta_kick
+
+    return z1
+
 
 def build_line(lattice_cfg: LatticeConfig) -> Tuple[xt.Line, xt.Environment]:
     """Build a simple Xsuite line with three quadrupoles."""
@@ -143,6 +312,208 @@ def build_line(lattice_cfg: LatticeConfig) -> Tuple[xt.Line, xt.Environment]:
     line.particle_ref = part_ref
     line.build_tracker()
     return line, env
+
+def build_line_from_madx(
+    madx_file: str,
+    seq_name: str,
+    p0c_ev: float = 1e9,
+    mass0_ev: float | None = None,
+    verbose: bool = False,
+) -> "xtrack.Line":
+    """
+    Robust importer: load MAD-X via cpymad, find sequence (seq_name),
+    obtain element order (handles multiple cpymad variants), map common
+    MAD-X elements to xtrack elements, build tracker and return xtrack.Line.
+
+    Parameters
+    ----------
+    madx_file : str
+        Path to MAD-X file.
+    seq_name : str
+        Name of sequence to import.
+    p0c_ev : float
+        Reference momentum (eV).
+    mass0_ev : float | None
+        Particle rest energy in eV (if None, fallback to xt.PROTON_MASS_EV).
+    verbose : bool
+        Print mapping info/warnings.
+    """
+    from pathlib import Path
+    import warnings
+    from cpymad.madx import Madx
+    import xtrack as xt
+    import numpy as np
+
+    p = Path(madx_file)
+    if not p.exists():
+        raise FileNotFoundError(f"MAD-X file not found: {madx_file!r}")
+
+    mad = Madx()
+    mad.call(str(p))
+
+    if seq_name not in mad.sequence:
+        seqs = list(mad.sequence.keys())
+        lower_map = {s.lower(): s for s in seqs}
+        if seq_name.lower() in lower_map:
+            seq_name = lower_map[seq_name.lower()]
+            if verbose:
+                print(f"[build_line_from_madx] using case-insensitive match -> '{seq_name}'")
+        else:
+            raise RuntimeError(f"Sequence {seq_name!r} not found. Available: {seqs}")
+
+    seq = mad.sequence[seq_name]
+
+    names = []
+    try:
+        en = getattr(seq, "element_names", None)
+        if callable(en):
+            names = list(en())
+            if verbose:
+                print(f"[import] used seq.element_names() -> {len(names)} elements")
+    except Exception:
+        names = []
+
+    if not names:
+        try:
+            for elem in seq.elements:
+                nm = getattr(elem, "name", None)
+                if nm is None:
+                    nm = str(elem).split()[0]
+                names.append(str(nm))
+            if verbose:
+                print(f"[import] obtained names by iterating seq.elements -> {len(names)} elements")
+        except Exception:
+            names = []
+
+    if not names:
+        elems_obj = seq.elements
+        possible_attrs = ["_list", "_elems", "_dict", "_elements"]
+        found = False
+        for a in possible_attrs:
+            if hasattr(elems_obj, a):
+                container = getattr(elems_obj, a)
+                try:
+                    if isinstance(container, dict):
+                        names = list(container.keys())
+                    else:
+                        for e in container:
+                            nm = getattr(e, "name", None) or str(e).split()[0]
+                            names.append(str(nm))
+                    found = True
+                    if verbose:
+                        print(f"[import] obtained names from seq.elements.{a} -> {len(names)} elements")
+                    break
+                except Exception:
+                    continue
+        if not found:
+            try:
+                i = 0
+                while True:
+                    e = seq.elements[i]  # may raise
+                    nm = getattr(e, "name", None) or str(e).split()[0]
+                    names.append(str(nm))
+                    i += 1
+            except Exception:
+                pass
+
+    if not names:
+        raise RuntimeError(
+            "Could not determine element order from MAD-X sequence. "
+            "Try inspecting mad.sequence keys and seq.elements in an interactive session."
+        )
+
+    xt_elements = []
+    element_names = []
+    for ename in names:
+        try:
+            elem = seq.elements[ename]
+        except Exception:
+            found_elem = None
+            try:
+                for e in seq.elements:
+                    nm = getattr(e, "name", None) or str(e).split()[0]
+                    if str(nm) == str(ename):
+                        found_elem = e
+                        break
+            except Exception:
+                found_elem = None
+            if found_elem is None:
+                warnings.warn(f"[build_line_from_madx] element {ename!r} not accessible; inserting Drift(0.0)")
+                xt_elements.append(xt.Drift(length=0.0))
+                element_names.append(str(ename))
+                continue
+            elem = found_elem
+
+        etype_raw = getattr(elem, "_type", None) or getattr(elem, "type", None)
+        etype = str(etype_raw).lower() if etype_raw is not None else ""
+        length = float(getattr(elem, "l", 0.0) or 0.0)
+        k0 = getattr(elem, "k0", None)
+        k1 = getattr(elem, "k1", None)
+        k2 = getattr(elem, "k2", None)
+        angle = getattr(elem, "angle", None)
+
+        try:
+            if "drift" in etype or etype.strip() == "":
+                xel = xt.Drift(length=length)
+
+            elif "quad" in etype or "quadrupole" in etype:
+                k1f = float(k1) if k1 is not None else 0.0
+                xel = xt.Quadrupole(k1=k1f, length=length)
+
+            elif "rbend" in etype or "sbend" in etype or "bend" in etype or "dipole" in etype:
+                a = float(angle) if angle is not None else 0.0
+                xel = xt.Sbend(angle=a, length=length)
+
+            elif "marker" in etype:
+                xel = xt.Marker()
+
+            elif "multipole" in etype or "sext" in etype or "sextupole" in etype:
+                knl = {}
+                if k0 is not None:
+                    knl[0] = float(k0)
+                if k1 is not None:
+                    knl[1] = float(k1)
+                if k2 is not None:
+                    knl[2] = float(k2)
+                if hasattr(xt, "Multipole"):
+                    try:
+                        xel = xt.Multipole(knl=knl)
+                    except Exception:
+                        if verbose:
+                            warnings.warn(f"Multipole mapping for '{ename}' failed; using Drift({length})")
+                        xel = xt.Drift(length=length)
+                else:
+                    xel = xt.Drift(length=length)
+
+            elif "rf" in etype or "cavity" in etype:
+                if verbose:
+                    warnings.warn(f"RF/cavity element '{ename}' encountered — inserting Drift(length={length}) placeholder")
+                xel = xt.Drift(length=length)
+
+            else:
+                if verbose:
+                    warnings.warn(f"Element '{ename}' type '{etype}' not explicitly mapped; using Drift(length={length}) fallback")
+                xel = xt.Drift(length=length)
+
+        except Exception as ex:
+            warnings.warn(f"Error mapping element '{ename}': {ex}; using Drift(length={length}) fallback")
+            xel = xt.Drift(length=length)
+
+        xt_elements.append(xel)
+        element_names.append(str(ename))
+
+    xline = xt.Line(elements=xt_elements, element_names=element_names)
+
+    if mass0_ev is None:
+        mass0_ev = getattr(xt, "PROTON_MASS_EV", 938272088.0)
+    xline.particle_ref = xt.Particles(mass0=float(mass0_ev), p0c=float(p0c_ev))
+
+    xline.build_tracker()
+
+    if verbose:
+        print(f"[build_line_from_madx] built xtrack.Line with {len(xt_elements)} elements from seq '{seq_name}'")
+
+    return xline
 
 
 def _diag_sigmas(cfg: BeamFamilyConfig) -> np.ndarray:
@@ -256,17 +627,42 @@ def track_cloud(line: xt.Line, z0: np.ndarray) -> np.ndarray:
     line.track(p)
     return particles_to_6d(p)
 
+
 def track_with_collective_effects(
     line: xt.Line,
     z0: np.ndarray,
     mu: np.ndarray,
-    density_cfg: DensityGridConfig,
-    wake_cfg: Optional["WakeConfig"],
+    density_cfg,
+    wake_cfg: Optional[object] = None,
+    impedance: Optional[Union[str, Tuple[np.ndarray, np.ndarray], np.ndarray]] = None,
+    eps: float = 1e-12,
 ) -> np.ndarray:
     """
-    mu = [Q_bunch, pipe_radius, impedance_scale]
-    """
+    Track a particle cloud through 'line' then apply a longitudinal collective kick
+    derived from either wake_cfg (fallback) or a provided impedance/wake model.
 
+    Parameters
+    ----------
+    line : xtrack.Line
+        Tracker line to use for external transport.
+    z0 : ndarray, shape [Np,6]
+        Input cloud.
+    mu : ndarray-like
+        Parameter vector [Q_bunch, pipe_radius, impedance_scale] (used for scaling).
+    density_cfg: object
+        An object with attributes nz, zeta_min, zeta_max (same as your DensityGridConfig).
+    wake_cfg : optional
+        If impedance is None, wake_cfg is used to build a kernel (build_wake_kernel).
+    impedance : optional
+        If provided, used in preference to wake_cfg. Accepts (zeta_grid,W) tuple, path to .npz/.npy, or W array.
+    eps : float
+        small numerical constant.
+
+    Returns
+    -------
+    z1 : ndarray shape [Np,6]
+        Tracked cloud after external transport and delta kicks applied.
+    """
     Q, a, Z_scale = mu
 
     # --- track externally
@@ -279,32 +675,49 @@ def track_with_collective_effects(
         delta=z0[:, 5],
     )
     line.track(p)
+    z1 = np.column_stack(
+        [
+            np.asarray(p.x),
+            np.asarray(p.y),
+            np.asarray(p.zeta),
+            np.asarray(p.px),
+            np.asarray(p.py),
+            np.asarray(p.delta),
+        ]
+    ).astype(np.float64)
 
-    z1 = particles_to_6d(p)
-
-    if wake_cfg is None:
+    if impedance is None and wake_cfg is None:
         return z1
 
-    # --- density
+    nz = density_cfg.nz
+    zeta_grid, lambda_z = None, None
     zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
 
-    # --- wake kernel
-    W = build_wake_kernel(zeta_grid, wake_cfg)
+    zg_imp, W_imp = load_impedance(impedance, density_cfg)
+    if zg_imp is None:
+        if wake_cfg is None:
+            raise RuntimeError("No wake_cfg provided and impedance not given; cannot compute wake kernel.")
+        W = build_wake_kernel(zeta_grid, wake_cfg)
+        zg = zeta_grid
+    else:
+        zg = np.asarray(zg_imp)
+        W = np.asarray(W_imp)
+        if zg.shape != zeta_grid.shape or not np.allclose(zg, zeta_grid):
+            W = np.interp(zeta_grid, zg, W)
+            zg = zeta_grid
 
-    # --- convolution
-    wake_conv = np.fft.ifft(
-        np.fft.fft(lambda_z) * np.fft.fft(W)
-    ).real
+    W = W / (np.abs(W).sum() + eps)
 
-    # --- interpolate to particles
+    wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+
     delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
 
-    # --- scaling
-    delta_kick *= Q * Z_scale / (a**2 + 1e-12)
+    delta_kick *= (Q * Z_scale) / (a ** 2 + eps)
 
     z1[:, 5] += delta_kick
 
     return z1
+
 
 
 def cloud_moments(z: np.ndarray) -> Dict[str, np.ndarray]:
@@ -492,6 +905,72 @@ def default_beam_families() -> List[BeamFamilyConfig]:
     ]
 
 
+
+def madx_list_includes(madx_path: str):
+    """
+    Return list of filenames referenced by `call,file=...` or `include,file=...`
+    in the MAD-X file. Filenames are returned as they appear (may be relative).
+    """
+    p = Path(madx_path)
+    text = p.read_text()
+    return INCLUDE_RE.findall(text)
+
+from contextlib import contextmanager
+
+@contextmanager
+def pushd(path: Path):
+    cwd = Path.cwd()
+    try:
+        os.chdir(path)
+        yield
+    finally:
+        os.chdir(cwd)
+
+def build_line_from_madx_safe(madx_file: str, seq_name: str, verbose: bool = False):
+    """
+    Wrapper that checks includes and runs MAD-X with working dir set to the madx file parent.
+    Returns the cpymad.Madx instance (or raises RuntimeError with a helpful message).
+    """
+    p = Path(madx_file)
+    if not p.exists():
+        raise FileNotFoundError(f"MAD-X file not found: {madx_file}")
+
+    # list referenced include files and check for existence
+    includes = madx_list_includes(str(p))
+    missing = []
+    for inc in includes:
+        # treat relative path relative to MAD-X file directory
+        inc_path = (p.parent / inc).resolve()
+        if not inc_path.exists():
+            missing.append(str(inc_path))
+
+    if missing:
+        raise FileNotFoundError(
+            "MAD-X file references included files that do not exist when resolved relative to the MAD-X file directory:\n"
+            + "\n".join(missing)
+            + "\nEither provide those files or adjust the includes to absolute paths."
+        )
+
+    mad = Madx()
+    # run MAD-X with cwd set to madx parent so relative includes and generated .str files resolve
+    try:
+        with pushd(p.parent):
+            if verbose:
+                print(f"[build_line_from_madx_safe] running MAD-X in directory: {p.parent}")
+            mad.call(str(p.name))   # call by filename (cwd is parent)
+    except Exception as e:
+        # Provide additional diagnostics: print includes and current cwd
+        raise RuntimeError(
+            f"MAD-X failed when loading {madx_file!r} from cwd={Path.cwd()!s}. "
+            f"Referenced includes: {includes!r}. "
+            f"Original error: {e}"
+        ) from e
+
+    # If you want to return the mad instance for further inspection:
+    return mad
+
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate Xsuite datasets for neural operator learning.")
     parser.add_argument("--n-samples", type=int, default=512)
@@ -553,7 +1032,13 @@ def main() -> None:
     )
     beam_families = default_beam_families()
 
-    line, env = build_line(lattice_cfg)
+    
+    madx_path = "/home/martinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1/heb_ring_z.madx"
+    seq_name = "fcc_heb"
+    line = build_line_from_madx_safe(madx_path,
+                             seq_name=seq_name,
+                             verbose=True)
+
     data = build_datasets(
         line=line,
         env=env,

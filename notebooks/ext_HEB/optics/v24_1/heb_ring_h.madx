@@ -1,0 +1,43 @@
+!**********************************************************************
+title, "fcc-ee booster FODO version V24";
+!**********************************************************************
+! author, antoine chance, barbara dalena, university paris-saclay, cea;
+!**********************************************************************
+! email, antoine.chance@cea.fr;
+!**********************************************************************
+set, format="12d", "20.12g", "-18s";
+option, rbarc=false, warn,-info,-echo;
+
+!**********************************************************************
+!************************ SEQUENCE DEFINITION *************************
+!**********************************************************************
+call, file = "heb_ring_h.str";
+call, file = "heb_ring_h.ele";
+call, file = "heb_ring_h.seq";
+!**********************************************************************
+injection_mode = 0;
+with_radiate = 0;
+ON_RF800_5 = 1;
+
+pbeam_inj := 20.0;
+pbeam_top := 120.0;
+ebeam_inj := sqrt( pbeam_inj^2 + emass^2 );
+ebeam_top := sqrt( pbeam_top^2 + emass^2 );
+nbun := 380; npar := 1.000000e+10;
+
+ebeam := ebeam_inj*injection_mode + ebeam_top*(1-injection_mode);
+beam, particle = electron,
+npart = npar,
+kbunch = nbun,
+energy = ebeam,
+radiate = false;
+if (with_radiate ==1) then {beam->radiate = true;};
+
+select,flag=twiss,clear;
+select,flag=twiss,column=name,keyword,s,l,x,y,betx,bety,alfx,alfy,
+dx,dpx,dy,dpy,mux,muy,wx,wy,phix,phiy,ddx,ddpx,tilt,angle,
+k1l,k2l,dmux,dmuy;
+!**********************************************************************
+use, sequence = fcc_heb; 
+twiss, chrom, centre, file = "heb_ring_h.tfs";
+
