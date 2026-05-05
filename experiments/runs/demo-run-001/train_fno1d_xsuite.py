@@ -23,13 +23,13 @@ class TrainConfig:
     run_name: str = "fno1d_lambda"
 
     batch_size: int = 16
-    epochs: int = 100
+    epochs: int = 1000
     lr: float = 1e-3
     weight_decay: float = 1e-6
 
-    width: int = 64
-    modes: int = 16
-    depth: int = 4
+    width: int = 128
+    modes: int = 32
+    depth: int = 5
     hidden_proj: int = 128
 
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
