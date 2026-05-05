@@ -29,7 +29,7 @@ class Config:
 
     # stage A: token AE
     token_dim: int = 64
-    ae_epochs: int = 20
+    ae_epochs: int = 50
     ae_batch_size: int = 8
     ae_lr: float = 1e-3
     ae_train_samples: int = 400

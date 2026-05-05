@@ -113,7 +113,7 @@ class LatentFNO1d(nn.Module):
 
 
 # ----------------------------
-# Field builder (CPU numpy -> torch KDE like training)
+# Field builder 
 # ----------------------------
 def percentile_range(a: np.ndarray, lo=0.5, hi=99.5) -> Tuple[float, float]:
     return float(np.percentile(a, lo)), float(np.percentile(a, hi))
