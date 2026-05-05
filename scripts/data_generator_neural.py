@@ -17,16 +17,23 @@ import argparse
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Literal, Optional, Tuple
-
+from typing import Dict, Iterable, List, Literal, Optional, Tuple, Sequence
 import numpy as np
 import xtrack as xt
-
-
 import os
 import re
-from pathlib import Path
 from cpymad.madx import Madx
+import numpy as np
+from scipy.constants import physical_constants
+import warnings
+from contextlib import contextmanager
+
+
+
+
+
+
+####################################################################3
 
 INCLUDE_RE = re.compile(r'^\s*(?:call|include)\s*,\s*file\s*=\s*["\']?([^,"\']+)["\']?', flags=re.IGNORECASE | re.MULTILINE)
 
@@ -313,7 +320,108 @@ def build_line(lattice_cfg: LatticeConfig) -> Tuple[xt.Line, xt.Environment]:
     line.build_tracker()
     return line, env
 
+@contextmanager
+def pushd(path: Path):
+    old = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old)
+
+
+def _is_missing_file_error(exc: Exception, filename: str) -> bool:
+    msg = str(exc).lower()
+    return ("cannot open input file" in msg) and (filename.lower() in msg)
+
+
+def run_madx_driver_with_bootstrap(
+    workdir: str | Path,
+    driver_madx: str,
+    *,
+    bootstrap_madx: Optional[str] = None,
+    bootstrap_candidates: Sequence[str] = ("generate.madx","make.madx","build.madx","export.madx","run.madx"),
+    verbose: bool = True,
+) -> Madx:
+    workdir = Path(workdir).expanduser().resolve()
+    driver_path = (workdir / driver_madx).resolve()
+    if not driver_path.exists():
+        raise FileNotFoundError(f"Driver MAD-X file not found: {driver_path}")
+
+    def pushd(path: Path):
+        class _Ctx:
+            def __enter__(self):
+                self.old = Path.cwd()
+                os.chdir(path)
+                return self
+            def __exit__(self, exc_type, exc, tb):
+                os.chdir(self.old)
+        return _Ctx()
+
+    def call_file(mad: Madx, file_path: Path):
+        file_path = Path(file_path).resolve()
+        with pushd(workdir):
+            if verbose:
+                print(f"[MAD-X] python_cwd={Path.cwd()}")
+                print(f"[MAD-X] calling_abs={file_path}")
+                print(f"[MAD-X] exists={file_path.exists()} readable={os.access(file_path, os.R_OK)}")
+            mad.call(str(file_path))   # ABSOLUTE
+
+    mad = Madx()
+    try:
+        call_file(mad, driver_path)
+        return mad
+    except Exception as e:
+        msg = str(e).lower()
+
+        def missing(name: str) -> bool:
+            return ("cannot open input file" in msg) and (name.lower() in msg)
+
+        missing_sidecar = None
+        for f in (f"{driver_path.stem}.str", f"{driver_path.stem}.seq", f"{driver_path.stem}.ele"):
+            if missing(f):
+                missing_sidecar = f
+                break
+
+        if missing_sidecar is None:
+            raise RuntimeError(f"MAD-X failed running {driver_path}: {e}") from e
+
+        if verbose:
+            print(f"[MAD-X] detected missing sidecar: {missing_sidecar}")
+
+        if bootstrap_madx is not None:
+            boot_path = (workdir / bootstrap_madx).resolve()
+            if not boot_path.exists():
+                raise FileNotFoundError(f"bootstrap_madx not found: {boot_path}")
+        else:
+            boot_path = None
+            for cand in bootstrap_candidates:
+                p = (workdir / cand)
+                if p.exists():
+                    boot_path = p.resolve()
+                    break
+
+        if boot_path is None:
+            raise FileNotFoundError(
+                f"Missing sidecar {missing_sidecar!r} required by {driver_path.name}.\n"
+                f"workdir={workdir}\n"
+                f"Provide bootstrap_madx=... that generates it, or generate/copy it into workdir."
+            )
+
+        if verbose:
+            print(f"[MAD-X] running bootstrap: {boot_path}")
+
+        mad2 = Madx()
+        call_file(mad2, boot_path)
+
+        mad3 = Madx()
+        call_file(mad3, driver_path)
+        return mad3
+
+
+
 def build_line_from_madx(
+    workdir : str,
     madx_file: str,
     seq_name: str,
     p0c_ev: float = 1e9,
@@ -338,19 +446,20 @@ def build_line_from_madx(
     verbose : bool
         Print mapping info/warnings.
     """
-    from pathlib import Path
-    import warnings
-    from cpymad.madx import Madx
-    import xtrack as xt
-    import numpy as np
+    
 
-    p = Path(madx_file)
-    if not p.exists():
-        raise FileNotFoundError(f"MAD-X file not found: {madx_file!r}")
+    # Start MAD-X
 
     mad = Madx()
-    mad.call(str(p))
+    os.chdir(workdir)
 
+    # Bootstrap
+    mad = run_madx_driver_with_bootstrap(
+        workdir=workdir,
+        driver_madx=madx_file,
+        bootstrap_madx=None,   
+        verbose=True,
+    )
     if seq_name not in mad.sequence:
         seqs = list(mad.sequence.keys())
         lower_map = {s.lower(): s for s in seqs}
@@ -749,7 +858,6 @@ def line_density_from_cloud(
 
 def build_datasets(
     line: xt.Line,
-    env: xt.Environment,
     dataset_cfg: DatasetConfig,
     density_cfg: DensityGridConfig,
     param_ranges: ParameterRanges,
@@ -926,48 +1034,6 @@ def pushd(path: Path):
     finally:
         os.chdir(cwd)
 
-def build_line_from_madx_safe(madx_file: str, seq_name: str, verbose: bool = False):
-    """
-    Wrapper that checks includes and runs MAD-X with working dir set to the madx file parent.
-    Returns the cpymad.Madx instance (or raises RuntimeError with a helpful message).
-    """
-    p = Path(madx_file)
-    if not p.exists():
-        raise FileNotFoundError(f"MAD-X file not found: {madx_file}")
-
-    # list referenced include files and check for existence
-    includes = madx_list_includes(str(p))
-    missing = []
-    for inc in includes:
-        # treat relative path relative to MAD-X file directory
-        inc_path = (p.parent / inc).resolve()
-        if not inc_path.exists():
-            missing.append(str(inc_path))
-
-    if missing:
-        raise FileNotFoundError(
-            "MAD-X file references included files that do not exist when resolved relative to the MAD-X file directory:\n"
-            + "\n".join(missing)
-            + "\nEither provide those files or adjust the includes to absolute paths."
-        )
-
-    mad = Madx()
-    # run MAD-X with cwd set to madx parent so relative includes and generated .str files resolve
-    try:
-        with pushd(p.parent):
-            if verbose:
-                print(f"[build_line_from_madx_safe] running MAD-X in directory: {p.parent}")
-            mad.call(str(p.name))   # call by filename (cwd is parent)
-    except Exception as e:
-        # Provide additional diagnostics: print includes and current cwd
-        raise RuntimeError(
-            f"MAD-X failed when loading {madx_file!r} from cwd={Path.cwd()!s}. "
-            f"Referenced includes: {includes!r}. "
-            f"Original error: {e}"
-        ) from e
-
-    # If you want to return the mad instance for further inspection:
-    return mad
 
 
 
@@ -1032,16 +1098,18 @@ def main() -> None:
     )
     beam_families = default_beam_families()
 
-    
-    madx_path = "/home/martinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1/heb_ring_z.madx"
+    working_dir = "/home/martinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1"
+    madx_file= "heb_ring_z.madx"
     seq_name = "fcc_heb"
-    line = build_line_from_madx_safe(madx_path,
+
+    line = build_line_from_madx(workdir=working_dir,
+                             madx_file= madx_file,
                              seq_name=seq_name,
+                             p0c_ev=1e9,
                              verbose=True)
 
     data = build_datasets(
         line=line,
-        env=env,
         dataset_cfg=dataset_cfg,
         density_cfg=density_cfg,
         param_ranges=param_ranges,
