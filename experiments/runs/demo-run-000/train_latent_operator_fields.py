@@ -28,9 +28,9 @@ class Config:
     sigma_steps: float = 2.0  # sigma = sigma_steps * grid_step
 
     # stage A: token AE
-    token_dim: int = 64
+    token_dim: int = 128
     ae_epochs: int = 50
-    ae_batch_size: int = 8
+    ae_batch_size: int = 16
     ae_lr: float = 1e-3
     ae_train_samples: int = 400
     ae_val_samples: int = 100

@@ -81,7 +81,6 @@ def main():
 
     data = build_datasets(
         line=line,
-        env=env,
         dataset_cfg=dataset_cfg,
         density_cfg=density_cfg,
         param_ranges=param_ranges,
