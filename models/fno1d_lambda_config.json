@@ -1,5 +1,5 @@
 {
-  "dataset_path": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:26:38.npz",
+  "dataset_path": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-06T09:07:30.npz",
   "out_dir": "./models",
   "run_name": "fno1d_lambda",
   "batch_size": 16,
