@@ -144,7 +144,11 @@ class FNO1d(nn.Module):
             x = block(x)
         x = self.act(self.proj1(x))
         x = self.proj2(x)
-        return x[:, 0, :]           # [B, N]
+        out = x[:, 0, :]               # [B, Nz]
+        out = torch.nn.functional.softplus(out)  # enforce positivity
+        # normalize mass to 1 using zeta grid spacing (approx constant)
+        return out
+
 
 
 # ----------------------------

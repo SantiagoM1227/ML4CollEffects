@@ -1,6 +1,6 @@
 {
   "split": "test",
   "n_samples": 51,
-  "mse_latent": 138413594.27450982,
+  "mse_latent": 138413594.03921568,
   "mse_field": 110382256208.31372
 }

@@ -248,7 +248,94 @@ def field_observables(field: np.ndarray) -> Dict[str, float]:
         out[f"{nm}_sigma_u"] = su
         out[f"{nm}_sigma_v"] = sv
     return out
+def plane_moments_from_density(
+    f2d: np.ndarray,
+    u_grid: np.ndarray,
+    v_grid: np.ndarray,
+    eps: float = 1e-12,
+) -> Dict[str, float]:
+    """
+    Compute physical moments from a 2D density on a regular grid.
+    Returns mean_u, mean_v, sigma_u, sigma_v, cov_uv, corr_uv.
+    """
+    f = np.clip(f2d.astype(np.float64), 0.0, None)
 
+    du = (u_grid[-1] - u_grid[0]) / max(1, len(u_grid) - 1)
+    dv = (v_grid[-1] - v_grid[0]) / max(1, len(v_grid) - 1)
+
+    mass = f.sum() * du * dv + eps
+    p = f / mass
+
+    U, V = np.meshgrid(u_grid, v_grid, indexing="ij")  # [H,W]
+
+    mu_u = float((U * p).sum() * du * dv)
+    mu_v = float((V * p).sum() * du * dv)
+
+    var_u = float(((U - mu_u) ** 2 * p).sum() * du * dv)
+    var_v = float(((V - mu_v) ** 2 * p).sum() * du * dv)
+    cov_uv = float(((U - mu_u) * (V - mu_v) * p).sum() * du * dv)
+
+    sig_u = float(np.sqrt(max(var_u, 0.0)))
+    sig_v = float(np.sqrt(max(var_v, 0.0)))
+    corr = float(cov_uv / (sig_u * sig_v + eps))
+
+    return {
+        "mass": float(mass),
+        "mean_u": mu_u,
+        "mean_v": mu_v,
+        "sigma_u": sig_u,
+        "sigma_v": sig_v,
+        "cov_uv": cov_uv,
+        "corr_uv": corr,
+    }
+
+
+def sixd_like_observables_from_field(field_3chw: np.ndarray, fb: FieldBuilder) -> Dict[str, float]:
+    """
+    Convert your 3 planes (x,px), (y,py), (zeta,delta) into 6D-like
+    observables: means and sigmas for x,px,y,py,zeta,delta.
+    Also returns per-plane correlation coefficients.
+    """
+    # planes
+    xpx = field_3chw[0]
+    ypy = field_3chw[1]
+    zd  = field_3chw[2]
+
+    # physical grids (torch -> numpy)
+    x  = fb.x_grid.detach().cpu().numpy()
+    px = fb.px_grid.detach().cpu().numpy()
+    y  = fb.y_grid.detach().cpu().numpy()
+    py = fb.py_grid.detach().cpu().numpy()
+    z  = fb.z_grid.detach().cpu().numpy()
+    d  = fb.d_grid.detach().cpu().numpy()
+
+    mxpx = plane_moments_from_density(xpx, x, px)
+    mypy = plane_moments_from_density(ypy, y, py)
+    mzd  = plane_moments_from_density(zd,  z, d)
+
+    out = {
+        # centroids
+        "mean_x": mxpx["mean_u"],
+        "mean_px": mxpx["mean_v"],
+        "mean_y": mypy["mean_u"],
+        "mean_py": mypy["mean_v"],
+        "mean_zeta": mzd["mean_u"],
+        "mean_delta": mzd["mean_v"],
+
+        # sigmas
+        "sigma_x": mxpx["sigma_u"],
+        "sigma_px": mxpx["sigma_v"],
+        "sigma_y": mypy["sigma_u"],
+        "sigma_py": mypy["sigma_v"],
+        "sigma_zeta": mzd["sigma_u"],
+        "sigma_delta": mzd["sigma_v"],
+
+        # per-plane correlations (optional but useful)
+        "corr_x_px": mxpx["corr_uv"],
+        "corr_y_py": mypy["corr_uv"],
+        "corr_zeta_delta": mzd["corr_uv"],
+    }
+    return out
 
 # ----------------------------
 # Plot helpers
@@ -331,6 +418,12 @@ class EvalCfg:
 
 
 def main():
+
+    sixd_keys = None
+    sixd_true: Dict[str, List[float]] = {}
+    sixd_pred: Dict[str, List[float]] = {}
+
+
     cfg = EvalCfg(
         dataset_path=os.environ.get("DATASET_PATH", ""),
         token_ae_ckpt=os.environ.get("TOKEN_AE_CKPT", ""),
@@ -409,6 +502,19 @@ def main():
                 obs_t = field_observables(Fout_np[i])
                 obs_p = field_observables(Fhat_np[i])
 
+                s6_t = sixd_like_observables_from_field(Fout_np[i], fb)
+                s6_p = sixd_like_observables_from_field(Fhat_np[i], fb)
+
+                if sixd_keys is None:
+                    sixd_keys = sorted(list(s6_t.keys()))
+                    for k in sixd_keys:
+                        sixd_true[k] = []
+                        sixd_pred[k] = []
+
+                for k in sixd_keys:
+                    sixd_true[k].append(float(s6_t[k]))
+                    sixd_pred[k].append(float(s6_p[k]))
+
                 if obs_keys is None:
                     obs_keys = sorted(list(obs_t.keys()))
                     for k in obs_keys:
@@ -431,6 +537,10 @@ def main():
                     row[f"{k}_abs_err"] = float(obs_p[k] - obs_t[k])
                 rows.append(row)
 
+                for k in sixd_keys:
+                    row[f"{k}_true"] = float(s6_t[k])
+                    row[f"{k}_pred"] = float(s6_p[k])
+
     metrics = {
         "split": cfg.split,
         "n_samples": int(n),
@@ -452,6 +562,14 @@ def main():
     for k in obs_keys or []:
         save_hist(true_store[k], pred_store[k], os.path.join(cfg.out_dir, f"hist_{k}.png"), k)
         save_scatter(true_store[k], pred_store[k], os.path.join(cfg.out_dir, f"scatter_{k}.png"), k)
+    
+    for k in sixd_keys or []:
+        save_scatter(
+            sixd_true[k],
+            sixd_pred[k],
+            os.path.join(cfg.out_dir, f"scatter_6d_{k}.png"),
+            f"6D-like {k}",
+        )
 
     # example images
     # pick a few deterministic samples: first 5 in split

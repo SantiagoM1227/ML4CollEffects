@@ -1040,7 +1040,7 @@ def pushd(path: Path):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate Xsuite datasets for neural operator learning.")
     parser.add_argument("--n-samples", type=int, default=512)
-    parser.add_argument("--particles-per-sample", type=int, default=1024)
+    parser.add_argument("--particles-per-sample", type=int, default=2048)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=str, default="./data/neural")
     parser.add_argument("--nz", type=int, default=256)
@@ -1098,7 +1098,7 @@ def main() -> None:
     )
     beam_families = default_beam_families()
 
-    working_dir = "/home/martinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1"
+    working_dir = "/pbs/home/s/smartinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1"
     madx_file= "heb_ring_z.madx"
     seq_name = "fcc_heb"
 

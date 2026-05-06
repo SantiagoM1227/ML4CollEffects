@@ -28,13 +28,89 @@ class EvalConfig:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     # FNO architecture (must match training)
-    in_channels: int = 5
-    width: int = 64
-    modes: int = 16
-    depth: int = 4
+    in_channels: int = 5  # [lambda_in, mu1, mu2, mu3, zeta]
+    width: int = 128
+    modes: int = 32
+    depth: int = 5
     hidden_proj: int = 128
 
     eps: float = 1e-12
+
+# ----------------------------
+# Helpers
+# ----------------------------
+
+def save_mean_density(z, Yt, Yp, out_path, title="Mean line density"):
+    mt = Yt.mean(axis=0)
+    mp = Yp.mean(axis=0)
+    plt.figure(figsize=(7,4))
+    plt.plot(z, mt, label="true mean")
+    plt.plot(z, mp, label="pred mean", linestyle="--")
+    plt.title(title)
+    plt.xlabel("zeta")
+    plt.ylabel("lambda(zeta)")
+    plt.grid(alpha=0.3)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+
+def save_mean_residual(z, R, out_path, title="Mean residual"):
+    mr = R.mean(axis=0)
+    plt.figure(figsize=(7,4))
+    plt.plot(z, mr)
+    plt.axhline(0.0, color="k", lw=1)
+    plt.title(title)
+    plt.xlabel("zeta")
+    plt.ylabel("pred - true")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+
+def save_rmse_vs_z(z, R, out_path, title="RMSE vs zeta"):
+    rmse = np.sqrt((R**2).mean(axis=0))
+    plt.figure(figsize=(7,4))
+    plt.plot(z, rmse)
+    plt.title(title)
+    plt.xlabel("zeta")
+    plt.ylabel("RMSE")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+
+def save_residual_hist(R, out_path, bins=100, title="Residual histogram (all z, all samples)"):
+    r = R.ravel()
+    plt.figure(figsize=(7,4))
+    plt.hist(r, bins=bins, density=True, alpha=0.8)
+    plt.axvline(0.0, color="k", lw=1)
+    plt.title(title)
+    plt.xlabel("pred - true")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
+
+def save_residual_heatmap(z, R, out_path, title="Residual heatmap (samples x zeta)"):
+    # sort samples by mean_zeta of truth (optional; makes structure visible)
+    # here: no sorting, just raw order
+    plt.figure(figsize=(9,4))
+    plt.imshow(R, aspect="auto", origin="lower",
+               extent=[z[0], z[-1], 0, R.shape[0]],
+               cmap="RdBu_r")
+    plt.colorbar(label="pred - true")
+    plt.title(title)
+    plt.xlabel("zeta")
+    plt.ylabel("sample index")
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
+
 
 
 # ----------------------------
@@ -128,7 +204,11 @@ class FNO1d(nn.Module):
             x = block(x)
         x = self.act(self.proj1(x))
         x = self.proj2(x)
-        return x[:, 0, :]           # [B, N]
+
+        out = x[:, 0, :]               # [B, Nz]
+        out = torch.nn.functional.softplus(out)  # enforce positivity
+        # normalize mass to 1 using zeta grid spacing (approx constant)
+        return out
 
 
 # ----------------------------
@@ -151,7 +231,7 @@ def moments_from_lambda(lam: np.ndarray, z: np.ndarray, eps: float = 1e-12) -> D
 
     mean = float(np.sum(z * lamn) * dz)
     var = float(np.sum((z - mean) ** 2 * lamn) * dz)
-    rms = np.sqrt(max(var, 0.0))
+    rms = float(np.sqrt(max(var, 0.0)))
 
     m3 = float(np.sum((z - mean) ** 3 * lamn) * dz)
     m4 = float(np.sum((z - mean) ** 4 * lamn) * dz)
@@ -187,6 +267,28 @@ def compare_obs(true_obs: Dict[str, float], pred_obs: Dict[str, float], eps: flo
         out[f"{k}_rel_err"] = float((p - t) / (abs(t) + eps))
     return out
 
+
+def save_curve_and_residual(z, y_true, y_pred, out_path, title=""):
+    plt.figure(figsize=(9, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(z, y_true, label="true")
+    plt.plot(z, y_pred, label="pred", linestyle="--")
+    plt.title(title or "lambda(zeta)")
+    plt.xlabel("zeta")
+    plt.grid(alpha=0.3)
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    r = y_pred - y_true
+    plt.plot(z, r)
+    plt.axhline(0.0, color="k", lw=1)
+    plt.title("residual (pred-true)")
+    plt.xlabel("zeta")
+    plt.grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
 
 # ----------------------------
 # Evaluation + plotting
@@ -224,7 +326,8 @@ def save_scatter(x, y, name: str, out_dir: str):
 
 def main():
     
-
+    y_true_all = []
+    y_pred_all = []
     cfg = EvalConfig(
         dataset_path=os.environ.get("DATASET_PATH", ""),
         checkpoint_path=os.environ.get("CKPT_PATH", ""),
@@ -275,18 +378,44 @@ def main():
             for i in range(y_true_np.shape[0]):
                 obs_t = moments_from_lambda(y_true_np[i], zeta_grid, cfg.eps)
                 obs_p = moments_from_lambda(y_pred_np[i], zeta_grid, cfg.eps)
+                lam_t, _ = normalize_lambda(y_true_np[i], zeta_grid, cfg.eps)
+                lam_p, _ = normalize_lambda(y_pred_np[i], zeta_grid, cfg.eps)
+                y_true_all.append(lam_t)
+                y_pred_all.append(lam_p)
 
                 for k in obs_keys:
                     true_vals[k].append(obs_t[k])
                     pred_vals[k].append(obs_p[k])
 
                 row = {
-                    "kf1": mu_np[i, 0],
-                    "kd1": mu_np[i, 1],
-                    "kf2": mu_np[i, 2],
+                    "mu1": mu_np[i, 0],
+                    "mu1": mu_np[i, 1],
+                    "mu2": mu_np[i, 2],
                 }
                 row.update(compare_obs(obs_t, obs_p, cfg.eps))
                 all_rows.append(row)
+                ex_dir = os.path.join(cfg.out_dir, "examples")
+                ensure_dir(ex_dir)
+
+                if len(all_rows) < 20:  # first 20 samples
+                    save_curve_and_residual(
+                        zeta_grid,
+                        y_true_np[i],
+                        y_pred_np[i],
+                        out_path=os.path.join(ex_dir, f"sample_{len(all_rows):04d}.png"),
+                        title=f"{cfg.split} sample {len(all_rows)}"
+                    )
+    
+    Yt = np.stack(y_true_all, axis=0)   # [Ns, Nz]
+    Yp = np.stack(y_pred_all, axis=0)   # [Ns, Nz]
+    R = Yp - Yt                         # residuals
+
+    # --- Line density aggregate plots (truth vs pred)
+    save_mean_density(zeta_grid, Yt, Yp, os.path.join(cfg.out_dir, f"lambda_mean_{cfg.split}.png"))
+    save_mean_residual(zeta_grid, R, os.path.join(cfg.out_dir, f"lambda_mean_residual_{cfg.split}.png"))
+    save_rmse_vs_z(zeta_grid, R, os.path.join(cfg.out_dir, f"lambda_rmse_vs_z_{cfg.split}.png"))
+    save_residual_hist(R, os.path.join(cfg.out_dir, f"lambda_residual_hist_{cfg.split}.png"))
+    save_residual_heatmap(zeta_grid, R, os.path.join(cfg.out_dir, f"lambda_residual_heatmap_{cfg.split}.png"))
 
     # Save CSV
     csv_path = os.path.join(cfg.out_dir, f"observables_{cfg.split}.csv")
