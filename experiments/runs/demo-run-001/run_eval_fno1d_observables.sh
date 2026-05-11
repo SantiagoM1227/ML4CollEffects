@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=observables-xsuite
-#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/observables-xsuite-%j.out
-#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/observables-xsuite-%j.err
+#SBATCH --job-name=eval-fno1d
+#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/eval-fno1d-%j.out
+#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/eval-fno1d-%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G

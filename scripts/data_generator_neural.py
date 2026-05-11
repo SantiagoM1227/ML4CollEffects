@@ -263,7 +263,7 @@ def track_with_collective_effects(
 
     nz = density_cfg.nz
     zeta_grid, lambda_z = None, None
-    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+    zeta_grid, lambda_z = line_density_from_cloud_kde(z1, density_cfg)
 
     zg_imp, W_imp = load_impedance(impedance, density_cfg)
     if zg_imp is None:
@@ -287,6 +287,7 @@ def track_with_collective_effects(
     delta_kick *= (Q * Z_scale) / (a ** 2 + eps)
 
     z1[:, 5] += delta_kick
+
 
     return z1
 
@@ -624,6 +625,26 @@ def build_line_from_madx(
 
     return xline
 
+def subline_by_index(line: xt.Line, n_i: int, n_f: int) -> xt.Line:
+    """
+    Return a new line containing elements [n_i:n_f] (python slicing semantics).
+    Keeps the same particle_ref.
+    """
+    if n_i < 0 or n_f > len(line.element_names) or n_i >= n_f:
+        raise ValueError(f"Bad slice n_i={n_i}, n_f={n_f}, n_elem={len(line.element_names)}")
+
+    names = line.element_names[n_i:n_f]
+    elements = [line.element_dict[nm] for nm in names]
+    sub = xt.Line(elements=elements, element_names=list(names))
+    sub.particle_ref = line.particle_ref
+    sub.build_tracker()
+    return sub
+
+def chunk_bounds(n_elem: int, n_chunks: int, k: int) -> tuple[int, int]:
+    edges = np.linspace(0, n_elem, n_chunks + 1).astype(int)
+    return int(edges[k]), int(edges[k+1])
+
+
 
 def _diag_sigmas(cfg: BeamFamilyConfig) -> np.ndarray:
     return np.array(
@@ -718,13 +739,10 @@ def sample_parameters(
         dtype=np.float64,
     )
 
-"""def set_lattice_parameters(env: xt.Environment, mu: np.ndarray) -> None:
-    env["kf1"] = float(mu[0])
-    env["kd1"] = float(mu[1])
-    env["kf2"] = float(mu[2])
-"""
 
-def track_cloud(line: xt.Line, z0: np.ndarray) -> np.ndarray:
+def track_cloud(line: xt.Line, z0: np.ndarray, n_i: int = 0, n_f: int | None = None) -> np.ndarray:
+    
+    
     p = line.build_particles(
         x=z0[:, 0],
         y=z0[:, 1],
@@ -800,7 +818,7 @@ def track_with_collective_effects(
 
     nz = density_cfg.nz
     zeta_grid, lambda_z = None, None
-    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+    zeta_grid, lambda_z = line_density_from_cloud_kde(z1, density_cfg)
 
     zg_imp, W_imp = load_impedance(impedance, density_cfg)
     if zg_imp is None:
@@ -835,26 +853,52 @@ def cloud_moments(z: np.ndarray) -> Dict[str, np.ndarray]:
     return {"centroid": centroid, "cov": cov}
 
 
-def line_density_from_cloud(
+def line_density_from_cloud_kde(
     z: np.ndarray,
-    density_cfg: DensityGridConfig,
-) -> Tuple[np.ndarray, np.ndarray]:
-    """Return (bin_centers, normalized_histogram) for zeta marginal."""
-    hist, edges = np.histogram(
-        z[:, 2],
-        bins=density_cfg.nz,
-        range=(density_cfg.zeta_min, density_cfg.zeta_max),
-        density=False,
-    )
+    density_cfg,
+    *,
+    sigma: float | None = None,
+    sigma_bins: float = 1.5,   # sigma = sigma_bins * dz if sigma not provided
+    clip_range: bool = True,
+    return_diag: bool = False,
+    eps: float = 1e-12,
+):
+    edges = np.linspace(density_cfg.zeta_min, density_cfg.zeta_max, density_cfg.nz + 1)
+    dz = float(edges[1] - edges[0])
     centers = 0.5 * (edges[:-1] + edges[1:])
-    hist = hist.astype(np.float64)
-    if density_cfg.normalize_density:
-        dz = (density_cfg.zeta_max - density_cfg.zeta_min) / density_cfg.nz
-        norm = hist.sum() * dz
-        if norm > 0:
-            hist = hist / norm
-    return centers, hist
 
+    zeta = z[:, 2].astype(np.float64)
+
+    # diagnostics about clipping
+    frac_outside = float(np.mean((zeta < edges[0]) | (zeta > edges[-1])))
+
+    if clip_range:
+        zeta_use = zeta[(zeta >= edges[0]) & (zeta <= edges[-1])]
+    else:
+        zeta_use = zeta
+
+    if zeta_use.size == 0:
+        lam = np.zeros_like(centers)
+        if return_diag:
+            return centers, lam, LambdaDiagnostics(frac_outside=frac_outside, mass_in_range=0.0, dz=dz)
+        return centers, lam
+
+    if sigma is None:
+        sigma = sigma_bins * dz
+
+    # KDE: lam[j] = mean_i N(centers[j] | zeta_i, sigma)
+    # shape: (Nz, Np)
+    diff = (centers[:, None] - zeta_use[None, :]) / (sigma + eps)
+    w = np.exp(-0.5 * diff**2)  # (Nz, Np)
+    lam = w.mean(axis=1)        # (Nz,)
+
+    # normalize as PDF: ∫ lam dz = 1
+    mass_in_range = float(lam.sum() * dz)
+    lam = lam / (mass_in_range + eps)
+
+    if return_diag:
+        return centers, lam, LambdaDiagnostics(frac_outside=frac_outside, mass_in_range=mass_in_range, dz=dz)
+    return centers, lam
 
 def build_datasets(
     line: xt.Line,
@@ -906,11 +950,20 @@ def build_datasets(
             mu_all.append(mu.astype(np.float32))
 
         if dataset_cfg.save_density_dataset:
-            grid, lam0 = line_density_from_cloud(z0, density_cfg)
-            _, lam1 = line_density_from_cloud(z1, density_cfg)
+            grid, lam0 = line_density_from_cloud_kde(z0, density_cfg)
+            _, lam1 = line_density_from_cloud_kde(z1, density_cfg)
             zeta_grid = grid.astype(np.float32)
             lambda_in.append(lam0.astype(np.float32))
             lambda_out.append(lam1.astype(np.float32))
+
+            grid1_check, lam1_check = line_density_from_cloud_kde(z1, density_cfg)
+
+            # lam1 you are about to append should be lam1_check
+            # compare with the one you computed
+            max_abs = float(np.max(np.abs(lam1_check - lam1)))
+            mean_abs = float(np.mean(np.abs(lam1_check - lam1)))
+            if mean_abs > 1e-6:
+                print("[WARN] lambda mismatch! mean_abs=", mean_abs, "max_abs=", max_abs)
 
         if dataset_cfg.save_moments:
             m0 = cloud_moments(z0)
@@ -1044,8 +1097,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=str, default="./data/neural")
     parser.add_argument("--nz", type=int, default=256)
-    parser.add_argument("--zeta-min", type=float, default=-5e-3)
-    parser.add_argument("--zeta-max", type=float, default=5e-3)
+    parser.add_argument("--zeta-min", type=float, default=-0.8)
+    parser.add_argument("--zeta-max", type=float, default=0.8)
     parser.add_argument("--Q-min", type=float, default=0.1e-9)
     parser.add_argument("--Q-max", type=float, default=3e-9)
     parser.add_argument("--pipe-radius-min", type=float, default=5e-3)
@@ -1102,11 +1155,16 @@ def main() -> None:
     madx_file= "heb_ring_z.madx"
     seq_name = "fcc_heb"
 
-    line = build_line_from_madx(workdir=working_dir,
+    RING = build_line_from_madx(workdir=working_dir,
                              madx_file= madx_file,
                              seq_name=seq_name,
                              p0c_ev=1e9,
                              verbose=True)
+
+    n_chunks = 100
+    k = 3
+    ni, nf = chunk_bounds(len(RING.element_names), n_chunks, k)
+    line = subline_by_index(RING, ni, nf)
 
     data = build_datasets(
         line=line,

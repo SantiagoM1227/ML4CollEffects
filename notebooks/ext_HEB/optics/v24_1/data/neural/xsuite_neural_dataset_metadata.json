@@ -1,0 +1,129 @@
+{
+  "phase_space_labels": [
+    "x",
+    "y",
+    "zeta",
+    "px",
+    "py",
+    "delta"
+  ],
+  "dataset_config": {
+    "n_samples": 1024,
+    "particles_per_sample": 1024,
+    "seed": 42,
+    "output_dir": "./data/neural",
+    "save_cloud_dataset": true,
+    "save_density_dataset": true,
+    "save_moments": true,
+    "train_fraction": 0.8,
+    "val_fraction": 0.1
+  },
+  "density_grid_config": {
+    "nz": 512,
+    "zeta_min": -0.8,
+    "zeta_max": 0.8,
+    "normalize_density": true
+  },
+  "parameter_ranges": {
+    "bunch_charge_range": [
+      1e-10,
+      3e-09
+    ],
+    "pipe_radius_range": [
+      0.005,
+      0.03
+    ],
+    "impedance_scale_range": [
+      0.1,
+      10.0
+    ]
+  },
+  "beam_families": [
+    {
+      "family": "gaussian",
+      "x_sigma": 0.001,
+      "y_sigma": 0.001,
+      "zeta_sigma": 0.001,
+      "px_sigma": 0.001,
+      "py_sigma": 0.001,
+      "delta_sigma": 0.0001,
+      "halo_scale": 4.0,
+      "halo_fraction": 0.15,
+      "mismatch_scale": 2.0,
+      "corr_strength": 0.45,
+      "mixture_shift_scale": 1.2
+    },
+    {
+      "family": "correlated_gaussian",
+      "x_sigma": 0.001,
+      "y_sigma": 0.001,
+      "zeta_sigma": 0.001,
+      "px_sigma": 0.001,
+      "py_sigma": 0.001,
+      "delta_sigma": 0.0001,
+      "halo_scale": 4.0,
+      "halo_fraction": 0.15,
+      "mismatch_scale": 2.0,
+      "corr_strength": 0.45,
+      "mixture_shift_scale": 1.2
+    },
+    {
+      "family": "core_halo",
+      "x_sigma": 0.001,
+      "y_sigma": 0.001,
+      "zeta_sigma": 0.001,
+      "px_sigma": 0.001,
+      "py_sigma": 0.001,
+      "delta_sigma": 0.0001,
+      "halo_scale": 4.0,
+      "halo_fraction": 0.15,
+      "mismatch_scale": 2.0,
+      "corr_strength": 0.45,
+      "mixture_shift_scale": 1.2
+    },
+    {
+      "family": "mixture",
+      "x_sigma": 0.001,
+      "y_sigma": 0.001,
+      "zeta_sigma": 0.001,
+      "px_sigma": 0.001,
+      "py_sigma": 0.001,
+      "delta_sigma": 0.0001,
+      "halo_scale": 4.0,
+      "halo_fraction": 0.15,
+      "mismatch_scale": 2.0,
+      "corr_strength": 0.45,
+      "mixture_shift_scale": 1.2
+    },
+    {
+      "family": "mismatched",
+      "x_sigma": 0.001,
+      "y_sigma": 0.001,
+      "zeta_sigma": 0.001,
+      "px_sigma": 0.001,
+      "py_sigma": 0.001,
+      "delta_sigma": 0.0001,
+      "halo_scale": 4.0,
+      "halo_fraction": 0.15,
+      "mismatch_scale": 2.0,
+      "corr_strength": 0.45,
+      "mixture_shift_scale": 1.2
+    }
+  ],
+  "keys": [
+    "MU",
+    "X_cloud",
+    "X_lambda",
+    "Y_cloud",
+    "Y_lambda",
+    "centroid_in",
+    "centroid_out",
+    "cov_in",
+    "cov_out",
+    "family_id",
+    "test",
+    "train",
+    "val",
+    "zeta_grid"
+  ]
+}

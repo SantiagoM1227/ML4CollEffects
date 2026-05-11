@@ -1,9 +1,7 @@
 {
-  "dataset_path": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-06T09:07:30.npz",
-  "out_dir": "./models",
-  "run_name": "fno1d_lambda",
+  "dataset_path": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-07T09:46:05.npz",
   "batch_size": 16,
-  "epochs": 100,
+  "epochs": 300,
   "lr": 0.001,
   "weight_decay": 1e-06,
   "width": 64,
@@ -12,5 +10,6 @@
   "hidden_proj": 128,
   "device": "cpu",
   "seed": 42,
-  "in_channels": 5
+  "out_dir": "./models",
+  "run_name": "fno1d_lambda"
 }

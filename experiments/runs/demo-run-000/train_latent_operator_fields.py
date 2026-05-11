@@ -34,7 +34,7 @@ class Config:
     ae_lr: float = 1e-3
     ae_train_samples: int = 400
     ae_val_samples: int = 100
-    ae_ckpt_path: str = "token_ae.pt"
+    ae_ckpt_path: str = "./models/token_ae.pt"
 
     # stage B: latent operator (FNO)
     op_epochs: int = 50
@@ -46,7 +46,7 @@ class Config:
     op_depth: int = 4
     op_hidden_proj: int = 128
     lambda_field: float = 1.0
-    op_ckpt_path: str = "latent_fno.pt"
+    op_ckpt_path: str = "./models/latent_fno.pt"
 
     seed: int = 42
 
@@ -143,9 +143,40 @@ def field_loss(x_hat: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
     # both [B,3,H,W], enforce mass normalization (sum only; consistent with your notebook)
     x_hat = x_hat / (x_hat.sum(dim=(-2, -1), keepdim=True) + 1e-12)
     x     = x     / (x.sum(dim=(-2, -1), keepdim=True) + 1e-12)
-    return torch.mean((x_hat - x) ** 2)
+    #return torch.mean((x_hat - x) ** 2)
+    w = torch.tensor([1.0, 1.0, 3.0], device=x.device).view(1,3,1,1)  # emphasize zd
+    return torch.mean(w * (x_hat - x) ** 2)
 
 
+
+   
+
+
+import numpy as np
+
+def frac_outside_range(clouds: np.ndarray, lo: float, hi: float, dim: int) -> float:
+    v = clouds[:, :, dim].ravel()
+    return float(np.mean((v < lo) | (v > hi)))
+
+def check_fieldbuilder_coverage(fb: FieldBuilder, X: np.ndarray, Y: np.ndarray, idx: np.ndarray):
+    # fb grids are torch tensors
+    xlo, xhi   = float(fb.x_grid[0].cpu()),  float(fb.x_grid[-1].cpu())
+    ylo, yhi   = float(fb.y_grid[0].cpu()),  float(fb.y_grid[-1].cpu())
+    zlo, zhi   = float(fb.z_grid[0].cpu()),  float(fb.z_grid[-1].cpu())
+    pxlo, pxhi = float(fb.px_grid[0].cpu()), float(fb.px_grid[-1].cpu())
+    pylo, pyhi = float(fb.py_grid[0].cpu()), float(fb.py_grid[-1].cpu())
+    dlo, dhi   = float(fb.d_grid[0].cpu()),  float(fb.d_grid[-1].cpu())
+
+    subX = X[idx]
+    subY = Y[idx]
+
+    print("Outside fractions on this subset:")
+    print("  X: x ",  frac_outside_range(subX, xlo,  xhi,  0), " px", frac_outside_range(subX, pxlo, pxhi, 3))
+    print("  X: y ",  frac_outside_range(subX, ylo,  yhi,  1), " py", frac_outside_range(subX, pylo, pyhi, 4))
+    print("  X: z ",  frac_outside_range(subX, zlo,  zhi,  2), " d ", frac_outside_range(subX, dlo,  dhi,  5))
+    print("  Y: x ",  frac_outside_range(subY, xlo,  xhi,  0), " px", frac_outside_range(subY, pxlo, pxhi, 3))
+    print("  Y: y ",  frac_outside_range(subY, ylo,  yhi,  1), " py", frac_outside_range(subY, pylo, pyhi, 4))
+    print("  Y: z ",  frac_outside_range(subY, zlo,  zhi,  2), " d ", frac_outside_range(subY, dlo,  dhi,  5))
 # ----------------------------
 # Datasets
 # ----------------------------
@@ -186,7 +217,13 @@ class OperatorFieldDataset(Dataset):
         i = int(self.idx[k])
         x = torch.from_numpy(self.X[i]).float().unsqueeze(0)
         y = torch.from_numpy(self.Y[i]).float().unsqueeze(0)
-        mu = torch.from_numpy(self.MU[i]).float()  # [3]
+        mu_raw = torch.from_numpy(self.MU[i]).float()
+
+        mu0 = torch.log10(mu_raw[0].clamp_min(1e-30))  # Q
+        mu1 = mu_raw[1] * 1e3                          # a in mm (optional but helps)
+        mu2 = torch.log10(mu_raw[2].clamp_min(1e-30))  # Z_scale
+        mu = torch.stack([mu0, mu1, mu2], dim=0)
+
         Fin = self.fb.cloud_to_fields(x)[0]
         Fout = self.fb.cloud_to_fields(y)[0]
         return Fin, Fout, mu
@@ -298,7 +335,7 @@ class LatentFNO1d(nn.Module):
         self.token_dim = token_dim
         self.mu_dim = mu_dim
 
-        in_channels = token_dim + mu_dim + 1  # + token coordinate
+        in_channels = token_dim + mu_dim + 2  # + token coordinate
         self.lift = nn.Linear(in_channels, width)
         self.blocks = nn.ModuleList([FNOBlock1d(width, modes) for _ in range(depth)])
         self.proj1 = nn.Conv1d(width, hidden_proj, kernel_size=1)
@@ -315,7 +352,19 @@ class LatentFNO1d(nn.Module):
         tgrid = torch.linspace(0, 1, T, device=Z_in.device).view(1, T, 1).expand(B, T, 1)
         mu_rep = mu.view(B, 1, self.mu_dim).expand(B, T, self.mu_dim)
 
-        x = torch.cat([Z_in, mu_rep, tgrid], dim=-1)   # [B,T,C+mu+1]
+        side = int(math.isqrt(T))
+        if side * side != T:
+            raise ValueError(f"T={T} is not a perfect square; cannot build 2D coords.")
+
+        # 2D coords in [0,1]
+        uu = torch.linspace(0, 1, side, device=Z_in.device)
+        vv = torch.linspace(0, 1, side, device=Z_in.device)
+        U, V = torch.meshgrid(uu, vv, indexing="ij")          # [side,side]
+        uv = torch.stack([U, V], dim=-1).reshape(1, T, 2)     # [1,T,2]
+        uv = uv.expand(B, T, 2)
+
+
+        x = torch.cat([Z_in, mu_rep, uv], dim=-1)      # [B,T,C+mu+2]
         x = self.lift(x)                               # [B,T,width]
         x = x.permute(0, 2, 1)                         # [B,width,T]
 
@@ -324,7 +373,13 @@ class LatentFNO1d(nn.Module):
 
         x = self.act(self.proj1(x))
         x = self.proj2(x)                              # [B,token_dim,T]
-        return x.permute(0, 2, 1)                      # [B,T,token_dim]
+
+        Z_delta = x.permute(0, 2, 1)                   # [B,T,token_dim]
+
+        return Z_in + Z_delta
+     
+
+
 
 
 # ----------------------------
@@ -402,18 +457,29 @@ def eval_operator(ae: FieldTokenAE, op: LatentFNO1d, loader: DataLoader, device:
     s_lat = 0.0
     s_field = 0.0
     n = 0
+
+    
     for Fin, Fout, mu in loader:
         Fin = Fin.to(device)
         Fout = Fout.to(device)
         mu = mu.to(device)
 
+
         Zin = ae.encode_tokens(Fin)
         Zout = ae.encode_tokens(Fout)
         Zpred = op(Zin, mu)
 
+        with torch.no_grad():
+            
+            lat_id = torch.mean((Zin - Zout)**2).item()
+            print("latent identity mse:", lat_id)
+
+
         lat = torch.mean((Zpred - Zout) ** 2)
         Fhat = ae.decode_tokens(Zpred)
         fld = field_loss(Fhat, Fout)
+
+
 
         b = Fin.size(0)
         s_lat += lat.item() * b
@@ -471,7 +537,36 @@ def train_operator(cfg: Config, ae: FieldTokenAE, X, Y, MU, train_idx, val_idx, 
             Fhat = ae.decode_tokens(Zpred)
             loss_field = field_loss(Fhat, Fout)
 
-            loss = loss_lat + cfg.lambda_field * loss_field
+            # moment loss on zd plane
+            zd_hat = Fhat[:, 2]  # [B,H,W]
+            zd_true = Fout[:, 2]
+
+            z = fb.z_grid  # torch tensors on device
+            d = fb.d_grid
+            Z, D = torch.meshgrid(z, d, indexing="ij")  # [H,W]
+            def plane_mean_sigma(f2d):
+                du = (z[-1]-z[0]) / max(1, z.numel()-1)
+                dv = (d[-1]-d[0]) / max(1, d.numel()-1)
+                mass = (f2d.sum(dim=(-2,-1)) * du * dv).clamp_min(1e-12)  # [B]
+                p = f2d / mass[:, None, None]
+                mu_z = (p * Z).sum(dim=(-2,-1)) * du * dv
+                mu_d = (p * D).sum(dim=(-2,-1)) * du * dv
+                var_z = (p * (Z - mu_z[:,None,None])**2).sum(dim=(-2,-1)) * du * dv
+                var_d = (p * (D - mu_d[:,None,None])**2).sum(dim=(-2,-1)) * du * dv
+                return mu_z, mu_d, torch.sqrt(var_z.clamp_min(0.0)), torch.sqrt(var_d.clamp_min(0.0))
+
+
+            mz_h, md_h, sz_h, sd_h = plane_mean_sigma(zd_hat)
+            mz_t, md_t, sz_t, sd_t = plane_mean_sigma(zd_true)
+
+            loss_zd_mom = ((mz_h - mz_t)**2 + (md_h - md_t)**2 + (sz_h - sz_t)**2 + (sd_h - sd_t)**2).mean()
+
+            
+
+           
+            
+
+            loss = loss = loss_lat + cfg.lambda_field * loss_field + 0.5 * loss_zd_mom
 
             opt.zero_grad()
             loss.backward()
@@ -529,8 +624,13 @@ def main():
     print("[INFO] device:", cfg.device)
 
     # Build grids/sigmas from a subset of X train
-    fb = FieldBuilder(X_cloud_train_subset=X[train_idx[:50]], grid_n=cfg.grid_n,
-                      lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
+    sub = np.concatenate([X[train_idx[:50]], Y[train_idx[:50]]], axis=0)
+    fb = FieldBuilder(X_cloud_train_subset=sub, grid_n=cfg.grid_n,
+                  lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
+    #fb = FieldBuilder(X_cloud_train_subset=X[train_idx[:50]], grid_n=cfg.grid_n,
+    #                 lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
+
+    check_fieldbuilder_coverage(fb, X, Y, train_idx[:200])
     print("[INFO] field grids built. grid_n=", cfg.grid_n)
 
     # Stage A: train token AE

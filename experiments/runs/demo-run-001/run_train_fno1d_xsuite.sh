@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=train_xsuite
-#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/train_xsuite-%j.out
-#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/train_xsuite-%j.err
+#SBATCH --job-name=train-fno1d
+#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/train-fno1d-%j.out
+#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/train-fno1d-%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
@@ -24,5 +24,5 @@ export NUMEXPR_NUM_THREADS=8
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
 
-export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-06T09:07:30.npz
-python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-001/train_fno1d_xsuite.py
+export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:24:42.npz
+srun python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-001/train_fno1d_xsuite.py
