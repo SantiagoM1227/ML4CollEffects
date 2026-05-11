@@ -23,7 +23,7 @@ class TrainConfig:
     run_name: str = "fno1d_lambda"
 
     batch_size: int = 16
-    epochs: int = 1000
+    epochs: int = 300
     lr: float = 1e-3
     weight_decay: float = 1e-6
 
@@ -36,7 +36,7 @@ class TrainConfig:
     seed: int = 42
 
     # data
-    in_channels: int = 5  # [lambda_in, kf1, kd1, kf2, zeta]
+    in_channels: int = 5  # [lambda_in, mu1, mu2, mu3, zeta]
 
 
 # ----------------------------
@@ -76,9 +76,35 @@ def load_npz(path: str) -> Dict[str, np.ndarray]:
     raw = np.load(path, allow_pickle=True)
     return {k: raw[k] for k in raw.files}
 
+# ----------------------------
+# Helpers
+# ----------------------------
+
+def dz_from_grid(grid: torch.Tensor) -> torch.Tensor:
+    # grid: [Nz]
+    return (grid[-1] - grid[0]) / max(1, grid.numel() - 1)
+
+def normalize_lambda_torch(lam: torch.Tensor, grid: torch.Tensor, eps: float = 1e-12) -> torch.Tensor:
+    # lam: [B,Nz], grid: [Nz]
+    dz = dz_from_grid(grid)
+    mass = torch.sum(lam, dim=-1, keepdim=True) * dz
+    return lam / (mass + eps)
+
+def moments_from_lambda_torch(lam: torch.Tensor, grid: torch.Tensor, eps: float = 1e-12):
+    # lam: [B,Nz], grid: [Nz]
+    dz = dz_from_grid(grid)
+    lamn = normalize_lambda_torch(lam, grid, eps)
+
+    mean = torch.sum(grid[None, :] * lamn, dim=-1) * dz                         # [B]
+    var = torch.sum((grid[None, :] - mean[:, None])**2 * lamn, dim=-1) * dz     # [B]
+    sig = torch.sqrt(torch.clamp(var, min=0.0))
+
+    return mean, sig
+
+
 
 # ----------------------------
-# FNO model (same as your notebook)
+# FNO model
 # ----------------------------
 class SpectralConv1d(nn.Module):
     def __init__(self, in_channels: int, out_channels: int, modes: int) -> None:
@@ -244,7 +270,28 @@ def train(cfg: TrainConfig) -> None:
             target = target.to(cfg.device)
 
             pred = model(features)
-            loss = torch.mean((pred - target) ** 2)
+            grid = features[0, :, -1]  # [Nz]
+
+            pred_pos = torch.nn.functional.softplus(pred)
+
+            # normalize both
+            pred_n = normalize_lambda_torch(pred_pos, grid)
+            targ_n = normalize_lambda_torch(target, grid)
+
+            loss_curve = torch.mean((pred_n - targ_n) ** 2)
+
+            m_pred, s_pred = moments_from_lambda_torch(pred_n, grid)
+            m_true, s_true = moments_from_lambda_torch(targ_n, grid)
+
+            loss_mom = torch.mean((m_pred - m_true) ** 2) + torch.mean((s_pred - s_true) ** 2)
+
+            # optional: mass loss before normalization (encourages correct scale if your targets are not perfectly normalized)
+            dz = dz_from_grid(grid)
+            mass_pred = torch.sum(pred_pos, dim=-1) * dz
+            mass_true = torch.sum(target, dim=-1) * dz
+            loss_mass = torch.mean((mass_pred - mass_true) ** 2)
+
+            loss = loss_curve + 0.1 * loss_mom + 0.1 * loss_mass
 
             opt.zero_grad()
             loss.backward()
