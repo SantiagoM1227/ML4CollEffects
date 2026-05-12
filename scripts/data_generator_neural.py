@@ -221,6 +221,8 @@ def _maybe_save_wake_diagnostics(
     diag_dir = os.environ.get("WAKE_DIAG_DIR", "").strip()
     if not diag_dir:
         return
+    call_index = _WAKE_DIAG_CALL_COUNT
+    _WAKE_DIAG_CALL_COUNT += 1
 
     try:
         max_plots = max(0, int(os.environ.get("WAKE_DIAG_MAX", "10")))
@@ -233,13 +235,11 @@ def _maybe_save_wake_diagnostics(
 
     if _WAKE_DIAG_PLOT_COUNT >= max_plots:
         return
-    if every > 1 and ((_WAKE_DIAG_CALL_COUNT % every) != 0):
-        _WAKE_DIAG_CALL_COUNT += 1
+    if every > 1 and ((call_index % every) != 0):
         return
 
     Path(diag_dir).mkdir(parents=True, exist_ok=True)
     idx = _WAKE_DIAG_PLOT_COUNT
-    _WAKE_DIAG_CALL_COUNT += 1
     _WAKE_DIAG_PLOT_COUNT += 1
 
     import matplotlib.pyplot as plt

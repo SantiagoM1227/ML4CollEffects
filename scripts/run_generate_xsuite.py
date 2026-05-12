@@ -29,7 +29,10 @@ def _load_wake_from_txt_env():
     if not wake_txt_path:
         return None
 
-    raw = np.loadtxt(wake_txt_path, comments="#", ndmin=2)
+    try:
+        raw = np.loadtxt(wake_txt_path, comments="#", ndmin=2)
+    except Exception as exc:
+        raise RuntimeError(f"Failed to load WAKE_TXT_PATH file: {wake_txt_path}") from exc
     if raw.shape[1] < 2:
         raise ValueError(f"WAKE_TXT_PATH must point to a 2-column txt file, got shape {raw.shape} at {wake_txt_path}")
     zeta_grid = raw[:, 0].astype(np.float64) * 1e-3  # mm -> m
