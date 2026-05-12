@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 if HERE not in sys.path:
@@ -16,6 +17,31 @@ from data_generator_neural import (
     WakeConfig,
     default_beam_families,
 )
+
+def _load_wake_from_txt_env():
+    """
+    Optional external wake loading via env vars:
+      - WAKE_TXT_PATH: two-column txt (s/mm, W), '#' comments supported.
+      - WAKE_FLIP (or WAKE_DIAG_FLIP): if true/1/yes, reverse wake arrays.
+    Returns (zeta_grid_m, W) tuple or None.
+    """
+    wake_txt_path = os.environ.get("WAKE_TXT_PATH", "").strip()
+    if not wake_txt_path:
+        return None
+
+    raw = np.loadtxt(wake_txt_path, comments="#", ndmin=2)
+    if raw.shape[1] < 2:
+        raise ValueError(f"WAKE_TXT_PATH must point to a 2-column txt file, got shape {raw.shape} at {wake_txt_path}")
+    zeta_grid = raw[:, 0].astype(np.float64) * 1e-3  # mm -> m
+    wake_values = raw[:, 1].astype(np.float64)
+
+    flip_flag = os.environ.get("WAKE_FLIP", os.environ.get("WAKE_DIAG_FLIP", "0")).strip().lower()
+    if flip_flag in {"1", "true", "yes", "on"}:
+        zeta_grid = zeta_grid[::-1].copy()
+        wake_values = wake_values[::-1].copy()
+
+    print(f"[INFO] Using external wake TXT from WAKE_TXT_PATH: {wake_txt_path}")
+    return (zeta_grid, wake_values)
 
 def main():
 
@@ -63,6 +89,10 @@ def main():
 
     use_collective = True
 
+    impedance = _load_wake_from_txt_env()
+    if impedance is not None:
+        wake_cfg = None
+
 
     beam_families = default_beam_families()
 
@@ -87,6 +117,7 @@ def main():
         beam_families=beam_families,
         use_collective=use_collective,
         wake_cfg=wake_cfg,
+        impedance=impedance,
     )
 
    

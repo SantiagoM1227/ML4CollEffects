@@ -17,7 +17,7 @@ import argparse
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Literal, Optional, Tuple, Sequence
+from typing import Dict, Iterable, List, Literal, Optional, Tuple, Sequence, Union
 import numpy as np
 import xtrack as xt
 import os
@@ -40,6 +40,8 @@ INCLUDE_RE = re.compile(r'^\s*(?:call|include)\s*,\s*file\s*=\s*["\']?([^,"\']+)
 
 PHASE_SPACE_DIM = 6
 PHASE_SPACE_LABELS = ("x", "y", "zeta", "px", "py", "delta")
+_WAKE_DIAG_CALL_COUNT = 0
+_WAKE_DIAG_PLOT_COUNT = 0
 
 
 @dataclass
@@ -201,6 +203,69 @@ def load_impedance(
     raise RuntimeError("Unsupported impedance spec. Provide (zeta_grid,W), np.array(W), or filepath to .npz/.npy")
 
 
+def _maybe_save_wake_diagnostics(
+    zeta_grid: np.ndarray,
+    lambda_z: np.ndarray,
+    W: np.ndarray,
+    wake_conv: np.ndarray,
+) -> None:
+    """
+    Optional wake diagnostics (enabled by env vars):
+      - WAKE_DIAG_DIR: output directory (if unset/empty, disabled)
+      - WAKE_DIAG_MAX: max number of plots to save (default 10)
+      - WAKE_DIAG_EVERY: save every Nth call (default 1)
+    """
+    global _WAKE_DIAG_PLOT_COUNT
+    global _WAKE_DIAG_CALL_COUNT
+
+    diag_dir = os.environ.get("WAKE_DIAG_DIR", "").strip()
+    if not diag_dir:
+        return
+
+    try:
+        max_plots = max(0, int(os.environ.get("WAKE_DIAG_MAX", "10")))
+    except ValueError:
+        max_plots = 10
+    try:
+        every = max(1, int(os.environ.get("WAKE_DIAG_EVERY", "1")))
+    except ValueError:
+        every = 1
+
+    if _WAKE_DIAG_PLOT_COUNT >= max_plots:
+        return
+    if every > 1 and ((_WAKE_DIAG_CALL_COUNT % every) != 0):
+        _WAKE_DIAG_CALL_COUNT += 1
+        return
+
+    Path(diag_dir).mkdir(parents=True, exist_ok=True)
+    idx = _WAKE_DIAG_PLOT_COUNT
+    _WAKE_DIAG_CALL_COUNT += 1
+    _WAKE_DIAG_PLOT_COUNT += 1
+
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+    axes[0].plot(zeta_grid, lambda_z)
+    axes[0].set_ylabel("lambda_z")
+    axes[0].set_title("Line density")
+    axes[0].grid(alpha=0.25)
+
+    axes[1].plot(zeta_grid, W)
+    axes[1].set_ylabel("W")
+    axes[1].set_title("Wake kernel")
+    axes[1].grid(alpha=0.25)
+
+    axes[2].plot(zeta_grid, wake_conv)
+    axes[2].set_ylabel("wake_conv")
+    axes[2].set_xlabel("zeta [m]")
+    axes[2].set_title("Convolved wake signal")
+    axes[2].grid(alpha=0.25)
+
+    fig.tight_layout()
+    fig.savefig(Path(diag_dir) / f"wake_diag_{idx:05d}.png", dpi=150)
+    plt.close(fig)
+
+
 def track_with_collective_effects(
     line: xt.Line,
     z0: np.ndarray,
@@ -281,6 +346,7 @@ def track_with_collective_effects(
     W = W / (np.abs(W).sum() + eps)
 
     wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+    _maybe_save_wake_diagnostics(zeta_grid, lambda_z, W, wake_conv)
 
     delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
 
@@ -836,6 +902,7 @@ def track_with_collective_effects(
     W = W / (np.abs(W).sum() + eps)
 
     wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+    _maybe_save_wake_diagnostics(zeta_grid, lambda_z, W, wake_conv)
 
     delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
 
@@ -907,7 +974,8 @@ def build_datasets(
     param_ranges: ParameterRanges,
     beam_families: Iterable[BeamFamilyConfig],
     use_collective: bool,
-    wake_cfg: Optional[WakeConfig]
+    wake_cfg: Optional[WakeConfig],
+    impedance: Optional[Union[str, Tuple[np.ndarray, np.ndarray], np.ndarray]] = None,
 ) -> Dict[str, np.ndarray]:
     rng = np.random.default_rng(dataset_cfg.seed)
     families = list(beam_families)
@@ -937,6 +1005,7 @@ def build_datasets(
                 mu,
                 density_cfg,
                 wake_cfg,
+                impedance=impedance,
             )
         else:
             z1 = track_cloud(line, z0)

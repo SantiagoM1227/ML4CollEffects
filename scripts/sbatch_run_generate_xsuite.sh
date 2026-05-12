@@ -26,5 +26,16 @@ export NUMEXPR_NUM_THREADS=8
 # Let wrapper know how many CPUs are allocated
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
+# Optional external wake TXT (two columns: s/mm, W; lines starting with # are comments)
+# export WAKE_TXT_PATH="/pbs/home/s/smartinez/ML4CollEffects/third_party/fcc_ee_booster_pywit_model/fcc_ee_booster_pywit_model/data/total/W_total_long (sigma 0.4 mm).txt"
+# Optional wake orientation flip (accepted values: 1/true/yes/on)
+# export WAKE_FLIP=1
+# export WAKE_DIAG_FLIP=1   # alias supported by wrapper for compatibility
+#
+# Optional wake diagnostics plots (generated during tracking)
+# export WAKE_DIAG_DIR="/pbs/home/s/smartinez/ML4CollEffects/outputs/wake-diag"
+# export WAKE_DIAG_MAX=10
+# export WAKE_DIAG_EVERY=1
+
 # Run the wrapper (uses srun to launch within the allocation)
 srun python -u /pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_xsuite.py
