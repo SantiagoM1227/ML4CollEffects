@@ -46,8 +46,8 @@
 @ DQMIN_PHASE      %le                     0
 @ TITLE            %31s "fcc-ee booster FODO version V24"
 @ ORIGIN           %16s "5.09.03 Linux 64"
-@ DATE             %08s "07/05/26"
-@ TIME             %08s "11.44.46"
+@ DATE             %08s "12/05/26"
+@ TIME             %08s "14.16.12"
 * NAME               KEYWORD                               S                    L                    X                    Y                 BETX                 BETY                 ALFX                 ALFY                   DX                  DPX                   DY                  DPY                  MUX                  MUY                   WX                   WY                 PHIX                 PHIY                  DDX                 DDPX                 TILT                ANGLE                  K1L                  K2L                 DMUX                 DMUY 
 $ %s                 %s                                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le                  %le 
  "FCC_HEB$START"     "MARKER"                               0                    0    4.94950875685e-36                    0        89.9476650761        14.6087544396        2.25463667129       -0.49361542167    2.23434828063e-08   -5.86137866621e-10                   -0                   -0                    0                    0        13.4614129995        15.5189481286      -0.193334000932        -0.4493285417     -0.0749520376276    0.000370461038402                    0                    0                    0                    0                    0                    0

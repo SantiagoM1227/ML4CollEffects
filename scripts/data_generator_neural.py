@@ -1167,11 +1167,11 @@ def pushd(path: Path):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate Xsuite datasets for neural operator learning.")
-    parser.add_argument("--n-samples", type=int, default=512)
+    parser.add_argument("--n-samples", type=int, default=2048)
     parser.add_argument("--particles-per-sample", type=int, default=2048)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=str, default="./data/neural")
-    parser.add_argument("--nz", type=int, default=256)
+    parser.add_argument("--nz", type=int, default=2048)
     parser.add_argument("--zeta-min", type=float, default=-0.8)
     parser.add_argument("--zeta-max", type=float, default=0.8)
     parser.add_argument("--Q-min", type=float, default=0.1e-9)
