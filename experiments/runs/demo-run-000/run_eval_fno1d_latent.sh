@@ -4,4 +4,4 @@ export OP_CKPT=/home/martinez/ML4CollEffects/experiments/runs/demo-run-000/model
 export OUT_DIR=/home/martinez/ML4CollEffects/experiments/runs/demo-run-000/output
 export SPLIT=test
 
-python -u /home/martinez/ML4CollEffects/experiments/runs/demo-run-000/eval_fno1s_latent.py
+python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-000/eval_fno1s_latent.py

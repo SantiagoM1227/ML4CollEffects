@@ -17,7 +17,7 @@ import argparse
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Literal, Optional, Tuple, Sequence
+from typing import Dict, Iterable, List, Literal, Optional, Tuple, Sequence, Union
 import numpy as np
 import xtrack as xt
 import os
@@ -40,6 +40,8 @@ INCLUDE_RE = re.compile(r'^\s*(?:call|include)\s*,\s*file\s*=\s*["\']?([^,"\']+)
 
 PHASE_SPACE_DIM = 6
 PHASE_SPACE_LABELS = ("x", "y", "zeta", "px", "py", "delta")
+_WAKE_DIAG_CALL_COUNT = 0
+_WAKE_DIAG_PLOT_COUNT = 0
 
 
 @dataclass
@@ -201,6 +203,75 @@ def load_impedance(
     raise RuntimeError("Unsupported impedance spec. Provide (zeta_grid,W), np.array(W), or filepath to .npz/.npy")
 
 
+def _maybe_save_wake_diagnostics(
+    zeta_grid: np.ndarray,
+    lambda_z: np.ndarray,
+    W: np.ndarray,
+    wake_conv: np.ndarray,
+) -> None:
+    """
+    Optional wake diagnostics (enabled by env vars):
+      - WAKE_DIAG_DIR: output directory (if unset/empty, disabled)
+      - WAKE_DIAG_MAX: max number of plots to save (default 10)
+      - WAKE_DIAG_EVERY: save every Nth call (default 1)
+    """
+    global _WAKE_DIAG_PLOT_COUNT
+    global _WAKE_DIAG_CALL_COUNT
+
+    diag_dir = os.environ.get("WAKE_DIAG_DIR", "").strip()
+    if not diag_dir:
+        return
+    call_index = _WAKE_DIAG_CALL_COUNT
+    _WAKE_DIAG_CALL_COUNT += 1
+
+    try:
+        max_plots = int(os.environ.get("WAKE_DIAG_MAX", "10"))
+    except ValueError:
+        max_plots = 10
+    if max_plots < 0:
+        warnings.warn(f"[WAKE_DIAG] WAKE_DIAG_MAX={max_plots} is negative; using 0")
+        max_plots = 0
+    try:
+        every = max(1, int(os.environ.get("WAKE_DIAG_EVERY", "1")))
+    except ValueError:
+        every = 1
+
+    if _WAKE_DIAG_PLOT_COUNT >= max_plots:
+        return
+    if every > 1 and ((call_index % every) != 0):
+        return
+
+    Path(diag_dir).mkdir(parents=True, exist_ok=True)
+    idx = _WAKE_DIAG_PLOT_COUNT
+    _WAKE_DIAG_PLOT_COUNT += 1
+
+    try:
+        import matplotlib.pyplot as plt
+
+        fig, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+        axes[0].plot(zeta_grid, lambda_z)
+        axes[0].set_ylabel("lambda_z")
+        axes[0].set_title("Line density")
+        axes[0].grid(alpha=0.25)
+
+        axes[1].plot(zeta_grid, W)
+        axes[1].set_ylabel("W")
+        axes[1].set_title("Wake kernel")
+        axes[1].grid(alpha=0.25)
+
+        axes[2].plot(zeta_grid, wake_conv)
+        axes[2].set_ylabel("wake_conv")
+        axes[2].set_xlabel("zeta [m]")
+        axes[2].set_title("Convolved wake signal")
+        axes[2].grid(alpha=0.25)
+
+        fig.tight_layout()
+        fig.savefig(Path(diag_dir) / f"wake_diag_{idx:05d}.png", dpi=150)
+        plt.close(fig)
+    except Exception as exc:
+        warnings.warn(f"[WAKE_DIAG] Could not save diagnostic plot {idx}: {exc}")
+
+
 def track_with_collective_effects(
     line: xt.Line,
     z0: np.ndarray,
@@ -263,7 +334,7 @@ def track_with_collective_effects(
 
     nz = density_cfg.nz
     zeta_grid, lambda_z = None, None
-    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+    zeta_grid, lambda_z = line_density_from_cloud_kde(z1, density_cfg)
 
     zg_imp, W_imp = load_impedance(impedance, density_cfg)
     if zg_imp is None:
@@ -281,12 +352,14 @@ def track_with_collective_effects(
     W = W / (np.abs(W).sum() + eps)
 
     wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+    _maybe_save_wake_diagnostics(zeta_grid, lambda_z, W, wake_conv)
 
     delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
 
     delta_kick *= (Q * Z_scale) / (a ** 2 + eps)
 
     z1[:, 5] += delta_kick
+
 
     return z1
 
@@ -624,6 +697,26 @@ def build_line_from_madx(
 
     return xline
 
+def subline_by_index(line: xt.Line, n_i: int, n_f: int) -> xt.Line:
+    """
+    Return a new line containing elements [n_i:n_f] (python slicing semantics).
+    Keeps the same particle_ref.
+    """
+    if n_i < 0 or n_f > len(line.element_names) or n_i >= n_f:
+        raise ValueError(f"Bad slice n_i={n_i}, n_f={n_f}, n_elem={len(line.element_names)}")
+
+    names = line.element_names[n_i:n_f]
+    elements = [line.element_dict[nm] for nm in names]
+    sub = xt.Line(elements=elements, element_names=list(names))
+    sub.particle_ref = line.particle_ref
+    sub.build_tracker()
+    return sub
+
+def chunk_bounds(n_elem: int, n_chunks: int, k: int) -> tuple[int, int]:
+    edges = np.linspace(0, n_elem, n_chunks + 1).astype(int)
+    return int(edges[k]), int(edges[k+1])
+
+
 
 def _diag_sigmas(cfg: BeamFamilyConfig) -> np.ndarray:
     return np.array(
@@ -718,13 +811,10 @@ def sample_parameters(
         dtype=np.float64,
     )
 
-"""def set_lattice_parameters(env: xt.Environment, mu: np.ndarray) -> None:
-    env["kf1"] = float(mu[0])
-    env["kd1"] = float(mu[1])
-    env["kf2"] = float(mu[2])
-"""
 
-def track_cloud(line: xt.Line, z0: np.ndarray) -> np.ndarray:
+def track_cloud(line: xt.Line, z0: np.ndarray, n_i: int = 0, n_f: int | None = None) -> np.ndarray:
+    
+    
     p = line.build_particles(
         x=z0[:, 0],
         y=z0[:, 1],
@@ -800,7 +890,7 @@ def track_with_collective_effects(
 
     nz = density_cfg.nz
     zeta_grid, lambda_z = None, None
-    zeta_grid, lambda_z = line_density_from_cloud(z1, density_cfg)
+    zeta_grid, lambda_z = line_density_from_cloud_kde(z1, density_cfg)
 
     zg_imp, W_imp = load_impedance(impedance, density_cfg)
     if zg_imp is None:
@@ -818,6 +908,7 @@ def track_with_collective_effects(
     W = W / (np.abs(W).sum() + eps)
 
     wake_conv = np.fft.ifft(np.fft.fft(lambda_z) * np.fft.fft(W)).real
+    _maybe_save_wake_diagnostics(zeta_grid, lambda_z, W, wake_conv)
 
     delta_kick = np.interp(z1[:, 2], zeta_grid, wake_conv)
 
@@ -835,26 +926,52 @@ def cloud_moments(z: np.ndarray) -> Dict[str, np.ndarray]:
     return {"centroid": centroid, "cov": cov}
 
 
-def line_density_from_cloud(
+def line_density_from_cloud_kde(
     z: np.ndarray,
-    density_cfg: DensityGridConfig,
-) -> Tuple[np.ndarray, np.ndarray]:
-    """Return (bin_centers, normalized_histogram) for zeta marginal."""
-    hist, edges = np.histogram(
-        z[:, 2],
-        bins=density_cfg.nz,
-        range=(density_cfg.zeta_min, density_cfg.zeta_max),
-        density=False,
-    )
+    density_cfg,
+    *,
+    sigma: float | None = None,
+    sigma_bins: float = 1.5,   # sigma = sigma_bins * dz if sigma not provided
+    clip_range: bool = True,
+    return_diag: bool = False,
+    eps: float = 1e-12,
+):
+    edges = np.linspace(density_cfg.zeta_min, density_cfg.zeta_max, density_cfg.nz + 1)
+    dz = float(edges[1] - edges[0])
     centers = 0.5 * (edges[:-1] + edges[1:])
-    hist = hist.astype(np.float64)
-    if density_cfg.normalize_density:
-        dz = (density_cfg.zeta_max - density_cfg.zeta_min) / density_cfg.nz
-        norm = hist.sum() * dz
-        if norm > 0:
-            hist = hist / norm
-    return centers, hist
 
+    zeta = z[:, 2].astype(np.float64)
+
+    # diagnostics about clipping
+    frac_outside = float(np.mean((zeta < edges[0]) | (zeta > edges[-1])))
+
+    if clip_range:
+        zeta_use = zeta[(zeta >= edges[0]) & (zeta <= edges[-1])]
+    else:
+        zeta_use = zeta
+
+    if zeta_use.size == 0:
+        lam = np.zeros_like(centers)
+        if return_diag:
+            return centers, lam, LambdaDiagnostics(frac_outside=frac_outside, mass_in_range=0.0, dz=dz)
+        return centers, lam
+
+    if sigma is None:
+        sigma = sigma_bins * dz
+
+    # KDE: lam[j] = mean_i N(centers[j] | zeta_i, sigma)
+    # shape: (Nz, Np)
+    diff = (centers[:, None] - zeta_use[None, :]) / (sigma + eps)
+    w = np.exp(-0.5 * diff**2)  # (Nz, Np)
+    lam = w.mean(axis=1)        # (Nz,)
+
+    # normalize as PDF: ∫ lam dz = 1
+    mass_in_range = float(lam.sum() * dz)
+    lam = lam / (mass_in_range + eps)
+
+    if return_diag:
+        return centers, lam, LambdaDiagnostics(frac_outside=frac_outside, mass_in_range=mass_in_range, dz=dz)
+    return centers, lam
 
 def build_datasets(
     line: xt.Line,
@@ -863,7 +980,8 @@ def build_datasets(
     param_ranges: ParameterRanges,
     beam_families: Iterable[BeamFamilyConfig],
     use_collective: bool,
-    wake_cfg: Optional[WakeConfig]
+    wake_cfg: Optional[WakeConfig],
+    impedance: Optional[Union[str, Tuple[np.ndarray, np.ndarray], np.ndarray]] = None,
 ) -> Dict[str, np.ndarray]:
     rng = np.random.default_rng(dataset_cfg.seed)
     families = list(beam_families)
@@ -893,6 +1011,7 @@ def build_datasets(
                 mu,
                 density_cfg,
                 wake_cfg,
+                impedance=impedance,
             )
         else:
             z1 = track_cloud(line, z0)
@@ -906,11 +1025,20 @@ def build_datasets(
             mu_all.append(mu.astype(np.float32))
 
         if dataset_cfg.save_density_dataset:
-            grid, lam0 = line_density_from_cloud(z0, density_cfg)
-            _, lam1 = line_density_from_cloud(z1, density_cfg)
+            grid, lam0 = line_density_from_cloud_kde(z0, density_cfg)
+            _, lam1 = line_density_from_cloud_kde(z1, density_cfg)
             zeta_grid = grid.astype(np.float32)
             lambda_in.append(lam0.astype(np.float32))
             lambda_out.append(lam1.astype(np.float32))
+
+            grid1_check, lam1_check = line_density_from_cloud_kde(z1, density_cfg)
+
+            # lam1 you are about to append should be lam1_check
+            # compare with the one you computed
+            max_abs = float(np.max(np.abs(lam1_check - lam1)))
+            mean_abs = float(np.mean(np.abs(lam1_check - lam1)))
+            if mean_abs > 1e-6:
+                print("[WARN] lambda mismatch! mean_abs=", mean_abs, "max_abs=", max_abs)
 
         if dataset_cfg.save_moments:
             m0 = cloud_moments(z0)
@@ -1039,13 +1167,13 @@ def pushd(path: Path):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate Xsuite datasets for neural operator learning.")
-    parser.add_argument("--n-samples", type=int, default=512)
+    parser.add_argument("--n-samples", type=int, default=2048)
     parser.add_argument("--particles-per-sample", type=int, default=2048)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=str, default="./data/neural")
-    parser.add_argument("--nz", type=int, default=256)
-    parser.add_argument("--zeta-min", type=float, default=-5e-3)
-    parser.add_argument("--zeta-max", type=float, default=5e-3)
+    parser.add_argument("--nz", type=int, default=2048)
+    parser.add_argument("--zeta-min", type=float, default=-0.8)
+    parser.add_argument("--zeta-max", type=float, default=0.8)
     parser.add_argument("--Q-min", type=float, default=0.1e-9)
     parser.add_argument("--Q-max", type=float, default=3e-9)
     parser.add_argument("--pipe-radius-min", type=float, default=5e-3)
@@ -1102,11 +1230,16 @@ def main() -> None:
     madx_file= "heb_ring_z.madx"
     seq_name = "fcc_heb"
 
-    line = build_line_from_madx(workdir=working_dir,
+    RING = build_line_from_madx(workdir=working_dir,
                              madx_file= madx_file,
                              seq_name=seq_name,
                              p0c_ev=1e9,
                              verbose=True)
+
+    n_chunks = 100
+    k = 3
+    ni, nf = chunk_bounds(len(RING.element_names), n_chunks, k)
+    line = subline_by_index(RING, ni, nf)
 
     data = build_datasets(
         line=line,

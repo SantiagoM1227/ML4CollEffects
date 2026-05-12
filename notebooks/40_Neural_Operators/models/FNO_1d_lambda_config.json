@@ -1,0 +1,15 @@
+{
+  "run_name": "FNO_1d_lambda",
+  "dataset_path": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-07T09:46:05.npz",
+  "batch_size": 16,
+  "epochs": 300,
+  "lr": 0.001,
+  "weight_decay": 1e-06,
+  "width": 64,
+  "modes": 16,
+  "depth": 4,
+  "hidden_proj": 128,
+  "device": "cpu",
+  "seed": 42,
+  "out_dir": "./models/"
+}

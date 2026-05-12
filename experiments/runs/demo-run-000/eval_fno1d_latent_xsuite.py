@@ -91,7 +91,7 @@ class LatentFNO1d(nn.Module):
         super().__init__()
         self.token_dim = token_dim
         self.mu_dim = mu_dim
-        in_channels = token_dim + mu_dim + 1
+        in_channels = token_dim + mu_dim + 2
         self.lift = nn.Linear(in_channels, width)
         self.blocks = nn.ModuleList([FNOBlock1d(width, modes) for _ in range(depth)])
         self.proj1 = nn.Conv1d(width, hidden_proj, kernel_size=1)
@@ -100,17 +100,36 @@ class LatentFNO1d(nn.Module):
 
     def forward(self, Z_in: torch.Tensor, mu: torch.Tensor) -> torch.Tensor:
         B, T, C = Z_in.shape
+        if C != self.token_dim:
+            raise ValueError(f"Expected token_dim={self.token_dim}, got {C}")
+        if mu.shape != (B, self.mu_dim):
+            raise ValueError(f"Expected mu shape {(B, self.mu_dim)}, got {tuple(mu.shape)}")
+
         tgrid = torch.linspace(0, 1, T, device=Z_in.device).view(1, T, 1).expand(B, T, 1)
         mu_rep = mu.view(B, 1, self.mu_dim).expand(B, T, self.mu_dim)
-        x = torch.cat([Z_in, mu_rep, tgrid], dim=-1)  # [B,T,C+mu+1]
+
+        side = int(math.isqrt(T))
+        if side * side != T:
+            raise ValueError(f"T={T} is not a perfect square; cannot build 2D coords.")
+
+        # 2D coords in [0,1]
+        uu = torch.linspace(0, 1, side, device=Z_in.device)
+        vv = torch.linspace(0, 1, side, device=Z_in.device)
+        U, V = torch.meshgrid(uu, vv, indexing="ij")          # [side,side]
+        uv = torch.stack([U, V], dim=-1).reshape(1, T, 2)     # [1,T,2]
+        uv = uv.expand(B, T, 2)
+
+
+        x = torch.cat([Z_in, mu_rep, uv], dim=-1)      # [B,T,C+mu+2]
         x = self.lift(x)                               # [B,T,width]
         x = x.permute(0, 2, 1)                         # [B,width,T]
+
         for blk in self.blocks:
             x = blk(x)
+
         x = self.act(self.proj1(x))
         x = self.proj2(x)                              # [B,token_dim,T]
         return x.permute(0, 2, 1)                      # [B,T,token_dim]
-
 
 # ----------------------------
 # Field builder (CPU numpy -> torch KDE like training)
@@ -200,7 +219,14 @@ class OperatorFieldDataset(Dataset):
         i = int(self.idx[k])
         x = torch.from_numpy(self.X[i]).float().unsqueeze(0)
         y = torch.from_numpy(self.Y[i]).float().unsqueeze(0)
-        mu = torch.from_numpy(self.MU[i]).float()
+        mu_raw = torch.from_numpy(self.MU[i]).float()
+
+        mu0 = torch.log10(mu_raw[0].clamp_min(1e-30))  # Q
+        mu1 = mu_raw[1] * 1e3                          # a in mm (optional but helps)
+        mu2 = torch.log10(mu_raw[2].clamp_min(1e-30))  # Z_scale
+        mu = torch.stack([mu0, mu1, mu2], dim=0)
+
+
         Fin = self.fb.cloud_to_fields(x)[0]
         Fout = self.fb.cloud_to_fields(y)[0]
         return Fin, Fout, mu, i
@@ -338,6 +364,27 @@ def sixd_like_observables_from_field(field_3chw: np.ndarray, fb: FieldBuilder) -
     }
     return out
 
+def sample_from_2d_density(f2d: np.ndarray, u_grid: np.ndarray, v_grid: np.ndarray, n: int = 5000):
+    """
+    f2d: [H,W] nonnegative density values on a regular grid (not necessarily normalized).
+    Returns samples u_s, v_s in physical coordinates using categorical sampling on cells.
+    """
+    f = np.clip(f2d.astype(np.float64), 0.0, None)
+    p = f / (f.sum() + 1e-12)          # discrete mass over grid points
+
+    H, W = f.shape
+    flat = p.reshape(-1)
+    idx = np.random.choice(H * W, size=n, replace=True, p=flat)
+    ii = idx // W
+    jj = idx % W
+
+    # optional jitter within a cell (makes nicer clouds)
+    du = (u_grid[-1] - u_grid[0]) / max(1, len(u_grid) - 1)
+    dv = (v_grid[-1] - v_grid[0]) / max(1, len(v_grid) - 1)
+
+    u = u_grid[ii] + (np.random.rand(n) - 0.5) * du
+    v = v_grid[jj] + (np.random.rand(n) - 0.5) * dv
+    return u, v
 
 # ----------------------------
 # Plot helpers
@@ -393,7 +440,28 @@ def save_scatter(x: List[float], y: List[float], out_path: str, title: str):
     plt.savefig(out_path, dpi=150)
     plt.close()
 
+def save_pair_scatter(u1,v1,u2,v2,out_path,title):
+    xmin, xmax = float(u1.min()), float(u1.max())
+    ymin, ymax = float(v1.min()), float(v1.max())
+    plt.figure(figsize=(10, 4))
 
+    ax1 = plt.subplot(1, 2, 1)
+    ax1.scatter(u1, v1, s=1, alpha=0.2)
+    ax1.set_title("TRUE " + title)
+    ax1.grid(alpha=0.2)
+    ax1.set_xlim(xmin, xmax)
+    ax1.set_ylim(ymin, ymax)
+
+    ax2 = plt.subplot(1, 2, 2)
+    ax2.scatter(u2, v2, s=1, alpha=0.2)
+    ax2.set_title("PRED " + title)
+    ax2.grid(alpha=0.2)
+    ax2.set_xlim(xmin, xmax)
+    ax2.set_ylim(ymin, ymax)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150)
+    plt.close()
 # ----------------------------
 # Main eval
 # ----------------------------
@@ -412,7 +480,7 @@ class EvalCfg:
     percentile_hi: float = 99.5
     sigma_steps: float = 2.0
 
-    token_dim: int = 64
+    token_dim: int = 128
     op_width: int = 128
     op_modes: int = 16
     op_depth: int = 4
@@ -440,8 +508,11 @@ def main():
     raw = np.load(cfg.dataset_path, allow_pickle=True)
     X = raw["X_cloud"]; Y = raw["Y_cloud"]; MU = raw["MU"]
     split_idx = raw[cfg.split]
+    sub = np.concatenate([X[raw["train"][:50]], Y[raw["train"][:50]]], axis=0)
+    fb = FieldBuilder(X_cloud_train_subset=sub, grid_n=cfg.grid_n,
+                  lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
 
-    fb = FieldBuilder(X[raw["train"][:50]], grid_n=cfg.grid_n, lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
+    #fb = FieldBuilder(X[raw["train"][:50]], grid_n=cfg.grid_n, lo=cfg.percentile_lo, hi=cfg.percentile_hi, sigma_steps=cfg.sigma_steps).to(cfg.device)
 
     ds = OperatorFieldDataset(X, Y, MU, split_idx, fb)
     loader = DataLoader(ds, batch_size=cfg.batch_size, shuffle=False, num_workers=0)
@@ -503,6 +574,9 @@ def main():
                 obs_p = field_observables(Fhat_np[i])
                 s6_t = sixd_like_observables_from_field(Fout_np[i], fb)
                 s6_p = sixd_like_observables_from_field(Fhat_np[i], fb)
+
+                
+
 
                 if sixd_keys is None:
                     sixd_keys = sorted(list(s6_t.keys()))
@@ -578,6 +652,15 @@ def main():
     # pick a few deterministic samples: first 5 in split
     ex_dir = os.path.join(cfg.out_dir, "examples")
     ex_idx = list(range(min(5, len(ds))))
+
+    # collect (true, pred) for a few samples for scatter plots
+    pair_keys = ["mean_x", "mean_px", "mean_y", "mean_py", "mean_zeta", "mean_delta",
+                "sigma_x", "sigma_px", "sigma_y", "sigma_py", "sigma_zeta", "sigma_delta",
+                "corr_x_px", "corr_y_py", "corr_zeta_delta"]
+
+    pairs_true = {k: [] for k in pair_keys}
+    pairs_pred = {k: [] for k in pair_keys}
+
     with torch.no_grad():
         for j, k in enumerate(ex_idx):
             Fin, Fout, mu, idx = ds[k]
@@ -590,9 +673,61 @@ def main():
 
             true_np = Fout[0].cpu().numpy()
             pred_np = Fhat[0].cpu().numpy()
+
+            s6_t = sixd_like_observables_from_field(true_np, fb)
+            s6_p = sixd_like_observables_from_field(pred_np, fb)
+
+            print("idx", int(idx),
+                "mean_zeta true/pred:", s6_t["mean_zeta"], s6_p["mean_zeta"],
+                "mean_delta true/pred:", s6_t["mean_delta"], s6_p["mean_delta"],
+                "sig_zeta true/pred:", s6_t["sigma_zeta"], s6_p["sigma_zeta"],
+                "sig_delta true/pred:", s6_t["sigma_delta"], s6_p["sigma_delta"])
+
+
+            # physical grids
+            x  = fb.x_grid.detach().cpu().numpy()
+            px = fb.px_grid.detach().cpu().numpy()
+            y  = fb.y_grid.detach().cpu().numpy()
+            py = fb.py_grid.detach().cpu().numpy()
+            z  = fb.z_grid.detach().cpu().numpy()
+            d  = fb.d_grid.detach().cpu().numpy()
+
+            n_samp = 5000
+
+            # sample from TRUE and PRED planes
+            xt, pxt = sample_from_2d_density(true_np[0], x,  px, n=n_samp)
+            xp, pxp = sample_from_2d_density(pred_np[0], x,  px, n=n_samp)
+
+            yt, pyt = sample_from_2d_density(true_np[1], y,  py, n=n_samp)
+            yp, pyp = sample_from_2d_density(pred_np[1], y,  py, n=n_samp)
+
+            zt, dt  = sample_from_2d_density(true_np[2], z,  d,  n=n_samp)
+            zp, dp  = sample_from_2d_density(pred_np[2], z,  d,  n=n_samp)
+
+            save_pair_scatter(xt,pxt,xp,pxp, os.path.join(ex_dir,f"scatter_cloud_xpx_{int(idx)}.png"), "(x,px)")
+            save_pair_scatter(yt,pyt,yp,pyp, os.path.join(ex_dir,f"scatter_cloud_ypy_{int(idx)}.png"), "(y,py)")
+            save_pair_scatter(zt,dt, zp,dp,  os.path.join(ex_dir,f"scatter_cloud_zd_{int(idx)}.png"),  "(zeta,delta)")
+
+
+            s6_t = sixd_like_observables_from_field(true_np, fb)
+            s6_p = sixd_like_observables_from_field(pred_np, fb)
+            for kk in pair_keys:
+                pairs_true[kk].append(float(s6_t[kk]))
+                pairs_pred[kk].append(float(s6_p[kk]))
             save_plane_triplet(true_np, pred_np, os.path.join(ex_dir, f"sample_{int(idx)}.png"), title=f"idx={int(idx)}")
 
     print("[OK] wrote example images to", ex_dir)
+    
+    for kk in pair_keys:
+        save_scatter(
+            pairs_true[kk],
+            pairs_pred[kk],
+            os.path.join(ex_dir, f"scatter_examples_{kk}.png"),
+            title=f"examples scatter: {kk}",
+        )
+
+    print("[OK] wrote example scatter plots to", ex_dir)
+
 
 
 if __name__ == "__main__":
