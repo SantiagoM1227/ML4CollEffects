@@ -9,4 +9,5 @@
 /experiments/runs/demo-run-000/F
 /experiments/runs/demo-run-000/plt
 __pycache__/
+/notebooks/ext_HEB/
 *.pyc
