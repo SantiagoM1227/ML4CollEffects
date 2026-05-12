@@ -94,6 +94,7 @@ def main():
 
     impedance = _load_wake_from_txt_env()
     if impedance is not None:
+        # External impedance/wake tuple takes precedence over synthetic wake_cfg.
         wake_cfg = None
 
 
