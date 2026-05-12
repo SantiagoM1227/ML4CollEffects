@@ -16,6 +16,9 @@ from data_generator_neural import (
     ParameterRanges,
     WakeConfig,
     default_beam_families,
+    build_line_from_madx,
+    chunk_bounds,
+    subline_by_index
 )
 
 def _load_wake_from_txt_env():
@@ -50,8 +53,8 @@ def main():
 
 
     dataset_cfg = DatasetConfig(
-        n_samples=512,
-        particles_per_sample=512,
+        n_samples=1024,
+        particles_per_sample=2048,
         seed=42,
         output_dir="/pbs/home/s/smartinez/ML4CollEffects/data/neural",
         save_cloud_dataset=True,
@@ -70,9 +73,9 @@ def main():
 
 
     density_cfg = DensityGridConfig(
-        nz=512,
-        zeta_min=-5e-3,
-        zeta_max=5e-3,
+        nz=2048,
+        zeta_min=-0.1,
+        zeta_max=0.1,
         normalize_density=True,
     )
 
@@ -101,7 +104,20 @@ def main():
     beam_families = default_beam_families()
 
 
-    line, env = build_line(lattice_cfg)
+    working_dir = "/pbs/home/s/smartinez/ML4CollEffects/notebooks/ext_HEB/optics/v24_1"
+    madx_file= "heb_ring_z.madx"
+    seq_name = "fcc_heb"
+
+    RING = build_line_from_madx(workdir=working_dir,
+                             madx_file= madx_file,
+                             seq_name=seq_name,
+                             p0c_ev=1e9,
+                             verbose=True)
+
+    n_chunks = 100
+    k = 3
+    ni, nf = chunk_bounds(len(RING.element_names), n_chunks, k)
+    line = subline_by_index(RING, ni, nf)
 
     n_jobs = int(
         os.environ.get(

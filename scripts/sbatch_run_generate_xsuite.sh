@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=pycollef-gen
-#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/pycollef-gen-%j.out
-#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/pycollef-gen-%j.err
+#SBATCH --job-name=WAKEFIELD_GEN
+#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/WAKEFIELD_GEN-%j.out
+#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/WAKEFIELD_GEN-%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
@@ -23,19 +23,18 @@ export OPENBLAS_NUM_THREADS=8
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 
+# --- wake model: use external wake file (txt) ---
+export WAKE_TXT_PATH="/pbs/home/s/smartinez/ML4CollEffects/third_party/fcc_ee_booster_pywit_model/fcc_ee_booster_pywit_model/data/total/W_total_long (sigma 0.4 mm).txt"
+
+# --- wake diagnostics plots ---
+export WAKE_DIAG_DIR="/pbs/home/s/smartinez/ML4CollEffects/outputs/wakes/wake_diag_${SLURM_JOB_ID}"
+export WAKE_DIAG_MAX="20"          # save only first N samples
+export WAKE_DIAG_EVERY="1"         # plot every sample until max reached
+export WAKE_DIAG_FLIP="0"          # set to 1 if wake orientation is wrong
+export WAKE_DIAG_CAUSAL="0"        # keep your current FFT convolution by default
+
 # Let wrapper know how many CPUs are allocated
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
-# Optional external wake TXT (two columns: s/mm, W; lines starting with # are comments)
-# export WAKE_TXT_PATH="/path/to/W_total_long.txt"
-# Optional wake orientation flip (accepted values: 1/true/yes/on)
-# export WAKE_FLIP=1
-# export WAKE_DIAG_FLIP=1   # alias supported by wrapper for compatibility
-#
-# Optional wake diagnostics plots (generated during tracking)
-# export WAKE_DIAG_DIR="/path/to/wake-diag"
-# export WAKE_DIAG_MAX=10
-# export WAKE_DIAG_EVERY=1
-
 # Run the wrapper (uses srun to launch within the allocation)
-srun python -u "$(dirname "$0")/run_generate_xsuite.py"
+python -u /pbs/home/s/smartinez/ML4CollEffects/scripts/run_generate_xsuite.py
