@@ -242,28 +242,31 @@ def _maybe_save_wake_diagnostics(
     idx = _WAKE_DIAG_PLOT_COUNT
     _WAKE_DIAG_PLOT_COUNT += 1
 
-    import matplotlib.pyplot as plt
+    try:
+        import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
-    axes[0].plot(zeta_grid, lambda_z)
-    axes[0].set_ylabel("lambda_z")
-    axes[0].set_title("Line density")
-    axes[0].grid(alpha=0.25)
+        fig, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+        axes[0].plot(zeta_grid, lambda_z)
+        axes[0].set_ylabel("lambda_z")
+        axes[0].set_title("Line density")
+        axes[0].grid(alpha=0.25)
 
-    axes[1].plot(zeta_grid, W)
-    axes[1].set_ylabel("W")
-    axes[1].set_title("Wake kernel")
-    axes[1].grid(alpha=0.25)
+        axes[1].plot(zeta_grid, W)
+        axes[1].set_ylabel("W")
+        axes[1].set_title("Wake kernel")
+        axes[1].grid(alpha=0.25)
 
-    axes[2].plot(zeta_grid, wake_conv)
-    axes[2].set_ylabel("wake_conv")
-    axes[2].set_xlabel("zeta [m]")
-    axes[2].set_title("Convolved wake signal")
-    axes[2].grid(alpha=0.25)
+        axes[2].plot(zeta_grid, wake_conv)
+        axes[2].set_ylabel("wake_conv")
+        axes[2].set_xlabel("zeta [m]")
+        axes[2].set_title("Convolved wake signal")
+        axes[2].grid(alpha=0.25)
 
-    fig.tight_layout()
-    fig.savefig(Path(diag_dir) / f"wake_diag_{idx:05d}.png", dpi=150)
-    plt.close(fig)
+        fig.tight_layout()
+        fig.savefig(Path(diag_dir) / f"wake_diag_{idx:05d}.png", dpi=150)
+        plt.close(fig)
+    except Exception as exc:
+        warnings.warn(f"[WAKE_DIAG] Could not save diagnostic plot {idx}: {exc}")
 
 
 def track_with_collective_effects(
