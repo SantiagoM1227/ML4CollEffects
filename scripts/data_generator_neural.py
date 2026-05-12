@@ -225,9 +225,12 @@ def _maybe_save_wake_diagnostics(
     _WAKE_DIAG_CALL_COUNT += 1
 
     try:
-        max_plots = max(0, int(os.environ.get("WAKE_DIAG_MAX", "10")))
+        max_plots = int(os.environ.get("WAKE_DIAG_MAX", "10"))
     except ValueError:
         max_plots = 10
+    if max_plots < 0:
+        warnings.warn(f"[WAKE_DIAG] WAKE_DIAG_MAX={max_plots} is negative; using 0")
+        max_plots = 0
     try:
         every = max(1, int(os.environ.get("WAKE_DIAG_EVERY", "1")))
     except ValueError:
