@@ -27,7 +27,7 @@ export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
 
 
-export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:26:38.npz
+export DATASET_PATH=/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T10:45:01.npz
 export TOKEN_AE_CKPT=/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-000/models/token_ae.pt
 export OP_CKPT=/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-000/models/latent_fno.pt
 export OUT_DIR=/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-000/output

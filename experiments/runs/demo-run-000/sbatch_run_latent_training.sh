@@ -23,5 +23,5 @@ export NUMEXPR_NUM_THREADS=8
 # Let wrapper know how many CPUs are allocated
 export JOBLIB_CPUS=${SLURM_CPUS_PER_TASK:-16}
 
-export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-29T12:26:38.npz"
+export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T10:45:01.npz"
 srun python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-000/train_latent_operator_fields.py
