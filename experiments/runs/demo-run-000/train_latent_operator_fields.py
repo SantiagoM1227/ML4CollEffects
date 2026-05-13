@@ -25,7 +25,7 @@ class Config:
     grid_n: int = 64
     percentile_lo: float = 0.5
     percentile_hi: float = 99.5
-    sigma_steps: float = 2.0  # sigma = sigma_steps * grid_step
+    sigma_steps: float = 1.0 # sigma = sigma_steps * grid_step
 
     # stage A: token AE
     token_dim: int = 128
@@ -144,7 +144,7 @@ def field_loss(x_hat: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
     x_hat = x_hat / (x_hat.sum(dim=(-2, -1), keepdim=True) + 1e-12)
     x     = x     / (x.sum(dim=(-2, -1), keepdim=True) + 1e-12)
     #return torch.mean((x_hat - x) ** 2)
-    w = torch.tensor([1.0, 1.0, 3.0], device=x.device).view(1,3,1,1)  # emphasize zd
+    w = torch.tensor([1.0, 1.0, 1.0], device=x.device).view(1,3,1,1)  # emphasize zd
     return torch.mean(w * (x_hat - x) ** 2)
 
 
@@ -469,10 +469,7 @@ def eval_operator(ae: FieldTokenAE, op: LatentFNO1d, loader: DataLoader, device:
         Zout = ae.encode_tokens(Fout)
         Zpred = op(Zin, mu)
 
-        with torch.no_grad():
-            
-            lat_id = torch.mean((Zin - Zout)**2).item()
-            print("latent identity mse:", lat_id)
+        
 
 
         lat = torch.mean((Zpred - Zout) ** 2)
@@ -535,38 +532,11 @@ def train_operator(cfg: Config, ae: FieldTokenAE, X, Y, MU, train_idx, val_idx, 
 
             # decoded field regularization (recommended)
             Fhat = ae.decode_tokens(Zpred)
-            loss_field = field_loss(Fhat, Fout)
-
-            # moment loss on zd plane
-            zd_hat = Fhat[:, 2]  # [B,H,W]
-            zd_true = Fout[:, 2]
-
-            z = fb.z_grid  # torch tensors on device
-            d = fb.d_grid
-            Z, D = torch.meshgrid(z, d, indexing="ij")  # [H,W]
-            def plane_mean_sigma(f2d):
-                du = (z[-1]-z[0]) / max(1, z.numel()-1)
-                dv = (d[-1]-d[0]) / max(1, d.numel()-1)
-                mass = (f2d.sum(dim=(-2,-1)) * du * dv).clamp_min(1e-12)  # [B]
-                p = f2d / mass[:, None, None]
-                mu_z = (p * Z).sum(dim=(-2,-1)) * du * dv
-                mu_d = (p * D).sum(dim=(-2,-1)) * du * dv
-                var_z = (p * (Z - mu_z[:,None,None])**2).sum(dim=(-2,-1)) * du * dv
-                var_d = (p * (D - mu_d[:,None,None])**2).sum(dim=(-2,-1)) * du * dv
-                return mu_z, mu_d, torch.sqrt(var_z.clamp_min(0.0)), torch.sqrt(var_d.clamp_min(0.0))
-
-
-            mz_h, md_h, sz_h, sd_h = plane_mean_sigma(zd_hat)
-            mz_t, md_t, sz_t, sd_t = plane_mean_sigma(zd_true)
-
-            loss_zd_mom = ((mz_h - mz_t)**2 + (md_h - md_t)**2 + (sz_h - sz_t)**2 + (sd_h - sd_t)**2).mean()
-
-            
-
+            loss_field = field_loss(Fhat, Fout)   
            
             
 
-            loss = loss = loss_lat + cfg.lambda_field * loss_field + 0.5 * loss_zd_mom
+            loss = loss = loss_lat + cfg.lambda_field * loss_field 
 
             opt.zero_grad()
             loss.backward()
@@ -620,7 +590,7 @@ def main():
     val_idx = raw["val"]
 
     print("[INFO] dataset:", cfg.dataset_path)
-    print("[INFO] X:", X.shape, X.dtype, "MU:", MU.shape)
+    print("[INFO] X :", X.shape, X.dtype, "MU:", MU.shape)
     print("[INFO] device:", cfg.device)
 
     # Build grids/sigmas from a subset of X train
