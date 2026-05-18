@@ -12,6 +12,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
+
+import copy
+
 # --- NeuralOperator FNO import (version-tolerant) ---
 try:
     from neuralop.models import FNO
@@ -40,9 +43,9 @@ class Config:
     mu_dim: int = 3
 
     # FNO1d (NeuralOperator)
-    fno_width: int = 64
+    fno_width: int = 32
     fno_modes: int = 16
-    fno_layers: int = 4
+    fno_layers: int = 3
 
     # training
     epochs: int = 100
@@ -51,9 +54,9 @@ class Config:
     weight_decay: float = 1e-6
 
     # output
-    out_dir: str = "./experiments/runs/demo-run-002/output"
-    ckpt_path: str = "./experiments/runs/demo-run-002/models/cp6d_neuralop_fno.pt"
-    meta_path: str = "./experiments/runs/demo-run-002/models/cp6d_neuralop_meta.json"
+    out_dir: str = "./output"
+    ckpt_path: str = "./models/cp6d_neuralop_fno.pt"
+    meta_path: str = "./models/cp6d_neuralop_meta.json"
 
 
 def percentile_range(a: np.ndarray, lo: float, hi: float) -> Tuple[float, float]:
@@ -278,17 +281,25 @@ def main():
 
         if va_loss < best:
             best = va_loss
-            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+            best_state = copy.deepcopy(model.state_dict())
+            best_state.pop("_metadata", None)
 
         if epoch == 1 or epoch % 10 == 0:
             print(f"[E{epoch:03d}] train={tr_loss:.4e} val={va_loss:.4e}")
 
     if best_state is not None:
-        model.load_state_dict(best_state)
+        best_state.pop("_metadata", None)
+        model.load_state_dict(best_state, strict=False)
+
+    final_state = best_state if best_state is not None else model.state_dict()
+    model.load_state_dict(final_state, strict=False)
+    
+        
 
     torch.save({"state_dict": model.state_dict(), "config": asdict(cfg)}, cfg.ckpt_path)
-    print("[OK] saved ckpt:", cfg.ckpt_path)
-    print("[OK] saved meta:", cfg.meta_path)
+    Path(cfg.meta_path).write_text(json.dumps(meta, indent=2))
+    print("[OK] saved ckpt:", cfg.ckpt_path, "size=", Path(cfg.ckpt_path).stat().st_size)
+    print("[OK] saved meta:", cfg.meta_path, "size=", Path(cfg.meta_path).stat().st_size)
 
 
 if __name__ == "__main__":

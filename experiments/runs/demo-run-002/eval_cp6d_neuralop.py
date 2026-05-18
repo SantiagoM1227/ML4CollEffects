@@ -192,8 +192,13 @@ def main():
         layers=tr_cfg["fno_layers"],
     ).to(cfg.device)
 
-    ckpt = torch.load(cfg.ckpt_path, map_location=cfg.device)
-    model.load_state_dict(ckpt["state_dict"])
+    ckpt = torch.load(cfg.ckpt_path, map_location=cfg.device, weights_only=False)
+
+    sd = ckpt["state_dict"] if isinstance(ckpt, dict) and "state_dict" in ckpt else ckpt
+    if isinstance(sd, dict):
+        sd.pop("_metadata", None)
+
+    model.load_state_dict(sd, strict=False)
     model.eval()
 
     # Collect moment metrics

@@ -6,11 +6,9 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
 #SBATCH --time=06:00:00
-# If your cluster requires a specific partition, replace the line below with:
-# SBATCH --partition=<partition_name>
 # Otherwise Slurm will use the default partition (omit the --partition directive).
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=you@domain.example
+#SBATCH --mail-user=smartinezsa@unal.edu.co
 
 # --- environment setup (conda example) ---
 export CONDA_BASE="$HOME/miniconda3"
