@@ -26,4 +26,4 @@ export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsu
 export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 
 # Run training (NeuralOperator FNO on CP6D factors)
-srun python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/train_cp6d_neuralop.py
+python -u /pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/train_cp6d_neuralop.py

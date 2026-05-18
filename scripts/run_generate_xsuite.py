@@ -53,8 +53,8 @@ def main():
 
 
     dataset_cfg = DatasetConfig(
-        n_samples=1024,
-        particles_per_sample=2048,
+        n_samples=4096,
+        particles_per_sample=4096,
         seed=42,
         output_dir="/pbs/home/s/smartinez/ML4CollEffects/data/neural",
         save_cloud_dataset=True,
@@ -73,9 +73,9 @@ def main():
 
 
     density_cfg = DensityGridConfig(
-        nz=2048,
-        zeta_min=-0.1,
-        zeta_max=0.1,
+        nz=5000,
+        zeta_min=-1,
+        zeta_max=1,
         normalize_density=True,
     )
 
@@ -114,10 +114,15 @@ def main():
                              p0c_ev=1e9,
                              verbose=True)
 
-    n_chunks = 100
-    k = 3
-    ni, nf = chunk_bounds(len(RING.element_names), n_chunks, k)
-    line = subline_by_index(RING, ni, nf)
+    USE_CHUNK = False
+
+    if USE_CHUNK:
+        n_chunks = 2
+        k = 1
+        ni, nf = chunk_bounds(len(RING.element_names), n_chunks, k)
+        line = subline_by_index(RING, ni, nf)
+    else:
+        line = RING
 
     n_jobs = int(
         os.environ.get(
