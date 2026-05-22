@@ -1,0 +1,8 @@
+{
+  "split": "val",
+  "n_samples": 102,
+  "latent_mse": 1.2487575418163033e-08,
+  "latent_npz": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae/latent/latent_dataset.npz",
+  "vae_ckpt": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae/checkpoints/vae_ep019.pt",
+  "dyn_ckpt": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage2_dynamics/checkpoints/dyn_ep029.pt"
+}

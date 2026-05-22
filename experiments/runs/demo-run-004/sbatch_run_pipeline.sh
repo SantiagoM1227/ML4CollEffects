@@ -20,8 +20,6 @@ export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=8
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
-
-# Optional: reduce PyTorch CPU threads
 export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 
 # Dataset (fixed)
@@ -30,11 +28,54 @@ export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsu
 # Demo root
 export DEMO004_ROOT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004"
 
-# Train VAE (saves into demo-run-004/models/vae)
-srun python -u "$DEMO004_ROOT/scripts/train_vae.py" \
+# Make package `scripts` importable
+export PYTHONPATH="$DEMO004_ROOT:${PYTHONPATH:-}"
+cd "$DEMO004_ROOT"
+
+# -------------------------
+# STAGE 1: VAE train + eval
+# -------------------------
+srun python -u -m scripts.trainers.train_vae \
   --data "$DATASET_PATH" \
-  --out "$DEMO004_ROOT/models/vae" \
+  --outdir "$DEMO004_ROOT/output/stage1_vae" \
   --bins 64 \
   --epochs 20 \
   --batch-size 16 \
   --device cuda
+
+srun python -u -m scripts.evaluation.evaluate_vae \
+  --data "$DATASET_PATH" \
+  --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
+  --outdir "$DEMO004_ROOT/output/stage1_vae" \
+  --device cuda \
+  --split val
+
+# -------------------------
+# Export latent dataset
+# -------------------------
+srun python -u -m scripts.export_latents \
+  --data "$DATASET_PATH" \
+  --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
+  --out-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
+  --bins 64 \
+  --batch-size 64 \
+  --device cuda
+
+# -------------------------
+# STAGE 2: dynamics train + eval
+# -------------------------
+srun python -u -m scripts.trainers.train_dynamics_1step \
+  --latent-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
+  --outdir "$DEMO004_ROOT/output/stage2_dynamics" \
+  --epochs 30 \
+  --batch-size 128 \
+  --device cuda
+
+srun python -u -m scripts.evaluation.evaluate_dynamics_1step \
+  --latent-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
+  --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
+  --dyn-ckpt "$DEMO004_ROOT/output/stage2_dynamics/checkpoints/dyn_ep029.pt" \
+  --outdir "$DEMO004_ROOT/output/stage2_dynamics" \
+  --device cuda \
+  --split val \
+  --n-plots 8
