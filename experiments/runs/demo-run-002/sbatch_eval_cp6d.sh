@@ -22,8 +22,8 @@ export NUMEXPR_NUM_THREADS=8
 export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T10:45:01.npz"
 
 # demo002 outputs
-export CP6D_CKPT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/models/cp6d_neuralop_fno.pt"
-export CP6D_META="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/models/cp6d_neuralop_meta.json"
+export CP6D_CKPT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/models/fno2d_planes.pt"
+export CP6D_META="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/models/fno2d_planes_meta.json"
 export OUT_DIR="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-002/output_eval"
 export SPLIT="test"
 
