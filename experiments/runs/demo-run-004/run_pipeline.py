@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 import numpy as np
@@ -9,7 +8,7 @@ import torch
 
 from scripts.tokenizer import ElementTokenizer, MuNormalizer
 from scripts.tracking_transformer import TrackingTransformer
-from scripts.vae_15x2d import ConvVAE2D
+from scripts.vae_15x2d import ConvVAE2D, cloud6d_to_15x2d_hist
 
 
 def parse_args():
@@ -27,6 +26,7 @@ def parse_args():
     p.add_argument("--d-model", type=int, default=512)
     p.add_argument("--max-T", type=int, default=128)
     p.add_argument("--device", type=str, default="cuda")
+    p.add_argument("--dyn-ckpt", type=str, default="", help="optional TrackingTransformer checkpoint")
 
     return p.parse_args()
 
@@ -42,7 +42,7 @@ def main():
     # Load VAE
     ckpt = torch.load(args.vae_ckpt, map_location="cpu")
     bins = int(ckpt.get("bins", 64))
-    vae = ConvVAE2D(in_channels=15, bins=bins, latent_dim=256)
+    vae = ConvVAE2D(in_channels=15, bins=bins, latent_dim=int(ckpt.get("latent_dim", 256)))
     vae.load_state_dict(ckpt["state_dict"], strict=True)
     vae.to(device).eval()
 
@@ -67,19 +67,21 @@ def main():
     normalizer = MuNormalizer(mean=mu_mean, std=mu_std)
     tok = ElementTokenizer(mu_dim=3, d_token=512, n_pos_freqs=16, mu_normalizer=normalizer).to(device).eval()
 
-    # Tracking model (random init here; load your trained weights in practice)
+    # Tracking model
     model = TrackingTransformer(z_dim=256, h_dim=512, d_model=args.d_model, n_layers=6, n_heads=8).to(device).eval()
+    if args.dyn_ckpt:
+        dyn = torch.load(args.dyn_ckpt, map_location="cpu")
+        model.load_state_dict(dyn["state_dict"], strict=False)
+        model.eval()
 
     # Load cloud
     cloud = np.load(args.cloud_npz)["cloud"].astype(np.float32)  # (Np,6)
-    # Convert to 15x2d hist
-    from ml4coll.models.vae_15x2d import cloud6d_to_15x2d_hist
     x = cloud6d_to_15x2d_hist(cloud, bins=bins)
     x = torch.from_numpy(x)[None, ...].to(device)  # (1,15,bins,bins)
 
     # Encode -> z0
     mu, logvar = vae.encode(x)
-    z0 = mu  # use mean for deterministic inference
+    z0 = mu  # deterministic
 
     # Tokenize lattice
     MU_t = torch.from_numpy(MU_seq)[None, ...].to(device)  # (1,T,3)
