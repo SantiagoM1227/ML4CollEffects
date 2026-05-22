@@ -13,7 +13,6 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
 
-import copy
 
 # --- NeuralOperator FNO import (version-tolerant) ---
 try:
@@ -22,9 +21,6 @@ except Exception:
     from neuralop.models.fno import FNO
 
 
-DIM_NAMES = ["x", "y", "zeta", "px", "py", "delta"]
-DIM_IDX = {"x": 0, "y": 1, "zeta": 2, "px": 3, "py": 4, "delta": 5}
-
 
 @dataclass
 class Config:
@@ -32,167 +28,186 @@ class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     seed: int = 42
 
-    # CP factorization sketch
-    n_bins: int = 64
-    rank: int = 16
-    pct_lo: float = 0.1
-    pct_hi: float = 99.9
-    sigma_steps: float = 1.0
+    # density field
+    grid_n: int = 64
+    percentile_lo: float = 0.5
+    percentile_hi: float = 99.5
+    sigma_steps: float = 2.0
 
     # conditioning
     mu_dim: int = 3
 
-    # FNO1d (NeuralOperator)
-    fno_width: int = 32
-    fno_modes: int = 16
-    fno_layers: int = 3
+    # FNO2d (NeuralOperator) 
+    fno_width: int = 64
+    fno_modes: int = 12
+    fno_layers: int = 4
 
     # training
-    epochs: int = 100
-    batch_size: int = 16
+    epochs: int = 50
+    batch_size: int = 8
     lr: float = 3e-4
     weight_decay: float = 1e-6
 
+    # low-rank regularization (Fourier)
+    lambda_hf: float = 1e-4
+
     # output
     out_dir: str = "./output"
-    ckpt_path: str = "./models/cp6d_neuralop_fno.pt"
-    meta_path: str = "./models/cp6d_neuralop_meta.json"
+    ckpt_path: str = "./models/fno2d_planes.pt"
+    meta_path: str = "./models/fno2d_planes_meta.json"
 
-
-def percentile_range(a: np.ndarray, lo: float, hi: float) -> Tuple[float, float]:
+ # ----------------------------
+# Utilities: density fields from clouds
+# ----------------------------
+def percentile_range(a: np.ndarray, lo=0.5, hi=99.5) -> Tuple[float, float]:
     return float(np.percentile(a, lo)), float(np.percentile(a, hi))
 
 
-class CP6DBuilder:
+def soft_kde2d(u, v, u_grid, v_grid, su, sv):
     """
-    Same idea as before: build per-dim grids, then represent a cloud by
-    rank anchors -> 1D soft hist factors per dim and per rank component.
-
-    Returns:
-      factors: [6, R, B] (each [R,B] normalized along B)
-      amps:    [R] (normalized)
+    u,v: [B,N]
+    u_grid: [Hu], v_grid: [Wv]
+    returns rho: [B, Hu, Wv] (not normalized)
     """
-    def __init__(self, clouds_subset: np.ndarray, n_bins: int, pct_lo: float, pct_hi: float, sigma_steps: float, rank: int, seed: int):
-        self.n_bins = int(n_bins)
-        self.rank = int(rank)
-        self.sigma_steps = float(sigma_steps)
-        self.rng = np.random.default_rng(seed)
+    du = (u[:, :, None, None] - u_grid[None, None, :, None]) / su
+    dv = (v[:, :, None, None] - v_grid[None, None, None, :]) / sv
+    w = torch.exp(-0.5 * (du**2 + dv**2))   # [B,N,Hu,Wv]
+    return w.mean(dim=1)                    # [B,Hu,Wv]
 
-        self.grids: Dict[str, np.ndarray] = {}
-        self.deltas: Dict[str, float] = {}
-        for name, j in DIM_IDX.items():
-            lo, hi = percentile_range(clouds_subset[:, :, j].ravel(), pct_lo, pct_hi)
-            g = np.linspace(lo, hi, self.n_bins).astype(np.float64)
-            self.grids[name] = g
-            self.deltas[name] = float(g[1] - g[0])
 
-        self.tgrids = None
+def normalize_density(rho, u_grid, v_grid):
+    du = (u_grid[-1] - u_grid[0]) / max(1, u_grid.numel() - 1)
+    dv = (v_grid[-1] - v_grid[0]) / max(1, v_grid.numel() - 1)
+    mass = rho.sum(dim=(-2, -1), keepdim=True) * du * dv
+    return rho / (mass + 1e-12)
+
+
+class FieldBuilder:
+    """
+    Holds grids + sigmas, builds 3 density planes from a 6D cloud batch.
+    """
+    def __init__(self, X_cloud_train_subset: np.ndarray, grid_n: int, lo: float, hi: float, sigma_steps: float):
+        # subset: [Ns, Np, 6]
+        sub = X_cloud_train_subset
+
+        xr  = percentile_range(sub[:, :, 0].ravel(), lo, hi)
+        yr  = percentile_range(sub[:, :, 1].ravel(), lo, hi)
+        zr  = percentile_range(sub[:, :, 2].ravel(), lo, hi)
+        pxr = percentile_range(sub[:, :, 3].ravel(), lo, hi)
+        pyr = percentile_range(sub[:, :, 4].ravel(), lo, hi)
+        dr  = percentile_range(sub[:, :, 5].ravel(), lo, hi)
+
+        self.x_grid  = torch.linspace(xr[0],  xr[1],  grid_n)
+        self.y_grid  = torch.linspace(yr[0],  yr[1],  grid_n)
+        self.z_grid  = torch.linspace(zr[0],  zr[1],  grid_n)
+        self.px_grid = torch.linspace(pxr[0], pxr[1], grid_n)
+        self.py_grid = torch.linspace(pyr[0], pyr[1], grid_n)
+        self.d_grid  = torch.linspace(dr[0],  dr[1],  grid_n)
+
+        # sigma ~ few grid steps
+        sx  = float((self.x_grid[1]  - self.x_grid[0])  * sigma_steps)
+        sy  = float((self.y_grid[1]  - self.y_grid[0])  * sigma_steps)
+        sz  = float((self.z_grid[1]  - self.z_grid[0])  * sigma_steps)
+        spx = float((self.px_grid[1] - self.px_grid[0]) * sigma_steps)
+        spy = float((self.py_grid[1] - self.py_grid[0]) * sigma_steps)
+        sd  = float((self.d_grid[1]  - self.d_grid[0])  * sigma_steps)
+
+        self.sigmas = (sx, sy, sz, spx, spy, sd)
 
     def to(self, device: str):
-        self.tgrids = {k: torch.tensor(v, dtype=torch.float32, device=device) for k, v in self.grids.items()}
+        self.x_grid  = self.x_grid.to(device)
+        self.y_grid  = self.y_grid.to(device)
+        self.z_grid  = self.z_grid.to(device)
+        self.px_grid = self.px_grid.to(device)
+        self.py_grid = self.py_grid.to(device)
+        self.d_grid  = self.d_grid.to(device)
         return self
 
-    @torch.no_grad()
-    def cloud_to_cp(self, cloud: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        device = cloud.device
-        dtype = cloud.dtype
-        Np = cloud.shape[0]
-        R = self.rank
-        B = self.n_bins
+    def cloud_to_fields(self, cloud_batch: torch.Tensor) -> torch.Tensor:
+        """
+        cloud_batch: [B,Np,6]
+        returns: [B,3,grid_n,grid_n] for (x,px), (y,py), (zeta,delta)
+        """
+        sx, sy, sz, spx, spy, sd = self.sigmas
 
-        idx = torch.randperm(Np, device=device)[:R] if Np >= R else torch.randint(0, Np, (R,), device=device)
-        anchors = cloud[idx]  # [R,6]
+        x  = cloud_batch[:, :, 0]
+        y  = cloud_batch[:, :, 1]
+        zt = cloud_batch[:, :, 2]
+        px = cloud_batch[:, :, 3]
+        py = cloud_batch[:, :, 4]
+        de = cloud_batch[:, :, 5]
 
-        amps = torch.ones(R, device=device, dtype=dtype) / float(R)
+        rho_x = normalize_density(soft_kde2d(x,  px, self.x_grid,  self.px_grid, sx,  spx), self.x_grid,  self.px_grid)
+        rho_y = normalize_density(soft_kde2d(y,  py, self.y_grid,  self.py_grid, sy,  spy), self.y_grid,  self.py_grid)
+        rho_z = normalize_density(soft_kde2d(zt, de, self.z_grid,  self.d_grid,  sz,  sd),  self.z_grid,  self.d_grid)
 
-        factors = torch.zeros(6, R, B, device=device, dtype=dtype)
-        for d, name in enumerate(DIM_NAMES):
-            grid = self.tgrids[name].to(device=device, dtype=dtype)  # [B]
-            sigma = torch.as_tensor(self.sigma_steps * self.deltas[name], device=device, dtype=dtype)
-
-            c = anchors[:, d].view(R, 1)
-            g = grid.view(1, B)
-            w = torch.exp(-0.5 * ((g - c) / (sigma + 1e-12)) ** 2)
-            w = w / (w.sum(dim=-1, keepdim=True) + 1e-12)
-            factors[d] = w
-
-        return factors, amps
+        return torch.stack([rho_x, rho_y, rho_z], dim=1)  # [B,3,H,W]
 
 
-class CP6DDataset(Dataset):
-    def __init__(self, X, Y, MU, idx: np.ndarray):
+def field_loss(x_hat: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+    # both [B,3,H,W], enforce mass normalization (sum only; consistent with your notebook)
+    x_hat = x_hat / (x_hat.sum(dim=(-2, -1), keepdim=True) + 1e-12)
+    x     = x     / (x.sum(dim=(-2, -1), keepdim=True) + 1e-12)
+    #return torch.mean((x_hat - x) ** 2)
+    w = torch.tensor([1.0, 1.0, 1.0], device=x.device).view(1,3,1,1)  # emphasize zd
+    return torch.mean(w * (x_hat - x) ** 2)
+
+class OperatorFieldDataset(Dataset):
+    def __init__(self, X, Y, MU, idx, field_builder: FieldBuilder):
         self.X = X
         self.Y = Y
         self.MU = MU
         self.idx = np.array(idx, dtype=np.int64)
+        self.fb = field_builder
 
     def __len__(self): return len(self.idx)
 
     def __getitem__(self, k):
         i = int(self.idx[k])
-        x = torch.from_numpy(self.X[i]).float()  # [Np,6]
-        y = torch.from_numpy(self.Y[i]).float()
+        x = torch.from_numpy(self.X[i]).float().unsqueeze(0)  # [1,Np,6]
+        y = torch.from_numpy(self.Y[i]).float().unsqueeze(0)
         mu_raw = torch.from_numpy(self.MU[i]).float()
 
-        # same mu preprocessing you used before
-        mu0 = torch.log10(mu_raw[0].clamp_min(1e-30))  # Q
-        mu1 = mu_raw[1] * 1e3                          # a in mm
-        mu2 = torch.log10(mu_raw[2].clamp_min(1e-30))  # Z_scale
+        mu0 = torch.log10(mu_raw[0].clamp_min(1e-30))
+        mu1 = mu_raw[1] * 1e3
+        mu2 = torch.log10(mu_raw[2].clamp_min(1e-30))
         mu = torch.stack([mu0, mu1, mu2], dim=0)
 
-        return x, y, mu
+        Fin = self.fb.cloud_to_fields(x)[0]   # [3,H,W]
+        Fout = self.fb.cloud_to_fields(y)[0]
+        return Fin, Fout, mu
 
 
-class CP6DNeuralOp(nn.Module):
-    """
-    Uses NeuralOperator's true FNO1d.
 
-    For each dimension d:
-      input:  [B, R + mu_dim, n_bins]
-      output: [B, R, n_bins]
-    Shared FNO across dims (same weights) for simplicity/regularization.
-    """
-    def __init__(self, rank: int, n_bins: int, mu_dim: int, width: int, modes: int, layers: int):
+class PlaneFNO2d(nn.Module):
+    def __init__(self, mu_dim: int, width: int, modes: int, layers: int):
         super().__init__()
-        self.rank = rank
-        self.n_bins = n_bins
         self.mu_dim = mu_dim
-
-        in_ch = rank + mu_dim
-        out_ch = rank
-
         self.fno = FNO(
-            n_modes=(modes,),
+            n_modes=(modes, modes),
             hidden_channels=width,
-            in_channels=in_ch,
-            out_channels=out_ch,
+            in_channels=3 + mu_dim,
+            out_channels=3,
             n_layers=layers,
-            # factorization options exist in neuralop, but keep default first
         )
 
-    def forward(self, factors_in: torch.Tensor, mu: torch.Tensor) -> torch.Tensor:
-        """
-        factors_in: [B,6,R,Bins]
-        mu:         [B,mu_dim]
-        return:     [B,6,R,Bins]
-        """
-        B, D, R, Bins = factors_in.shape
-        assert D == 6 and R == self.rank and Bins == self.n_bins
+    def forward(self, Fin: torch.Tensor, mu: torch.Tensor) -> torch.Tensor:
+        # Fin: [B,3,H,W], mu: [B,3]
+        B, _, H, W = Fin.shape
+        mu_img = mu.view(B, self.mu_dim, 1, 1).expand(B, self.mu_dim, H, W)
+        x = torch.cat([Fin, mu_img], dim=1)  # [B,3+mu_dim,H,W]
+        y = self.fno(x)                      # [B,3,H,W]
+        y = F.softplus(y)
+        y = y / (y.sum(dim=(-2, -1), keepdim=True) + 1e-12)
+        return y
 
-        # expand mu into channels constant over space
-        mu_ch = mu.unsqueeze(-1).expand(B, self.mu_dim, Bins)  # [B,mu_dim,Bins]
-
-        outs = []
-        for d in range(6):
-            x = factors_in[:, d]                               # [B,R,Bins]
-            x_in = torch.cat([x, mu_ch], dim=1)                # [B,R+mu_dim,Bins]
-            y = self.fno(x_in)                                 # [B,R,Bins]
-            y = F.softplus(y)
-            y = y / (y.sum(dim=-1, keepdim=True) + 1e-12)      # normalize per rank
-            outs.append(y)
-
-        return torch.stack(outs, dim=1)  # [B,6,R,Bins]
-
+def high_freq_penalty(field: torch.Tensor, keep: int) -> torch.Tensor:
+    # field: [B,3,H,W]
+    ft = torch.fft.rfft2(field, norm="ortho")  # [B,3,H,W//2+1]
+    mask = torch.ones_like(ft.real)
+    mask[:, :, :keep, :keep] = 0.0
+    power = ft.real**2 + ft.imag**2
+    return (mask * power).mean()
 
 def main():
     cfg = Config(dataset_path=os.environ.get("DATASET_PATH", ""))
@@ -208,31 +223,45 @@ def main():
 
     # grids from subset of BOTH X and Y (coverage)
     sub = np.concatenate([X[train_idx[:200]], Y[train_idx[:200]]], axis=0)
-    builder = CP6DBuilder(sub, n_bins=cfg.n_bins, pct_lo=cfg.pct_lo, pct_hi=cfg.pct_hi,
-                         sigma_steps=cfg.sigma_steps, rank=cfg.rank, seed=cfg.seed).to(cfg.device)
+    fb = FieldBuilder(
+        X_cloud_train_subset=sub,
+        grid_n=cfg.grid_n,
+        lo=cfg.percentile_lo,
+        hi=cfg.percentile_hi,
+        sigma_steps=cfg.sigma_steps,
+    ).to(cfg.device)
 
     Path(cfg.out_dir).mkdir(parents=True, exist_ok=True)
     Path(Path(cfg.ckpt_path).parent).mkdir(parents=True, exist_ok=True)
 
-    meta = {"config": asdict(cfg), "grids": {k: v.tolist() for k, v in builder.grids.items()}, "deltas": builder.deltas}
+    meta = {
+        "config": asdict(cfg),
+        "grids": {
+            "x_grid": fb.x_grid.detach().cpu().numpy().tolist(),
+            "y_grid": fb.y_grid.detach().cpu().numpy().tolist(),
+            "z_grid": fb.z_grid.detach().cpu().numpy().tolist(),
+            "px_grid": fb.px_grid.detach().cpu().numpy().tolist(),
+            "py_grid": fb.py_grid.detach().cpu().numpy().tolist(),
+            "d_grid": fb.d_grid.detach().cpu().numpy().tolist(),
+        },
+    }
     Path(cfg.meta_path).write_text(json.dumps(meta, indent=2))
 
-    ds_tr = CP6DDataset(X, Y, MU, train_idx)
-    ds_va = CP6DDataset(X, Y, MU, val_idx)
+    ds_tr = OperatorFieldDataset(X, Y, MU, train_idx, fb)
+    ds_va = OperatorFieldDataset(X, Y, MU, val_idx, fb)
     tr = DataLoader(ds_tr, batch_size=cfg.batch_size, shuffle=True, num_workers=0)
     va = DataLoader(ds_va, batch_size=cfg.batch_size, shuffle=False, num_workers=0)
 
-    model = CP6DNeuralOp(rank=cfg.rank, n_bins=cfg.n_bins, mu_dim=cfg.mu_dim,
-                         width=cfg.fno_width, modes=cfg.fno_modes, layers=cfg.fno_layers).to(cfg.device)
+    model = PlaneFNO2d(
+        mu_dim=cfg.mu_dim,
+        width=cfg.fno_width,
+        modes=cfg.fno_modes,
+        layers=cfg.fno_layers,
+    ).to(cfg.device)
+
     opt = torch.optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
 
-    def build_cp_batch(cloud_batch: torch.Tensor) -> torch.Tensor:
-        # cloud_batch: [B,Np,6] on device -> factors: [B,6,R,Bins]
-        fs = []
-        for b in range(cloud_batch.shape[0]):
-            f, _a = builder.cloud_to_cp(cloud_batch[b])  # [6,R,B]
-            fs.append(f)
-        return torch.stack(fs, dim=0)
+    
 
     best = float("inf")
     best_state = None
@@ -241,24 +270,25 @@ def main():
         model.train()
         s = 0.0; n = 0
 
-        for x, y, mu in tr:
-            x = x.to(cfg.device)  # [B,Np,6]
-            y = y.to(cfg.device)
-            mu = mu.to(cfg.device)
+        for Fin, Fout, mu in tr:
 
-            fx = build_cp_batch(x)
-            fy = build_cp_batch(y)
+            Fin = Fin.to(cfg.device)     # [B,3,H,W]
+            Fout = Fout.to(cfg.device)   # [B,3,H,W]
+            mu = mu.to(cfg.device)       # [B,3]
 
-            fhat = model(fx, mu)
+            Fhat = model(Fin, mu)
 
-            loss = torch.mean((fhat - fy) ** 2)
+            loss_data = field_loss(Fhat, Fout)
+            loss_hf = high_freq_penalty(Fhat, keep=cfg.fno_modes)
+            loss = loss_data + cfg.lambda_hf * loss_hf
+
 
             opt.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
 
-            bsz = x.size(0)
+            bsz = Fin.size(0)
             s += float(loss.item()) * bsz
             n += bsz
 
@@ -268,25 +298,30 @@ def main():
         model.eval()
         sv = 0.0; nv = 0
         with torch.no_grad():
-            for x, y, mu in va:
-                x = x.to(cfg.device); y = y.to(cfg.device); mu = mu.to(cfg.device)
-                fx = build_cp_batch(x)
-                fy = build_cp_batch(y)
-                fhat = model(fx, mu)
-                vloss = torch.mean((fhat - fy) ** 2)
-                bsz = x.size(0)
+            for Fin, Fout, mu in va:
+                Fin = Fin.to(cfg.device)
+                Fout = Fout.to(cfg.device)
+                mu = mu.to(cfg.device)
+
+                Fhat = model(Fin, mu)
+                vloss = field_loss(Fhat, Fout) + cfg.lambda_hf * high_freq_penalty(Fhat, keep=cfg.fno_modes)
+                
+                bsz = Fin.size(0)
                 sv += float(vloss.item()) * bsz
                 nv += bsz
+
         va_loss = sv / max(1, nv)
 
         if va_loss < best:
-            best = va_loss
-            best_state = copy.deepcopy(model.state_dict())
-            best_state.pop("_metadata", None)
+           best = va_loss
+           best = va_loss
+           sd = model.state_dict()
+           sd.pop("_metadata", None)
+           torch.save({"state_dict": sd, "config": asdict(cfg)}, cfg.ckpt_path)
 
         if epoch == 1 or epoch % 10 == 0:
             print(f"[E{epoch:03d}] train={tr_loss:.4e} val={va_loss:.4e}")
-
+    
     if best_state is not None:
         best_state.pop("_metadata", None)
         model.load_state_dict(best_state, strict=False)
@@ -298,9 +333,8 @@ def main():
 
     torch.save({"state_dict": model.state_dict(), "config": asdict(cfg)}, cfg.ckpt_path)
     Path(cfg.meta_path).write_text(json.dumps(meta, indent=2))
-    print("[OK] saved ckpt:", cfg.ckpt_path, "size=", Path(cfg.ckpt_path).stat().st_size)
-    print("[OK] saved meta:", cfg.meta_path, "size=", Path(cfg.meta_path).stat().st_size)
-
+    print("[OK] wrote meta:", cfg.meta_path)
+    print("[OK] best ckpt at:", cfg.ckpt_path)
 
 if __name__ == "__main__":
     main()
