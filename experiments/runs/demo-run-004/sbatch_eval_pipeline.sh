@@ -23,21 +23,20 @@ export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-8}
 
 export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T08:37:06.npz"
 export DEMO004_ROOT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004"
-
-# Choose stage via env var: STAGE=1 or STAGE=2
 export STAGE="${STAGE:-1}"
 
+export PYTHONPATH="$DEMO004_ROOT:${PYTHONPATH:-}"
 cd "$DEMO004_ROOT"
 
 if [ "$STAGE" = "1" ]; then
-  srun python -u -m "$DEMO004_ROOT/scripts/evaluation/evaluate_vae.py" \
+  srun python -u -m scripts.evaluation.evaluate_vae \
     --data "$DATASET_PATH" \
     --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
     --outdir "$DEMO004_ROOT/output/stage1_vae" \
     --device cuda \
     --split val
 elif [ "$STAGE" = "2" ]; then
-  srun python -u -m "$DEMO004_ROOT/scripts/evaluation/evaluate_dynamics_1step.py" \
+  srun python -u -m scripts.evaluation.evaluate_dynamics_1step \
     --latent-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
     --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
     --dyn-ckpt "$DEMO004_ROOT/output/stage2_dynamics/checkpoints/dyn_ep029.pt" \
