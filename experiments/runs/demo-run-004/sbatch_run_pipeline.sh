@@ -15,26 +15,19 @@ export CONDA_BASE="$HOME/miniconda3"
 source "$CONDA_BASE/etc/profile.d/conda.sh"
 conda activate xsuite-py310
 
-# Thread control (avoid oversubscription)
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=8
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 
-# Dataset (fixed)
 export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T08:37:06.npz"
-
-# Demo root
 export DEMO004_ROOT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004"
 
-# Make package `scripts` importable
 export PYTHONPATH="$DEMO004_ROOT:${PYTHONPATH:-}"
 cd "$DEMO004_ROOT"
 
-# -------------------------
-# STAGE 1: VAE train + eval
-# -------------------------
+# Stage 1
 srun python -u -m scripts.trainers.train_vae \
   --data "$DATASET_PATH" \
   --outdir "$DEMO004_ROOT/output/stage1_vae" \
@@ -50,9 +43,7 @@ srun python -u -m scripts.evaluation.evaluate_vae \
   --device cuda \
   --split val
 
-# -------------------------
-# Export latent dataset
-# -------------------------
+# Export latents
 srun python -u -m scripts.export_latents \
   --data "$DATASET_PATH" \
   --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
@@ -61,9 +52,7 @@ srun python -u -m scripts.export_latents \
   --batch-size 64 \
   --device cuda
 
-# -------------------------
-# STAGE 2: dynamics train + eval
-# -------------------------
+# Stage 2
 srun python -u -m scripts.trainers.train_dynamics_1step \
   --latent-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
   --outdir "$DEMO004_ROOT/output/stage2_dynamics" \
