@@ -14,20 +14,14 @@ from scripts.vae_15x2d import ConvVAE2D, cloud6d_to_15x2d_hist
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--vae-ckpt", type=str, required=True)
+    p.add_argument("--dyn-ckpt", type=str, required=True, help="trained dynamics checkpoint")
     p.add_argument("--out", type=str, default="./runs/infer")
 
-    # lattice token inputs (npz)
     p.add_argument("--lattice-npz", type=str, required=True, help="npz with MU_seq (T,3) and L_seq (T,) or s_seq (T,)")
-
-    # beam input
     p.add_argument("--cloud-npz", type=str, required=True, help="npz with key cloud (Np,6)")
 
-    # model
-    p.add_argument("--d-model", type=int, default=512)
     p.add_argument("--max-T", type=int, default=128)
     p.add_argument("--device", type=str, default="cuda")
-    p.add_argument("--dyn-ckpt", type=str, default="", help="optional TrackingTransformer checkpoint")
-
     return p.parse_args()
 
 
@@ -39,16 +33,36 @@ def main():
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
-    # Load VAE
-    ckpt = torch.load(args.vae_ckpt, map_location="cpu")
-    bins = int(ckpt.get("bins", 64))
-    vae = ConvVAE2D(in_channels=15, bins=bins, latent_dim=int(ckpt.get("latent_dim", 256)))
-    vae.load_state_dict(ckpt["state_dict"], strict=True)
+    vae_ckpt = torch.load(args.vae_ckpt, map_location="cpu")
+    bins = int(vae_ckpt.get("bins", 64))
+    latent_dim = int(vae_ckpt.get("latent_dim", 256))
+    global_ranges = tuple((float(a), float(b)) for (a, b) in vae_ckpt["global_ranges"])
+
+    vae = ConvVAE2D(in_channels=15, bins=bins, latent_dim=latent_dim)
+    vae.load_state_dict(vae_ckpt["state_dict"], strict=True)
     vae.to(device).eval()
 
-    # Load lattice token inputs
+    dyn_ckpt = torch.load(args.dyn_ckpt, map_location="cpu")
+    dargs = dyn_ckpt.get("args", {})
+
+    mu_norm = MuNormalizer.from_state_dict(dyn_ckpt["mu_normalizer"]).to(device)
+    tok = ElementTokenizer(mu_dim=3, d_token=512, n_pos_freqs=16, mu_normalizer=mu_norm)
+    tok.load_state_dict(dyn_ckpt["tokenizer_state"], strict=True)
+    tok.to(device).eval()
+
+    model = TrackingTransformer(
+        z_dim=latent_dim,
+        h_dim=512,
+        d_model=int(dargs.get("d_model", 512)),
+        n_layers=int(dargs.get("n_layers", 4)),
+        n_heads=int(dargs.get("n_heads", 8)),
+        dropout=float(dargs.get("dropout", 0.0)),
+    ).to(device)
+    model.load_state_dict(dyn_ckpt["state_dict"], strict=True)
+    model.eval()
+
     lat = np.load(args.lattice_npz)
-    MU_seq = lat["MU_seq"].astype(np.float32)  # (T,3)
+    MU_seq = lat["MU_seq"].astype(np.float32)
     if "s_seq" in lat:
         s_seq = lat["s_seq"].astype(np.float32)
     elif "L_seq" in lat:
@@ -61,42 +75,24 @@ def main():
     MU_seq = MU_seq[:T]
     s_seq = s_seq[:T]
 
-    # Build tokenizer
-    mu_mean = torch.tensor(MU_seq.mean(axis=0))
-    mu_std = torch.tensor(MU_seq.std(axis=0) + 1e-12)
-    normalizer = MuNormalizer(mean=mu_mean, std=mu_std)
-    tok = ElementTokenizer(mu_dim=3, d_token=512, n_pos_freqs=16, mu_normalizer=normalizer).to(device).eval()
+    cloud = np.load(args.cloud_npz)["cloud"].astype(np.float32)
+    x = cloud6d_to_15x2d_hist(cloud, bins=bins, ranges=global_ranges)
+    x = torch.from_numpy(x)[None, ...].to(device)
 
-    # Tracking model
-    model = TrackingTransformer(z_dim=256, h_dim=512, d_model=args.d_model, n_layers=6, n_heads=8).to(device).eval()
-    if args.dyn_ckpt:
-        dyn = torch.load(args.dyn_ckpt, map_location="cpu")
-        model.load_state_dict(dyn["state_dict"], strict=False)
-        model.eval()
+    mu0, _ = vae.encode(x)
+    z0 = mu0
 
-    # Load cloud
-    cloud = np.load(args.cloud_npz)["cloud"].astype(np.float32)  # (Np,6)
-    x = cloud6d_to_15x2d_hist(cloud, bins=bins)
-    x = torch.from_numpy(x)[None, ...].to(device)  # (1,15,bins,bins)
+    MU_t = torch.from_numpy(MU_seq)[None, ...].to(device)
+    s_t = torch.from_numpy(s_seq)[None, ...].to(device)
+    h = tok(MU_t, s_t)
 
-    # Encode -> z0
-    mu, logvar = vae.encode(x)
-    z0 = mu  # deterministic
+    z_seq = model(z0, h)
 
-    # Tokenize lattice
-    MU_t = torch.from_numpy(MU_seq)[None, ...].to(device)  # (1,T,3)
-    s_t = torch.from_numpy(s_seq)[None, ...].to(device)    # (1,T)
-    h = tok(MU_t, s_t)  # (1,T,512)
-
-    # Rollout z_seq
-    z_seq = model(z0, h)  # (1,T+1,256)
-
-    # Decode all
     xhat_seq = []
     for t in range(z_seq.shape[1]):
         xhat = vae.decode(z_seq[:, t, :])
         xhat_seq.append(xhat.detach().cpu().numpy())
-    xhat_seq = np.concatenate(xhat_seq, axis=0)  # (T+1,15,bins,bins)
+    xhat_seq = np.concatenate(xhat_seq, axis=0)
 
     np.savez(outdir / "predicted_distributions.npz", Xhat=xhat_seq, MU_seq=MU_seq, s_seq=s_seq)
     print("Saved", outdir / "predicted_distributions.npz")

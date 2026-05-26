@@ -1,26 +1,34 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
 
 
+class CausalBlock(nn.Module):
+    def __init__(self, d_model: int, n_heads: int, dropout: float = 0.0):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(d_model)
+        self.attn = nn.MultiheadAttention(d_model, n_heads, dropout=dropout, batch_first=True)
+        self.ln2 = nn.LayerNorm(d_model)
+        self.ff = nn.Sequential(
+            nn.Linear(d_model, 4 * d_model),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(4 * d_model, d_model),
+        )
+
+    def forward(self, x: torch.Tensor, attn_mask: torch.Tensor, need_weights: bool = False) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+        y = self.ln1(x)
+        attn_out, w = self.attn(y, y, y, attn_mask=attn_mask, need_weights=need_weights, average_attn_weights=False)
+        x = x + attn_out
+        x = x + self.ff(self.ln2(x))
+        return x, w
+
+
 class TrackingTransformer(nn.Module):
-    """Latent-space beam dynamics model.
-
-    Per step t:
-      input fused token = concat(z_{t-1}, h_t) -> proj to d_model
-      causal Transformer over sequence of fused tokens
-      head -> delta z_t
-      z_t = z_{t-1} + delta z_t
-
-    Notes:
-    - This implementation uses a standard causal Transformer over the whole sequence.
-      It supports "memory" of previous steps via self-attention.
-    - We keep z's as (B, T+1, 256) and tokens as (B, T, d_model).
-    """
+    """Autoregressive latent dynamics with causal self-attention over fused tokens."""
 
     def __init__(
         self,
@@ -35,57 +43,61 @@ class TrackingTransformer(nn.Module):
         self.z_dim = int(z_dim)
         self.h_dim = int(h_dim)
         self.d_model = int(d_model)
+        self.n_layers = int(n_layers)
 
-        self.fuse = nn.Linear(z_dim + h_dim, d_model)
+        self.fuse = nn.Linear(self.z_dim + self.h_dim, self.d_model)
+        self.layers = nn.ModuleList([CausalBlock(self.d_model, n_heads, dropout=dropout) for _ in range(self.n_layers)])
+        self.head = nn.Linear(self.d_model, self.z_dim)
 
-        enc_layer = nn.TransformerEncoderLayer(
-            d_model=d_model,
-            nhead=n_heads,
-            dim_feedforward=4 * d_model,
-            activation="gelu",
-            batch_first=True,
-            dropout=dropout,
-            norm_first=True,  # LN -> attn
-        )
-        self.tr = nn.TransformerEncoder(enc_layer, num_layers=n_layers)
+    @staticmethod
+    def _causal_mask(T: int, device: torch.device) -> torch.Tensor:
+        return torch.triu(torch.ones(T, T, dtype=torch.bool, device=device), diagonal=1)
 
-        self.head = nn.Linear(d_model, z_dim)
-
-    def _causal_mask(self, T: int, device) -> torch.Tensor:
-        # True means blocked for PyTorch Transformer (attn_mask uses float or bool depending version)
-        return torch.triu(torch.ones(T, T, device=device, dtype=torch.bool), diagonal=1)
-
-    def forward(self, z0: torch.Tensor, h: torch.Tensor) -> torch.Tensor:
-        """Forward rollout.
-
-        Parameters
-        ----------
-        z0: (B, z_dim)
-        h:  (B, T, h_dim)
-
-        Returns
-        -------
-        z_seq: (B, T+1, z_dim)
-            z_seq[:,0]=z0, z_seq[:,t]=z_t
+    def forward(
+        self,
+        z0: torch.Tensor,
+        h: torch.Tensor,
+        return_attention: bool = False,
+    ) -> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]:
         """
-        B, T, _ = h.shape
+        z0: (B,z_dim)
+        h: (B,T,h_dim)
+        returns z_seq: (B,T+1,z_dim), and optional attention map (L,H,T,T)
+        """
+        bsz, T, _ = h.shape
         device = h.device
 
-        # Build z_{t-1} sequence iteratively, but attention wants all tokens.
-        # We'll do a single pass by providing an initial guess z_{t-1}=z0 for all steps,
-        # then do explicit residual integration using the transformer's per-token outputs.
-        # This matches your "delta z" residual update per element.
-
-        z_prev = z0[:, None, :].expand(B, T, self.z_dim)
-        x = self.fuse(torch.cat([z_prev, h], dim=-1))  # (B,T,d_model)
-
-        y = self.tr(x, mask=self._causal_mask(T, device))  # (B,T,d_model)
-        dz = self.head(y)  # (B,T,256)
-
-        # residual integrate
-        z_list = [z0]
+        z_list: List[torch.Tensor] = [z0]
+        token_list: List[torch.Tensor] = []
         zt = z0
+        attn_last: Optional[torch.Tensor] = None
+
         for t in range(T):
-            zt = zt + dz[:, t, :]
+            token_t = self.fuse(torch.cat([zt, h[:, t, :]], dim=-1))
+            token_list.append(token_t)
+            x = torch.stack(token_list, dim=1)  # (B,t+1,d_model)
+            mask = self._causal_mask(x.shape[1], device)
+
+            all_layer_weights = []
+            for layer in self.layers:
+                x, w = layer(x, mask, need_weights=return_attention)
+                if return_attention and w is not None:
+                    all_layer_weights.append(w)
+
+            dz_t = self.head(x[:, -1, :])
+            zt = zt + dz_t
             z_list.append(zt)
-        return torch.stack(z_list, dim=1)
+
+            if return_attention and all_layer_weights:
+                # stack as (L,B,H,t+1,t+1) for current step
+                attn_last = torch.stack(all_layer_weights, dim=0)
+
+        z_seq = torch.stack(z_list, dim=1)
+
+        if not return_attention:
+            return z_seq
+
+        if attn_last is None:
+            attn_last = torch.zeros(self.n_layers, bsz, 1, T, T, device=device)
+        # return only first sample attention for visualization: (L,H,T,T)
+        return z_seq, attn_last[:, 0, ...]
