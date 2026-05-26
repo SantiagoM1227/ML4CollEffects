@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Dict, Optional, Sequence, Tuple
 
 import numpy as np
 import torch
@@ -19,6 +18,42 @@ PAIR_IDX_6D = (
 )
 
 
+def compute_global_ranges_6d(
+    clouds: np.ndarray,
+    lo_pct: float = 0.5,
+    hi_pct: float = 99.5,
+    pad_frac: float = 0.05,
+) -> Tuple[Tuple[float, float], ...]:
+    """Compute global, fixed ranges per 6D coordinate.
+
+    clouds expected shape (N, Np, 6) or (Np, 6).
+    """
+    if clouds.ndim == 2:
+        if clouds.shape[1] != 6:
+            raise ValueError(f"Expected shape (Np,6), got {clouds.shape}")
+        flat = clouds
+    elif clouds.ndim == 3:
+        if clouds.shape[2] != 6:
+            raise ValueError(f"Expected shape (N,Np,6), got {clouds.shape}")
+        flat = clouds.reshape(-1, 6)
+    else:
+        raise ValueError(f"Expected 2D or 3D clouds, got {clouds.shape}")
+
+    ranges = []
+    for k in range(6):
+        x = flat[:, k]
+        lo = float(np.percentile(x, lo_pct))
+        hi = float(np.percentile(x, hi_pct))
+        if (not np.isfinite(lo)) or (not np.isfinite(hi)) or lo >= hi:
+            lo = float(np.min(x))
+            hi = float(np.max(x))
+        if lo >= hi:
+            lo, hi = lo - 1.0, hi + 1.0
+        pad = pad_frac * (hi - lo)
+        ranges.append((lo - pad, hi + pad))
+    return tuple(ranges)
+
+
 def cloud6d_to_15x2d_hist(
     z: np.ndarray,
     *,
@@ -27,44 +62,18 @@ def cloud6d_to_15x2d_hist(
     normalize: bool = True,
     eps: float = 1e-12,
 ) -> np.ndarray:
-    """Convert an Np x 6 cloud into 15 x bins x bins 2D histograms.
-
-    Parameters
-    ----------
-    z: np.ndarray
-        shape [Np,6]
-    bins: int
-        number of bins per dimension for each 2D histogram.
-    ranges: optional
-        tuple of 6 (min,max) ranges. If None, computed from data via percentiles.
-    normalize: bool
-        if True, each 2D histogram is normalized to sum to 1.
-
-    Returns
-    -------
-    hist: np.ndarray
-        shape [15, bins, bins], float32
-    """
-    assert z.ndim == 2 and z.shape[1] == 6
+    """Convert (Np,6) cloud into (15,bins,bins) pairwise histograms."""
+    if z.ndim != 2 or z.shape[1] != 6:
+        raise ValueError(f"Expected shape (Np,6), got {z.shape}")
 
     if ranges is None:
-        # robust range per coordinate
-        ranges = []
-        for k in range(6):
-            lo = float(np.percentile(z[:, k], 0.5))
-            hi = float(np.percentile(z[:, k], 99.5))
-            if not np.isfinite(lo) or not np.isfinite(hi) or lo == hi:
-                lo, hi = float(z[:, k].min()), float(z[:, k].max())
-            if lo == hi:
-                lo, hi = lo - 1.0, hi + 1.0
-            ranges.append((lo, hi))
-        ranges = tuple(ranges)
+        ranges = compute_global_ranges_6d(z)
 
     out = np.zeros((15, bins, bins), dtype=np.float32)
-
     for i, (a, b) in enumerate(PAIR_IDX_6D):
-        H, xedges, yedges = np.histogram2d(
-            z[:, a], z[:, b],
+        H, _, _ = np.histogram2d(
+            z[:, a],
+            z[:, b],
             bins=bins,
             range=[ranges[a], ranges[b]],
             density=False,
@@ -73,16 +82,11 @@ def cloud6d_to_15x2d_hist(
         if normalize:
             H = H / (H.sum() + eps)
         out[i] = H
-
     return out
 
 
 class ConvVAE2D(nn.Module):
-    """Simple convolutional VAE for (15, H, W) inputs.
-
-    Assumes input is already normalized (e.g., per-channel sum=1).
-    Produces latent z in R^latent_dim (default 256).
-    """
+    """Convolutional VAE for (15,bins,bins) normalized histogram targets."""
 
     def __init__(
         self,
@@ -92,13 +96,12 @@ class ConvVAE2D(nn.Module):
         hidden_channels: int = 64,
     ):
         super().__init__()
-        self.in_channels = in_channels
-        self.bins = bins
-        self.latent_dim = latent_dim
+        self.in_channels = int(in_channels)
+        self.bins = int(bins)
+        self.latent_dim = int(latent_dim)
 
-        # Encoder
         self.enc = nn.Sequential(
-            nn.Conv2d(in_channels, hidden_channels, 4, stride=2, padding=1),
+            nn.Conv2d(self.in_channels, hidden_channels, 4, stride=2, padding=1),
             nn.GELU(),
             nn.Conv2d(hidden_channels, hidden_channels * 2, 4, stride=2, padding=1),
             nn.GELU(),
@@ -108,19 +111,17 @@ class ConvVAE2D(nn.Module):
             nn.GELU(),
         )
 
-        # figure out flatten size
         with torch.no_grad():
-            dummy = torch.zeros(1, in_channels, bins, bins)
+            dummy = torch.zeros(1, self.in_channels, self.bins, self.bins)
             h = self.enc(dummy)
             self._enc_shape = h.shape[1:]
-            flat = int(h.numel())
+            self._enc_flat = int(h.numel())
 
-        self.fc_mu = nn.Linear(flat, latent_dim)
-        self.fc_logvar = nn.Linear(flat, latent_dim)
+        self.fc_mu = nn.Linear(self._enc_flat, self.latent_dim)
+        self.fc_logvar = nn.Linear(self._enc_flat, self.latent_dim)
 
-        # Decoder
-        self.fc_dec = nn.Linear(latent_dim, flat)
-        c, h, w = self._enc_shape
+        c, _, _ = self._enc_shape
+        self.fc_dec = nn.Linear(self.latent_dim, self._enc_flat)
         self.dec = nn.Sequential(
             nn.ConvTranspose2d(c, hidden_channels * 4, 4, stride=2, padding=1),
             nn.GELU(),
@@ -128,12 +129,11 @@ class ConvVAE2D(nn.Module):
             nn.GELU(),
             nn.ConvTranspose2d(hidden_channels * 2, hidden_channels, 4, stride=2, padding=1),
             nn.GELU(),
-            nn.Conv2d(hidden_channels, in_channels, 3, stride=1, padding=1),
+            nn.Conv2d(hidden_channels, self.in_channels, 3, stride=1, padding=1),
         )
 
     def encode(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        h = self.enc(x)
-        h = h.flatten(1)
+        h = self.enc(x).flatten(1)
         mu = self.fc_mu(h)
         logvar = self.fc_logvar(h)
         return mu, logvar
@@ -143,11 +143,16 @@ class ConvVAE2D(nn.Module):
         eps = torch.randn_like(std)
         return mu + eps * std
 
+    def decode_logits(self, z: torch.Tensor) -> torch.Tensor:
+        h = self.fc_dec(z).view(z.shape[0], *self._enc_shape)
+        return self.dec(h)
+
     def decode(self, z: torch.Tensor) -> torch.Tensor:
-        h = self.fc_dec(z)
-        h = h.view(z.shape[0], *self._enc_shape)
-        xhat = self.dec(h)
-        return xhat
+        logits = self.decode_logits(z)
+        b, c, h, w = logits.shape
+        # channel-wise spatial distribution per pair: nonnegative and sums to 1
+        probs = torch.softmax(logits.view(b, c, h * w), dim=-1).view(b, c, h, w)
+        return probs
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         mu, logvar = self.encode(x)
@@ -156,14 +161,41 @@ class ConvVAE2D(nn.Module):
         return xhat, mu, logvar, z
 
 
+def _channelwise_js_divergence(p: torch.Tensor, q: torch.Tensor, eps: float = 1e-12) -> torch.Tensor:
+    """Returns mean JS over batch+channels for spatial distributions."""
+    p = p.clamp_min(eps)
+    q = q.clamp_min(eps)
+    m = 0.5 * (p + q)
+    kl_pm = (p * (p.log() - m.log())).sum(dim=(-1, -2))
+    kl_qm = (q * (q.log() - m.log())).sum(dim=(-1, -2))
+    js = 0.5 * (kl_pm + kl_qm)
+    return js.mean()
+
+
 def vae_loss(
     xhat: torch.Tensor,
     x: torch.Tensor,
     mu: torch.Tensor,
     logvar: torch.Tensor,
     beta: float = 1e-3,
-) -> Tuple[torch.Tensor, dict]:
-    recon = F.mse_loss(xhat, x)
-    kl = -0.5 * torch.mean(1.0 + logvar - mu.pow(2) - logvar.exp())
-    loss = recon + beta * kl
-    return loss, {"recon": recon.detach(), "kl": kl.detach()}
+    js_weight: float = 1.0,
+    mae_weight: float = 0.25,
+) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    mse = F.mse_loss(xhat, x)
+    mae = F.l1_loss(xhat, x)
+    js = _channelwise_js_divergence(xhat, x)
+
+    # Standard VAE KL: E_b[ -0.5 * sum_d(1 + logvar - mu^2 - exp(logvar)) ]
+    kl_per_sample = -0.5 * torch.sum(1.0 + logvar - mu.pow(2) - logvar.exp(), dim=-1)
+    kl = kl_per_sample.mean()
+
+    recon = mse + mae_weight * mae + js_weight * js
+    loss = recon + float(beta) * kl
+
+    return loss, {
+        "recon": recon.detach(),
+        "mse": mse.detach(),
+        "mae": mae.detach(),
+        "js": js.detach(),
+        "kl": kl.detach(),
+    }
