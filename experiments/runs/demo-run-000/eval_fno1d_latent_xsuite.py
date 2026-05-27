@@ -129,7 +129,9 @@ class LatentFNO1d(nn.Module):
 
         x = self.act(self.proj1(x))
         x = self.proj2(x)                              # [B,token_dim,T]
-        return x.permute(0, 2, 1)                      # [B,T,token_dim]
+        Z_delta = x.permute(0, 2, 1)
+        return Z_in + Z_delta                          # [B,T,token_dim]
+                              
 
 # ----------------------------
 # Field builder (CPU numpy -> torch KDE like training)
@@ -478,7 +480,7 @@ class EvalCfg:
     grid_n: int = 64
     percentile_lo: float = 0.5
     percentile_hi: float = 99.5
-    sigma_steps: float = 2.0
+    sigma_steps: float = 1.0
 
     token_dim: int = 128
     op_width: int = 128

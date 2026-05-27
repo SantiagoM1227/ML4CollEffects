@@ -1,0 +1,14 @@
+{
+  "data": "/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T08:37:06.npz",
+  "outdir": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae",
+  "bins": 64,
+  "latent_dim": 256,
+  "epochs": 20,
+  "batch_size": 16,
+  "lr": 0.0002,
+  "beta": 0.001,
+  "seed": 42,
+  "num_workers": 2,
+  "device": "cuda",
+  "log_every": 50
+}

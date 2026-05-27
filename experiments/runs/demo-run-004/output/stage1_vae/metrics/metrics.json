@@ -1,0 +1,8 @@
+{
+  "split": "val",
+  "n_samples": 102,
+  "loss_mean": 7.924184860355893e-07,
+  "recon_mean": 6.518435676369728e-07,
+  "kl_mean": 1.4057492369285647e-07,
+  "vae_ckpt": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae/checkpoints/vae_ep019.pt"
+}
