@@ -1,5 +1,6 @@
 """Entry-point wrappers for this experiment.
 
-These wrappers let you run the experiment from within this run folder while
-reusing the shared implementation under the top-level `scripts/` package.
+This run mirrors demo-run-004, but uses the architecture/loss from the Colab
+notebook (vae_tf(1).py) with centroid/sigma auxiliary heads + latent
+autoregressive transformer.
 """
