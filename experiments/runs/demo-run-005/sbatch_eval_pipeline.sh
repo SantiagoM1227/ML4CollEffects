@@ -21,27 +21,33 @@ export MKL_NUM_THREADS=4
 export NUMEXPR_NUM_THREADS=4
 export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-8}
 
-export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-04-28T09:40:32.npz"
-export DEMO005_ROOT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-005"
+export DEMO005_ROOT="${DEMO005_ROOT:-/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-005}"
+export DATASET_PATH="${DATASET_PATH:-$DEMO005_ROOT/../../../data/processed/neural_dataset.npz}"
 export STAGE="${STAGE:-1}"
+export DEVICE="${DEVICE:-cuda}"
+export EPOCHS_STAGE1="${EPOCHS_STAGE1:-20}"
+export EPOCHS_STAGE2="${EPOCHS_STAGE2:-30}"
 
 export PYTHONPATH="$DEMO005_ROOT:${PYTHONPATH:-}"
 cd "$DEMO005_ROOT"
 
 if [ "$STAGE" = "1" ]; then
+  VAE_CKPT="$DEMO005_ROOT/output/stage1_vae/checkpoints/vae_ep$(printf '%03d' "$((EPOCHS_STAGE1-1))").pt"
   srun python -u -m scripts.eval_vae \
     --data "$DATASET_PATH" \
-    --vae-ckpt "$DEMO005_ROOT/output/stage1_vae/checkpoints/vae_ep099.pt" \
+    --vae-ckpt "$VAE_CKPT" \
     --outdir "$DEMO005_ROOT/output/stage1_vae" \
-    --device cuda \
+    --device "$DEVICE" \
     --split val
 elif [ "$STAGE" = "2" ]; then
+  VAE_CKPT="$DEMO005_ROOT/output/stage1_vae/checkpoints/vae_ep$(printf '%03d' "$((EPOCHS_STAGE1-1))").pt"
+  DYN_CKPT="$DEMO005_ROOT/output/stage2_dynamics/checkpoints/dyn_ep$(printf '%03d' "$((EPOCHS_STAGE2-1))").pt"
   srun python -u -m scripts.eval_dynamics \
     --latent-npz "$DEMO005_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
-    --vae-ckpt "$DEMO005_ROOT/output/stage1_vae/checkpoints/vae_ep099.pt" \
-    --dyn-ckpt "$DEMO005_ROOT/output/stage2_dynamics/checkpoints/dyn_ep099.pt" \
+    --vae-ckpt "$VAE_CKPT" \
+    --dyn-ckpt "$DYN_CKPT" \
     --outdir "$DEMO005_ROOT/output/stage2_dynamics" \
-    --device cuda \
+    --device "$DEVICE" \
     --split val \
     --n-plots 8
 else

@@ -1,4 +1,4 @@
-from scripts.evaluation.eval_vae_stage1 import main
+from scripts.evaluation.evaluate_vae import main
 
 
 if __name__ == "__main__":

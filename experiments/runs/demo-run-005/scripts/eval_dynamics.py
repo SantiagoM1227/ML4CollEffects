@@ -1,4 +1,4 @@
-from scripts.evaluation.eval_dynamics_stage2 import main
+from scripts.evaluation.evaluate_dynamics_1step import main
 
 
 if __name__ == "__main__":
