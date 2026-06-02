@@ -11,3 +11,20 @@
 __pycache__/
 /notebooks/ext_HEB/
 *.pyc
+
+# models
+*.pt
+*.pth
+*.ckpt
+
+# datasets
+*.npz
+*.h5
+*.hdf5
+
+# outputs
+outputs/
+experiments/runs/
+
+# logs
+*.out
