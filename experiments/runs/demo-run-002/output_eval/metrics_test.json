@@ -1,7 +1,0 @@
-{
-  "split": "test",
-  "n_samples": 409,
-  "field_loss_mean": 4.958970445167478e-07,
-  "mse_mean": 30476558.533007335,
-  "hf_penalty_mean": 0.0
-}
