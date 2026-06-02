@@ -1,7 +1,14 @@
 {
   "split": "val",
   "n_samples": 102,
-  "latent_mse": 1.2487575418163033e-08,
+  "loss": 0.011779429391026497,
+  "latent_mse": 0.0022755423560738564,
+  "latent_mae": 0.03801554813981056,
+  "latent_rel_l2": 0.22320489585399628,
+  "temporal_corr": 0.051970992712853124,
+  "trajectory_wasserstein": 31.40368412990196,
+  "rollout_drift": 4.8515289053320885,
+  "rollout_stability": 3.2389354623811686,
   "latent_npz": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae/latent/latent_dataset.npz",
   "vae_ckpt": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage1_vae/checkpoints/vae_ep019.pt",
   "dyn_ckpt": "/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004/output/stage2_dynamics/checkpoints/dyn_ep029.pt"

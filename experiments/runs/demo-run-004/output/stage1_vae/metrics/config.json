@@ -7,8 +7,11 @@
   "batch_size": 16,
   "lr": 0.0002,
   "beta": 0.001,
+  "beta_warmup_epochs": 10,
   "seed": 42,
   "num_workers": 2,
   "device": "cuda",
-  "log_every": 50
+  "log_every": 50,
+  "range_lo_pct": 0.5,
+  "range_hi_pct": 99.5
 }

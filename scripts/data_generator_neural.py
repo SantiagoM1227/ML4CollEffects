@@ -43,6 +43,126 @@ PHASE_SPACE_LABELS = ("x", "y", "zeta", "px", "py", "delta")
 _WAKE_DIAG_CALL_COUNT = 0
 _WAKE_DIAG_PLOT_COUNT = 0
 
+# ---------------------------
+# Paper-style 15x64x64 inputs
+# ---------------------------
+
+PAIR_INDEX = [
+    (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+    (1, 2), (1, 3), (1, 4), (1, 5),
+    (2, 3), (2, 4), (2, 5),
+    (3, 4), (3, 5),
+    (4, 5),
+]
+
+def beam_centroid_sigma_np(z: np.ndarray, eps: float = 1e-12):
+    c = z.mean(axis=0)
+    v = ((z - c[None, :]) ** 2).mean(axis=0)
+    s = np.sqrt(v + eps)
+    return c, s
+
+def cloud_to_pairwise_hists_np(z: np.ndarray, nbins: int = 64, clip_k: float = 5.0, eps: float = 1e-12) -> np.ndarray:
+    """
+    z: [Np,6]
+    returns: [15,64,64], each map sums to 1
+    """
+    assert z.ndim == 2 and z.shape[1] == 6
+    Np = z.shape[0]
+    c, s = beam_centroid_sigma_np(z, eps=eps)
+
+    edges = []
+    for d in range(6):
+        lo = c[d] - clip_k * s[d]
+        hi = c[d] + clip_k * s[d]
+        if (hi - lo) < 1e-12:
+            hi = lo + 1e-12
+        edges.append(np.linspace(lo, hi, nbins + 1))
+
+    maps = []
+    for (i, j) in PAIR_INDEX:
+        H, _, _ = np.histogram2d(z[:, i], z[:, j], bins=(edges[i], edges[j]))
+        H = H.astype(np.float32) / (float(Np) + eps)           # normalized by particle count
+        H = H / (H.sum() + eps)                                # ensure sum=1 exactly
+        maps.append(H)
+    return np.stack(maps, axis=0).astype(np.float32)           # [15,64,64]
+
+# ---------------------------
+# MU preprocessing (spec-based)
+# ---------------------------
+def mu_transform_value(x: float, spec, eps: float = 1e-12) -> float:
+    unit = 1.0
+    op = "identity"
+    if isinstance(spec, (int, float)):
+        unit = float(spec)
+    elif isinstance(spec, str):
+        op = spec
+    elif isinstance(spec, dict):
+        unit = float(spec.get("unit", 1.0))
+        op = str(spec.get("op", "identity"))
+    else:
+        raise TypeError(f"Unsupported MU spec: {type(spec)}")
+
+    y = x / unit
+    op = op.lower()
+    if op in ("identity", "none", ""):
+        return float(y)
+    if op in ("log", "log1p"):
+        return float(np.log1p(max(y, 0.0)))
+    if op == "log_log":
+        return float(np.log1p(np.log1p(max(y, 0.0))))
+    raise ValueError(f"Unknown MU op: {op}")
+
+def preprocess_mu(mu_raw: np.ndarray, mu_spec) -> np.ndarray:
+    mu_raw = np.asarray(mu_raw, dtype=np.float64)
+    assert len(mu_spec) == mu_raw.shape[0]
+    return np.array([mu_transform_value(mu_raw[i], mu_spec[i]) for i in range(mu_raw.shape[0])], dtype=np.float32)
+
+def line_to_elem_params_and_s(line: xt.Line, N: int = 32) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Build elem_params [N,7] and elem_s [N] from an xtrack.Line.
+    This is a best-effort mapper:
+      [L, K1, K2, phi, Vrf, frf, phirf]
+    Non-RF elements => Vrf=frf=phirf=0.
+    """
+    names = list(line.element_names)
+
+    # If line has more than N elements, uniformly sample N elements (or use slicing/chunking)
+    if len(names) >= N:
+        idx = np.linspace(0, len(names) - 1, N).astype(int)
+        names = [names[i] for i in idx]
+    else:
+        raise ValueError(f"Line has only {len(names)} elements, cannot build N={N} tokens.")
+
+    elem_params = np.zeros((N, 7), dtype=np.float32)
+    lengths = np.zeros((N,), dtype=np.float64)
+
+    for t, nm in enumerate(names):
+        el = line.element_dict[nm]
+
+        L = float(getattr(el, "length", 0.0) or 0.0)
+        K1 = float(getattr(el, "k1", 0.0) or 0.0)
+        phi = float(getattr(el, "angle", 0.0) or 0.0)
+
+        # sextupole strength: if Multipole-like, try knl[2]
+        K2 = 0.0
+        knl = getattr(el, "knl", None)
+        if knl is not None and len(knl) > 2:
+            try:
+                K2 = float(knl[2])
+            except Exception:
+                K2 = 0.0
+
+        # RF (best-effort)
+        Vrf = float(getattr(el, "voltage", 0.0) or 0.0)
+        frf = float(getattr(el, "frequency", 0.0) or 0.0)
+        phirf = float(getattr(el, "lag", 0.0) or getattr(el, "phase", 0.0) or 0.0)
+
+        elem_params[t] = np.array([L, K1, K2, phi, Vrf, frf, phirf], dtype=np.float32)
+        lengths[t] = L
+
+    elem_s = np.cumsum(lengths) - lengths
+    elem_s = elem_s.astype(np.float32)
+    return elem_params, elem_s
 
 @dataclass
 class BeamFamilyConfig:
@@ -993,6 +1113,10 @@ def build_datasets(
     moments_in_centroid, moments_out_centroid = [], []
     moments_in_cov, moments_out_cov = [], []
     family_id = []
+    X_hist_list, Y_hist_list = [], []
+    aux_in_list, aux_out_list = [], []
+    MU_raw_list, MU_feat_list = [], []
+    mu_spec = [1e-9, 1e-3, {"unit": 1.0, "op": "log"}]  # Q(nC), a(mm), log1p(imp_scale)
 
     for _ in range(dataset_cfg.n_samples):
         beam_cfg = families[rng.integers(0, len(families))]
@@ -1017,7 +1141,17 @@ def build_datasets(
             z1 = track_cloud(line, z0)
 
         
-       
+        # Paper input representation
+        X_hist_list.append(cloud_to_pairwise_hists_np(z0, nbins=64))
+        Y_hist_list.append(cloud_to_pairwise_hists_np(z1, nbins=64))
+
+        c0, s0 = beam_centroid_sigma_np(z0)
+        c1, s1 = beam_centroid_sigma_np(z1)
+        aux_in_list.append(np.concatenate([s0, c0]).astype(np.float32))   # [12]
+        aux_out_list.append(np.concatenate([s1, c1]).astype(np.float32))  # [12]
+
+        MU_raw_list.append(mu.astype(np.float32))
+        MU_feat_list.append(preprocess_mu(mu, mu_spec))
 
         if dataset_cfg.save_cloud_dataset:
             cloud_in.append(z0.astype(np.float32))

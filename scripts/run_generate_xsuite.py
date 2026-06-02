@@ -53,8 +53,8 @@ def main():
 
 
     dataset_cfg = DatasetConfig(
-        n_samples=4096,
-        particles_per_sample=4096,
+        n_samples=10000,
+        particles_per_sample=10000,
         seed=42,
         output_dir="/pbs/home/s/smartinez/ML4CollEffects/data/neural",
         save_cloud_dataset=True,
