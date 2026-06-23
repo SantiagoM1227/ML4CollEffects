@@ -1,0 +1,508 @@
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+
+\input{glossary}
+\addbibresource{ML_collefects.bib}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+
+
+% remarks in red
+\usepackage{xcolor}
+\newcommand{\rmq}[1]{\textcolor{red}{#1}}
+\newcommand\ignore[1]\null
+
+% \setcounter{secnumdepth}{0} % sections will not be enumerated
+
+\usepackage[figurename=Fig.]{caption}
+\usepackage[tablename=Tab.]{caption}
+
+
+\usepackage{fancyhdr,graphicx,lastpage}% http://ctan.org/pkg/{fancyhdr,graphicx,lastpage}
+\fancypagestyle{plain}{
+  \fancyhf{}% Clear header/footer
+  \fancyhead[R]{\textit{Internship report}}% Right header
+  \fancyhead[L]{\textit{Santiago Martinez Saenz}}% Right header
+  \fancyfoot[L]{\textit{Université Paris-Saclay 2026}}% Left footer
+  \fancyfoot[R]{\thepage\  / \pageref{LastPage}}% Right footer
+}
+\pagestyle{plain}% Set page style to plain.
+
+
+
+\begin{document}
+\begin{sloppypar}
+\pagestyle{empty}
+
+% Declare new goemetry for the title page only.
+\newgeometry{margin=1in}
+\newcommand\titleofdoc{\bfseries Midterm Internship Report M2}
+
+ %%%%% Put your document title in this argument
+\newcommand\GroupName{} %%%%% Put your group name here. If you are the only member of the group, just put your name
+\begin{titlepage}
+   \begin{center}
+        \vspace*{0.5cm} % Adjust spacings to ensure the title page is generally filled with text
+        %% input logos
+        \begin{center}
+        \begin{tabular}{cccc}
+        \includegraphics[height=1.7cm,valign=c]{images/logo/lascala.png} &
+        \includegraphics[height=1.7cm,valign=c]{images/logo/ijclab.jpg} &
+        \includegraphics[height=0.8 cm,valign=c]{images/logo/LogoGANIL.png} &
+        \includegraphics[height=1.7cm,valign=c]{images/logo/cnrs.png}
+        \end{tabular}
+        \end{center}
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        
+        \vspace{2.5 cm} 
+
+        \Huge{\titleofdoc} 
+
+        \vspace{0.5cm}
+        \LARGE{Exploratory modeling of collective effects in the FCC-ee high energy booster using machine learning.}
+          
+        \vspace{2 cm}
+        % \Large{\GroupName}
+        \vspace{1.25cm}
+        \large{Santiago Martinez Saenz}\\
+        \large{\bfseries Internship carried out from April to August 2026}\\
+        % \vfill
+        \vspace{4 cm}
+         
+        \leftline{ \small { \textbf{Internship tutors :} Dr. Adnan Ghribi (GANIL) and Dr. Hayg Guler (IJCLab) } }
+        \leftline{ \small { \textbf{Referent teacher :} Dr. Sophie Kazamias (Université Paris-Saclay) } }
+        \vspace{1 cm}
+        \leftline{\small { \textbf{Educational institutions :} Université Paris-Saclay / Università di Roma La Sapienza}}
+        \leftline{\small { \textbf{Internship host Laboratory :} Grand Accélérateur National d'Ions Lourds (GANIL) } }
+        \vspace{2 cm}
+        
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}\\
+        
+        \begin{center}
+        \begin{tabular}{ccccc}
+        \includegraphics[height=1cm,valign=c]{images/logo/saclay.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/Uniroma1.svg.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/szeged.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/lund.png} &
+        \includegraphics[height=1cm,valign=c]{images/logo/erasmus.png}
+        \end{tabular}
+        \end{center}
+      
+    \end{center}
+\setcounter{page}{0}
+\end{titlepage}
+%%% notice: 
+% . prénom et nom de l’élève
+% . titre du stage
+% . type du stage (1A, 2A ou 3A + humanitaire ou autre mise en situation
+% pro. . .)
+% . nom de l’établissement
+% . prénom et nom de l’encadrant·e dans l’établissement
+% . dates du stage
+
+
+%%% Ends the declared geometry for the titlepage
+\restoregeometry
+
+
+%\section*{Acknowledgments}\
+%\setcounter{page}{-5}
+
+% Acknowledgments
+
+
+
+% \newpage 
+% \ % The empty page
+%\newpage
+
+
+
+
+
+% \section{Préambule}
+%\begin{abstract}
+%\noindent
+%. \\  \\
+%\textit{Key words}: ...
+%\end{abstract}
+
+
+
+
+
+
+
+
+\newpage
+\tableofcontents
+
+
+
+
+% Corps du rapport
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+
+\section*{Abstract}
+
+Modern particle accelerators such as the Future Circular Collider (FCC-ee) require increasingly precise modeling of beam dynamics in regimes where nonlinear collective effects become significant. These effects, including space-charge forces, wakefields, and beam-induced fields, introduce complex correlations in the six-dimensional phase space distribution that are computationally expensive to simulate using traditional tracking methods.
+
+This internship focuses on the development of machine learning-based surrogate models for the efficient and physically consistent modeling of collective beam dynamics in the FCC-ee booster. In particular, the goal is to construct data-driven representations of the six-dimensional beam distribution evolution under both single-particle Hamiltonian transport and collective effects.
+
+The proposed approach builds upon recent advances in operator learning and physics-informed neural networks. Neural operator architectures, such as Fourier Neural Operators, provide a natural framework for learning mappings between function spaces, making them well-suited to model the evolution of phase space densities rather than individual particle trajectories. In parallel, structure-preserving neural architectures inspired by symplectic maps (e.g. Henon-type networks) are considered to ensure consistency with the underlying Hamiltonian dynamics.
+
+In future developments, the dynamics will be decomposed into a Hamiltonian transport operator and a collective interaction operator, allowing for efficient composition of learned evolution steps. This hybrid approach aims to provide fast, accurate, and physically interpretable surrogate models for beam dynamics, enabling improved simulation, control, and optimization of next-generation accelerator systems.
+
+\section*{Keywords}
+
+Machine learning, accelerator physics, FCC-ee, beam dynamics, collective effects, neural operators, Fourier neural operator, symplectic neural networks, operator learning, surrogate modeling
+\label{conclusion}
+
+
+
+
+\newpage
+\nocite{*}
+\printbibliography % [title={Whole bibliography}]
+
+%\bibliographystyle{IEEEtran}
+% \bibliography{bibfile}
+
+
+
+
+
+\newpage
+\appendix % macro
+
+\section{Annexe}
+\label{Annexe}
+%% write as you write sections
+
+\subsection{Parametrized H\'enon Maps}
+For a Parametrized H\'enon Map, the potential is a function of the phase space coordinates only, $V_W(p)$, and the map takes the form
+\begin{equation}
+\begin{aligned}
+\tilde q &= p + \eta,\\
+\tilde p &= -q + \nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+This map is symp-lectic by construction, and the proof will be given by considering a differential-geometric formulation. For a given map $F$, it is said to be symplectic if it preserves the symplectic form, that is,
+\begin{equation*}
+F^* \omega = \omega,
+\end{equation*}
+where $\omega$ is the symplectic form on the phase space. In canonical coordinates, the symplectic form is given by
+\begin{equation}
+\omega = \sum_{i=1}^N \mathrm{d}q_i \wedge \mathrm{d}p_i.
+\end{equation}
+and $F^*$ denotes the pullback of the map $F$, defined as $F^* \omega = \omega(F(\xi))$, where $\xi$ are the coordinates in the original phase space, such that it suffices to show that $\omega(F(\xi)) = \omega(\xi)$ for all $\xi$ in the phase space.
+Let $\xi=(q,p)$ and $\tilde \xi = (\tilde q,\tilde p) = (X,Y)$, the map can be written as 
+\begin{equation}
+\begin{aligned}
+X &= p + \eta,\\
+Y &= -q + \nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+by taking $\mathrm{d}$ as the exterior derivative and using Einstein notation, we have that for each degree of freedom $i$,
+\begin{equation}
+\begin{aligned}
+\mathrm{d}X_i &= \mathrm{d}p_i,\\
+\mathrm{d}Y_i &= -\mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_j,
+\end{aligned}
+\end{equation}
+where $V_{ij} = \frac{\partial^2 V_W}{\partial p_i \partial p_j}$ is the Hessian of the potential, it whorth noting that this term is symmetric for analytical potentials. The symplectic form is given by
+\begin{equation}
+\begin{aligned}
+F^*\omega &= \mathrm{d}X_i \wedge \mathrm{d}Y_i
+=
+\mathrm{d}p_i \wedge \left(-\mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_j\right)\\
+&=
+-\mathrm{d}p_i \wedge \mathrm{d}q_i + V_{ij}[\mu] \mathrm{d}p_i \wedge \mathrm{d}p_j\\
+&=
+\mathrm{d}q_i \wedge \mathrm{d}p_i,
+\end{aligned}
+\end{equation}
+where we have used the antisymmetry of the wedge product and the symmetry of the Hessian to conclude that the second term vanishes. This shows that the map preserves the symplectic form, and therefore is symplectic.
+
+
+\subsection{Reconstruction of the Longitudinal Wake Function from Ha\"issinski Profiles}
+
+Let $q=z/\sigma_{z0}$ denote the normalized longitudinal coordinate and let $\lambda(q)$ be the normalized Ha\"issinski profile, with
+\begin{equation}
+\int_{-\infty}^{\infty} \lambda(q)\,dq = 1.
+\end{equation}
+Following the usual derivation from the stationary Vlasov--Fokker--Planck equation, the equilibrium profile satisfies
+\begin{equation}
+\frac{d\lambda}{dq} + \left[q - F(q,\lambda)\right]\lambda(q)=0,
+\end{equation}
+with collective wakefield 
+\begin{equation}
+F(q,\lambda)= I \int_{-\infty}^{\infty} W(q-q')\lambda(q')\,dq'.
+\label{eq:continuous_convolution}
+\end{equation}
+Here $I$ is the normalized bunch current and $W$ is the longitudinal wake function to be reconstructed.
+
+A convenient identity is obtained by dividing the stationary equation by $\lambda(q)$:
+\begin{equation}
+F(q)=\frac{d}{dq}\log \lambda(q)+q.
+\label{eq:F_from_lambda}
+\end{equation}
+Hence, if several Ha\"issinski profiles are available at different currents $I^{(n)}$, one may reconstruct $W$ from the family of pairs
+\begin{equation}
+\left\{\left(I^{(n)},\lambda^{(n)}\right)\right\}_{n=1}^M.
+\end{equation}
+Funkner et al. \cite{Funkner_2025} formulates this inverse problem as a discretized linear system, solved with a Tikhonov-regularized pseudoinverse. The present note rewrites the same inverse problem as a trainable operator-learning model, in which the wake kernel itself is learned by gradient-based optimization.\footnote{This follows the same discrete structure described in \cite{Funkner_2025} the force is computed from $\log\lambda$, the convolution is discretized on a grid, several currents are stacked into an overdetermined system, and regularization is used to stabilize the inversion.}
+
+
+Let
+\begin{equation}
+q_i = q_{\min} + i\,\Delta q, \qquad i=0,\dots,N-1,
+\end{equation}
+be a uniform grid. For each current $I^{(n)}$, define the sampled profile and force by
+\begin{equation}
+\lambda^{(n)}_i \approx \lambda^{(n)}(q_i),
+\qquad
+F^{(n)}_i \approx F^{(n)}(q_i).
+\end{equation}
+Using the convolution structure in \eqref{eq:continuous_convolution}, the discrete forward map reads
+\begin{equation}
+F^{(n)}_i \approx I^{(n)}\Delta q \sum_{j=0}^{N-1} K_{ij}\lambda^{(n)}_j,
+\label{eq:generic_discrete_operator}
+\end{equation}
+where $K_{ij}$ is the discrete interaction kernel.
+
+Under the physically natural assumption that the wake depends only on the linear distance between the source and test particles, that is,
+\begin{equation}
+K_{ij}=W(q_i-q_j),
+\end{equation}
+the matrix is Toeplitz. Writing
+\begin{equation}
+w_{\ell} := W(\ell\,\Delta q), \qquad \ell = -(N-1),\dots,(N-1),
+\end{equation}
+we obtain
+\begin{equation}
+K_{ij} = w_{i-j},
+\qquad
+F^{(n)}_i \approx I^{(n)}\Delta q\sum_{j=0}^{N-1} w_{i-j}\lambda^{(n)}_j.
+\label{eq:toeplitz_forward}
+\end{equation}
+Thus the unknown object is the response vector
+\begin{equation}
+\bm{w}=(w_{-(N-1)},\dots,w_0,\dots,w_{N-1})\in\mathbb{R}^{2N-1},
+\end{equation}
+
+\subsubsection{Dataset}
+The minimal dataset for training is
+\begin{equation}
+\mathcal{D} = \left\{\left(\lambda^{(n)}, I^{(n)}, F^{(n)}\right)\right\}_{n=1}^{M},
+\end{equation}
+with
+\begin{equation}
+\lambda^{(n)}\in\mathbb{R}^{N},
+\qquad
+I^{(n)}\in\mathbb{R},
+\qquad
+F^{(n)}\in\mathbb{R}^{N}.
+\end{equation}
+If $F^{(n)}$ is not directly available, it can be constructed from the measured profile using \eqref{eq:F_from_lambda}. On the grid, one may use a centered finite-difference approximation,
+\begin{equation}
+F^{(n)}_i \approx \frac{\log\lambda^{(n)}_{i+1}-\log\lambda^{(n)}_{i-1}}{2\Delta q}+q_i,
+\qquad i=1,\dots,N-2,
+\end{equation}
+with one-sided differences at the boundaries. In practice, one should clip very small values of $\lambda$ before taking the logarithm in order to avoid numerical singularities.
+
+A simple wrapper therefore stores:
+\begin{align}
+&\texttt{q} \in \mathbb{R}^{N}, \\
+&\texttt{currents} \in \mathbb{R}^{M}, \\
+&\texttt{lambdas} \in \mathbb{R}^{M\times N}, \\
+&\texttt{F\_targets} \in \mathbb{R}^{M\times N} \quad \text{(optional)}.
+\end{align}
+If \texttt{F\_targets} is omitted, it is generated from \texttt{lambdas} and \texttt{q} using \eqref{eq:F_from_lambda}.
+
+
+The simplest machine-learning model is a differentiable realization of \eqref{eq:toeplitz_forward}. Let $\bm{w}_{\theta}\in\mathbb{R}^{2N-1}$ be a trainable parameter vector. Then the model prediction is
+\begin{equation}
+\widehat{F}^{(n)}_i(\theta) = I^{(n)}\Delta q \sum_{j=0}^{N-1} (w_{\theta})_{i-j}\lambda^{(n)}_j.
+\label{eq:model_prediction}
+\end{equation}
+Equivalently, one may view this as a one-dimensional convolution,
+\begin{equation}
+\widehat{\bm{F}}^{(n)}(\theta)=I^{(n)}\Delta q\,T(\bm{w}_{\theta})\,\bm{\lambda}^{(n)},
+\end{equation}
+where $T(\bm{w}_{\theta})$ is the Toeplitz matrix induced by the kernel.
+
+This model has several attractive properties:
+\begin{enumerate}[label=(\roman*)]
+\item it preserves the physics of the discretized Ha\"issinski equation,
+\item it uses only $2N-1$ trainable parameters instead of $N^2$,
+\item it is directly interpretable, since the learned parameters are the wake samples themselves,
+\item it can be optimized with standard stochastic-gradient methods.
+\end{enumerate}
+
+
+The empirical data fidelity term is
+\begin{equation}
+\mathcal{L}_{\mathrm{data}}(\theta)=\frac{1}{M}\sum_{n=1}^{M}
+\norm{\widehat{\bm{F}}^{(n)}(\theta)-\bm{F}^{(n)}}_2^2.
+\end{equation}
+Since inverse problems are ill-conditioned, regularization is essential. A discrete smoothness penalty is naturally imposed through second differences of the wake samples,
+\begin{equation}
+\mathcal{L}_{\mathrm{smooth}}(\theta)=\norm{D^2\bm{w}_{\theta}}_2^2,
+\end{equation}
+where $D^2$ is the standard second-difference matrix. One may also include an $\ell^2$ penalty,
+\begin{equation}
+\mathcal{L}_{\mathrm{ridge}}(\theta)=\norm{\bm{w}_{\theta}}_2^2.
+\end{equation}
+The total loss becomes
+\begin{equation}
+\mathcal{L}(\theta)=
+\mathcal{L}_{\mathrm{data}}(\theta)
++\alpha\,\mathcal{L}_{\mathrm{smooth}}(\theta)
++\beta\,\mathcal{L}_{\mathrm{ridge}}(\theta),
+\label{eq:total_loss}
+\end{equation}
+with hyperparameters $\alpha,\beta\ge 0$.
+
+Equation \eqref{eq:total_loss} is the machine-learned analogue of Tikhonov regularization: if the model is linear in the parameters and one trains to convergence, the resulting estimator is conceptually very close to the regularized inverse used in the classical formulation.
+
+
+If one wishes to relax exact shift invariance, then the discrete kernel may be modeled as a full matrix $K\in\mathbb{R}^{N\times N}$. A structured alternative is a low-rank factorization,
+\begin{equation}
+K \approx UV^{\top},
+\qquad
+U,V\in\mathbb{R}^{N\times r},
+\end{equation}
+where $r\ll N$. The forward model then becomes
+\begin{equation}
+\widehat{\bm{F}}^{(n)} = I^{(n)}\Delta q\,U\left(V^{\top}\bm{\lambda}^{(n)}\right).
+\end{equation}
+This may absorb discretization artifacts, finite-window effects, or mild violations of perfect translation invariance. However, it is less interpretable than the Toeplitz model and introduces more parameters.
+
+
+A potential weakness of the fully supervised approach is that the target force $F$ is itself obtained by differentiating $\log\lambda$, which may amplify noise. A more robust alternative is to optimize the discrete Ha\"issinski residual directly. For each sample, define
+\begin{equation}
+\mathcal{R}^{(n)}_i(\theta)=
+\frac{\log\lambda^{(n)}_{i+1}-\log\lambda^{(n)}_{i-1}}{2\Delta q}
++q_i
+-I^{(n)}\Delta q\sum_{j=0}^{N-1}(w_{\theta})_{i-j}\lambda^{(n)}_j.
+\end{equation}
+Then one may minimize
+\begin{equation}
+\mathcal{L}_{\mathrm{phys}}(\theta)=\frac{1}{M}\sum_{n=1}^{M}\sum_{i=1}^{N-2}
+\left|\mathcal{R}^{(n)}_i(\theta)\right|^2
++\alpha\norm{D^2\bm{w}_{\theta}}_2^2
++\beta\norm{\bm{w}_{\theta}}_2^2.
+\end{equation}
+This preserves the governing equation more directly and avoids treating the numerically differentiated force as an externally fixed label.
+
+
+A practical training loop is summarized below.
+
+\begin{algorithm}[h]
+\caption{Training a Toeplitz wake model from Ha\"issinski profiles}
+\begin{algorithmic}[1]
+\Require grid $\bm{q}$, currents $\{I^{(n)}\}_{n=1}^{M}$, profiles $\{\bm{\lambda}^{(n)}\}_{n=1}^{M}$
+\State Build or load targets $\bm{F}^{(n)}$ using \eqref{eq:F_from_lambda}
+\State Initialize trainable wake vector $\bm{w}_{\theta}$
+\For{epoch $=1,\dots,E$}
+    \For{mini-batch $\mathcal{B}$}
+        \For{each sample $n\in\mathcal{B}$}
+            \State Compute prediction $\widehat{\bm{F}}^{(n)}$ from \eqref{eq:model_prediction}
+        \EndFor
+        \State Compute total loss \eqref{eq:total_loss}
+        \State Update $\theta$ with Adam or another optimizer
+    \EndFor
+    \State Monitor training and validation errors
+    \State Apply early stopping if the validation loss stagnates
+\EndFor
+\State Return learned wake samples $\bm{w}_{\theta}$
+\end{algorithmic}
+\end{algorithm}
+
+
+A lightweight implementation can be organized around four components.
+
+Inputs:
+\begin{align}
+&\texttt{lambdas}: \text{array of shape } (M,N),\\
+&\texttt{currents}: \text{array of shape } (M,),\\
+&\texttt{q}: \text{array of shape } (N,),\\
+&\texttt{F\_targets}: \text{optional array of shape } (M,N).
+\end{align}
+Outputs per sample:
+\begin{equation}
+(\bm{\lambda}^{(n)}, I^{(n)}, \bm{F}^{(n)}).
+\end{equation}
+
+From a mathematical point of view, the key observation is that the inverse reconstruction of the wake from multiple Ha\"issinski distributions is already a structured operator-learning problem. The classical pseudoinverse approach and the trainable-convolution approach differ mainly in how the prior is imposed. The former uses explicit matrix inversion with Tikhonov stabilization; the latter uses a differentiable parameterization together with smoothness penalties, early stopping, and potentially richer structural assumptions.
+
+For a first implementation, the Toeplitz model is the most natural choice. It matches the discretized physics exactly, remains interpretable, and uses very few parameters. Only after this baseline is validated should one move to low-rank kernels or more expressive neural operator architectures.
+
+
+\begin{enumerate}
+\item The grid should be uniform if one wants to use the simple Toeplitz convolution exactly as written.
+\item Since $\log\lambda$ appears explicitly, one must prevent numerical underflow in regions where the profile is very small.
+\item If the measured profiles are noisy, pre-smoothing or a residual-based formulation is often preferable.
+\item If the physical wake is expected to satisfy one-sided support or causality constraints, these can be enforced directly on $\bm{w}_{\theta}$ by masking or parameterization.
+\end{enumerate}
+
+% \newpage
+% \section{Codes}
+
+\section{Key theoretical guarantees}
+\label{subsubsec:key-theorems}
+
+The mathematical justification for operator learning rests on three central facts.
+
+\begin{theorem}[Discretization invariance, informal; \cite{kovachki_neural_nodate}]
+Let $G : A \times \Theta \to U$ be a neural operator class on Banach spaces. Then there exist discretized realizations $\widehat{G}_L$ such that for every compact subset $K \subset A$ and every fixed parameter value $\theta \in \Theta$,
+\begin{equation}
+ \lim_{L\to\infty}
+ \sup_{a\in K}
+ \|\widehat{G}_L(D_L,a|_{D_L},\theta) - G(a,\theta)\|_U = 0.
+ \label{eq:theorem-discretization-invariance}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Universal approximation of continuous operators, informal; \cite{kovachki_neural_nodate}]
+Let $G^\dagger : A \to U$ be a continuous operator between suitable Banach spaces and let $K \subset A$ be compact. Then for every $\varepsilon>0$ there exists a neural operator $G_\theta$ such that
+\begin{equation}
+ \sup_{a\in K}
+ \|G_\theta(a)-G^\dagger(a)\|_U < \varepsilon.
+ \label{eq:theorem-universal-operator}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Approximation by H\'enon compositions; Turaev, informal; \cite{burby_fast_2021}]
+Let $\Phi : U \to \mathbb{R}^{2n}$ be a $C^{r+1}$ symplectic map and let $C\subset U$ be compact. Then for every $\varepsilon>0$ there exist a smooth scalar potential $V$, a constant shift $\eta$, and an integer $N$ such that the composition of H\'enon maps approximates $\Phi$ within $\varepsilon$ on $C$ in the $C^r$ topology.
+\end{theorem}
+
+The first theorem motivates testing the learned model across changing discretizations or particle numbers. The second theorem justifies learning maps between distributions or reduced observables directly as operators. The third theorem motivates the use of structure-preserving H\'enon-type cores for the external Hamiltonian transport.
+
+In particular, the neural-operator framework yields a useful error decomposition:
+\begin{equation}
+ \|\widehat{G}_\theta(D_L,a|_{D_L}) - G^\dagger(a)\|_U
+ \le
+ \underbrace{\|\widehat{G}_\theta(D_L,a|_{D_L}) - G_\theta(a)\|_U}_{\text{discretization error}}
+ +
+ \underbrace{\|G_\theta(a)-G^\dagger(a)\|_U}_{\text{approximation error}}.
+ \label{eq:error-decomposition}
+\end{equation}
+This decomposition should guide the empirical validation strategy.
+
+
+
+% % add codes
+% \subsection{Traitement et Audit des Données par séries temporelles}
+% \inputminted[linenos=true, breaklines=true]{python}{codes/time_series_analysis.py}
+
+\end{sloppypar}
+
+\end{document}
