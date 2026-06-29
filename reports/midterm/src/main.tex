@@ -469,7 +469,7 @@ Even when no full Vlasov solver is used, high-fidelity collective-effects studie
 
 \subsection{Machine learning for surrogate modeling of collective effects}
 
-Because high-fidelity collective-effects simulations are computationally demanding, machine learning has emerged as a natural candidate for building surrogate models as fast approximations of expensive maps that preserve, at least partially, the relevant physical structure. In accelerator physics, ML has already been used for diagnostics, optics correction, anomaly detection, beam optimization, and simulation post-processing. In the present context, the objective is clear: to learn maps related to collective beam dynamics quickly enough to enable parameter scans, inverse problems, or repeated evaluations in design studies \cite{arpaia_machine_2021}.
+High-fidelity collective-effects simulations are computationally demanding, therefore machine learning has emerged as a natural candidate for building surrogate models as fast approximations of expensive maps that preserve, at least partially, the relevant physical structure. In accelerator physics, ML has already been used for diagnostics, optics correction, anomaly detection, beam optimization, and simulation post-processing. In the present context, the objective is clear: to learn maps related to collective beam dynamics quickly enough to enable parameter scans, inverse problems, or repeated evaluations in design studies \cite{arpaia_machine_2021}.
 
 From a supervised-learning viewpoint, one starts from a dataset
 \begin{equation}
@@ -482,97 +482,7 @@ where $x_i$ collects the input variables, such as beam parameters, phase-space s
 \end{equation}
 possibly augmented with regularization or physical constraints. The crucial distinction between the different approaches discussed below lies in the type of object being learned, it can be a finite-dimensional symplectic map, a probability density in phase space, or an operator acting between function spaces.
 
-\subsubsection{HenonNets}
 
-When the target is a phase-space map
-\begin{equation}
-z_{n+1} = \Phi_\mu(z_n),
-\qquad z_n\in\mathbb R^{2N},
-\end{equation}
-it is natural to ask whether the learned surrogate should preserve symplectic structure. In the Hamiltonian limit the answer is yes, the true transport satisfies hamiltonian flow in phase space, and therefore the surrogate should ideally satisfy the symplectic condition. HenonNets are designed precisely for this purpose. 
-
-HenonNets are structure-preserving neural networks designed to approximate symplectic maps. Their motivation comes from Hamiltonian dynamics. In the absence of dissipation, as is the case for Vlasov equation, beam transport in phase space is naturally represented by symplectic maps, and preserving this structure is desirable when constructing surrogates for beam dynamics \cite{burby_fast_2021,huang_symplectic_2024}. If $\xi=(q,p)\in\mathbb R^{2N}$ denotes canonical phase-space coordinates, the Hamiltonian equations can be written as
-\begin{equation}
-\frac{d\xi}{dt} = \{\xi,H\},
-\end{equation}
-with Poisson bracket
-\begin{equation}
-\{f,g\}
-=
-\sum_{i,j}
-\frac{\partial f}{\partial \xi_i}
-J_{ij}
-\frac{\partial g}{\partial \xi_j},
-\qquad
-J=
-\begin{pmatrix}
-0 & I\\
--I & 0
-\end{pmatrix}.
-\end{equation}
-A discrete transport map $\xi_{n+1}=M(\xi_n)$ is symplectic when
-\begin{equation}
-(\nabla M)^{\top}J(\nabla M)=J.
-\label{eq:symplectic_condition}
-\end{equation}
-
-The HenonNet architecture enforces this property at the layer level. In the parameter-dependent construction relevant for accelerator applications, the parametrized potential function is used to capture collective effects. More precisely, one defines a potential function
-\begin{equation}
-V_W:\mathbb R^N\times \mathcal P \to \mathbb R,
-\end{equation}
-where $W$ denotes trainable weights and $\mu\in\mathcal P\subset\mathbb R^m$ is a vector of physical parameters that are relevant for the observation of the desired physical phenomenta, as an example, the intensity (Bunch Charge) is a key parameter that defines the extent of the wakefields and their resulting collective effects. A basic H\'enon-type map $H:\mathbb R^{2N}\to\mathbb R^{2N}$ then takes the form
-\begin{equation}
-  H\begin{pmatrix}
-    p \\ q 
-  \end{pmatrix}
-     = \begin{pmatrix}\tilde{q} \\ \tilde{p} \end{pmatrix}
-      = \begin{pmatrix} p + \eta \\ -q + \nabla_p V_W(p;\mu) \end{pmatrix},
-      \label{eq:henon_basic}
-\end{equation}
-
-and a H\'enon layer is built as a composition of 4 such elementary maps. 
-
-\begin{equation}
-\mathcal H_L(\xi;\mu)
-=
-(H \circ H \circ H \circ H) (\xi;\mu).
-\end{equation}
-It is worth noting that for each layer, the same potential function is used in all four elementary maps, which means that the same trainable parameters $W$ are shared across those maps. This design choice allows the model to capture more complex dynamics while keeping the number of trainable parameters manageable.
-
-The full HenonNet is then a composition of layers,
-\begin{equation}
-\Phi_{\Theta}
-=
-\mathcal H_L^{(L)}
-\circ
-\cdots
-\circ
-\mathcal H_L^{(1)},
-\end{equation}
-which remains symplectic by construction \cite{huang_symplectic_2024,burby_fast_2021}.
-
-In the present context, the natural input is a pair $(z,\mu)$, where $z\in\mathbb R^{2N}$ denotes the beam phase-space coordinates and $\mu$ collects machine parameters, while the output is the transported state $z'$. Training is typically performed with a regression loss such as
-\begin{equation}
-\mathcal L_{\mathrm{Henon}}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-\left\|
-\Phi_{\Theta}(z_i,\mu_i)-z_i'
-\right\|^2.
-\end{equation}
-The main reason for including HenonNets in this work is that they provide a physically structured baseline for surrogate modeling of phase-space transport. Their limitation, however, is equally important. The network is designed to learn finite-dimensional maps between particle states, not directly distribution-to-distribution evolution operators. This challenge is under investigation since the addition of a parametrized potential in the Henon map reproduces effects such as space charge with some degree of accuracy \cite{huang_symplectic_2024,}. Furthermore, while it is true that the mapping is done in pointwise fashion for the phase space, the distribution transform can be obtained by pushing forward the initial distribution through the learned map, let $\psi$ be a distribution in the initial phase space, then the evolved distribution is given by
-\begin{equation}
-\psi' = \Phi_{\Theta\#}\psi,
-\end{equation}
-
-where $\#$ denotes the pushforward operation, and it acts on the phase space such that
-\begin{equation}
-  \int_A \psi'(z')\,dz' = \int_{\Phi_{\Theta}^{-1}(A)} \psi(z)\,dz,
-\end{equation}
-for any measurable set $A$ in the phase space due to Liouville's theorem.
-
-This means that, in principle, HenonNets can be used to learn the underlying particle transport map, and then the distribution evolution can be obtained by pushing forward the initial distribution through the learned map. However, this approach may not capture all the relevant collective effects, especially if the dynamics involves strong mixing, filamentation, or nontrivial phase-space structures that are not well represented by a finite-dimensional map. This study will face the question of how well HenonNets can capture the relevant dynamics in the presence of collective effects, and whether they can be used as a building block for more complex surrogate models that directly learn distribution evolution or operator maps, and how do they compare with other approaches such as neural operators or maximum-entropy tomography, as well as the usual vlasov solver approach.
 \subsubsection{Phase-space tomography reconstruction}
 
 A different problem is the reconstruction of an unknown beam distribution from a collection of measurements. Let $\rho(x)$ denote the unknown initial phase-space density and let $M_k$ be the known transport map associated with measurement configuration $k$. The transformed coordinates are
@@ -1419,12 +1329,292 @@ for the first operator-learning experiments, and provide a baseline against whic
 models can be compared. In particular, once collective effects are incorporated in the simulator, the same
 structure of figures can be reused to compare the external-transport baseline with the genuinely collective
 surrogate models.
+\subsection{Collective Effects Modelling and Reconstruction}
 
+Neural operators are investigated as surrogate models for collective effects studies. The objective is to approximate the beam evolution induced by collective effects (wakefields and impedance-driven dynamics), while preserving physical control parameters as conditioning variables. This enables fast exploration of bunch intensity, RF settings, impedance scaling, and lattice configurations, providing a reduced-order surrogate that complements high-fidelity tracking simulations.
 
+The beam dynamics are governed by equation~\eqref{eq:vlasov_hamiltonian}, whose formal solution can be written as
+\begin{equation}
+    \begin{split}
+        \rho_{s+\Delta s}
+        &= \mathcal{G}_\theta(\rho_s,\mu)\rho_s \\
+        &\approx e^{\Delta s \mathcal{L}_{\mathrm{wake}}}
+        e^{\Delta s \mathcal{L}_{\mathrm{ext}}}\rho_s,
+    \end{split}
+\end{equation}
+where $\mathcal{L}_{\mathrm{ext}}$ denotes the external lattice transport generator and $\mathcal{L}_{\mathrm{wake}}$ encodes collective effects. This Lie--Trotter splitting provides a natural decomposition between single-particle dynamics and collective interactions.
 
+\paragraph{Latent formulation via CVAE}
 
+Instead of learning the full phase-space evolution operator directly, a compressed representation is introduced. Let
+\begin{equation}
+\mathcal{H}(\rho)\in\mathbb{R}^{15\times64\times64}
+\end{equation}
+denote a set of fifteen pairwise 2D projections of the six-dimensional phase-space distribution. The encoder network
+\begin{equation}
+\mathcal{E}_{\phi}:
+\left(
+\mathcal{H}(\rho),\sigma,\langle x\rangle
+\right)
+\rightarrow z\in\mathbb{R}^{256}
+\end{equation}
+maps projected beam observables and low-order moments into a latent representation.
 
+Within the variational formulation, the encoder defines a Gaussian posterior
+\begin{equation}
+q_{\phi}(z|\mathcal{H},\sigma,\langle x\rangle)
+=
+\mathcal{N}(\mu_z,\Sigma_z),
+\end{equation}
+from which latent variables are sampled using the reparameterization trick.
 
+The decoder
+\begin{equation}
+\mathcal{D}_{\psi}: z \rightarrow \widehat{\mathcal{H}}
+\end{equation}
+reconstructs the projected distributions, while latent dynamics are modeled as
+\begin{equation}
+z_{i+1} = \mathcal{T}_\theta(z_i, \ell_i, \mu),
+\end{equation}
+where $\ell_i$ encodes lattice elements and $\mu$ global collective parameters.
+
+\paragraph{Latent space structure and disentanglement diagnostics}
+
+To assess whether the CVAE learns a physically meaningful latent representation, we analyze latent correlations against known physical observables.
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 1
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{4cm}
+\centering
+\textbf{Figure Placeholder: Latent Space Correlation Diagnostics}\\
+\small
+(Boxplot of Pearson correlations across latent dimensions + heatmap of top-$K$ correlated latent variables)
+\vspace{4cm}
+\end{minipage}}
+\caption{\small Latent space decorrelation analysis. Left: distribution of Pearson correlations across latent dimensions against physical observables. Right: heatmap of the top-$K$ most correlated latent variables, used to detect potential feature leakage and entanglement.}
+\label{fig:latent_corr}
+\end{figure}
+
+The analysis indicates that most latent dimensions remain weakly correlated with physical inputs, consistent with a well-regularized CVAE. However, a small subset of latent variables captures strongly structured physical information, suggesting partial but controlled entanglement of dynamical features.
+
+\paragraph{Conditional consistency of learned distributions}
+
+To further validate the learned latent representation, as well as the latent dynamics training, we evaluate conditional slice statistics in phase space. We compare predicted and true conditional means across constant-$z$ and constant-$\delta$ slices.
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 2
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{4cm}
+\centering
+\textbf{Figure Placeholder: Conditional Slice Consistency}\\
+\small
+(Parity plots of conditional means with error bars for constant-$z$ and constant-$\delta$ slices)
+\vspace{4cm}
+\end{minipage}}
+\caption{\small Conditional consistency diagnostics. Left: agreement of conditional $\delta$ statistics across constant-$z$ slices. Right: agreement of conditional $z$ statistics across constant-$\delta$ slices. Error bars represent local slice variances.}
+\label{fig:conditional_slices}
+\end{figure}
+
+The model reproduces conditional statistics with high fidelity, indicating that the latent space preserves local phase-space structure rather than only global marginals.
+
+\paragraph{Macroparticle reconstruction of phase-space distributions}
+
+To move beyond histogram-level comparison, phase-space densities are interpreted as probability distributions and sampled into macroparticle ensembles. This enables direct comparison in a physically interpretable particle representation.
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 3
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{5cm}
+\centering
+\textbf{Figure Placeholder: Macroparticle Sampling and Distribution Fidelity}\\
+\small
+(Left: 2D phase-space density map. Right: sampled macroparticles from learned distribution)
+\vspace{5cm}
+\end{minipage}}
+\caption{\small Macroparticle reconstruction of phase-space distributions. The learned density is interpreted as a probability measure and sampled to recover continuous particle clouds for visual and statistical comparison.}
+\label{fig:macroparticles}
+\end{figure}
+
+This representation reveals fine-grained structural agreement between predicted and true distributions, particularly in high-density core regions, while deviations remain localized in filamentary tails.
+
+\paragraph{Latent evolution models}
+
+Two alternative realizations of the latent propagator $\mathcal{T}_\theta$ are considered.
+
+\subparagraph{Transformer-based latent propagator}
+
+In the first approach, lattice tokens are processed using a causal Transformer:
+\begin{equation}
+\Delta z_i = \mathcal{F}_\theta(z_0, h_{1:i}, \mu),
+\end{equation}
+with cumulative evolution
+\begin{equation}
+z_i = z_0 + \sum_{k=1}^{i} \Delta z_k.
+\end{equation}
+
+\subparagraph{Graph Neural Operator (GNO) latent propagator}
+
+In the second approach, the lattice is modeled as a graph:
+\begin{equation}
+\Delta z_i = \mathcal{K}_\theta(z_0, h_{1:i}, \mu),
+\end{equation}
+with the same cumulative update rule.
+
+\paragraph{Global comparison of surrogate models}
+
+We next compare Transformer and GNO models across both distributional accuracy and statistical beam observables.
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 4
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{5cm}
+\centering
+\textbf{Figure Placeholder: Global Model Comparison Dashboard}\\
+\small
+(Panel comparison of truth vs predictions, plus residual error maps for both Transformer and GNO)
+\vspace{5cm}
+\end{minipage}}
+\caption{\small Global comparison of surrogate models. Left panels show reconstructed phase-space distributions; right panels show residual error maps highlighting systematic deviations between Transformer and GNO architectures.}
+\label{fig:global_comparison}
+\end{figure}
+
+A complementary statistical evaluation compares envelope quantities and centroids across phase-space dimensions.
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 5
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{4.5cm}
+\centering
+\textbf{Figure Placeholder: Statistical Envelope and Centroid Comparison}\\
+\small
+(Scatter plots comparing $\sigma$ and $\langle x \rangle$ predictions between Transformer and GNO models)
+\vspace{4.5cm}
+\end{minipage}}
+\caption{\small Global statistical comparison of surrogate models. Both envelope widths and centroid trajectories are evaluated across phase-space dimensions, highlighting differences in stability and bias between architectures.}
+\label{fig:stats_comparison}
+\end{figure}
+
+Finally, a high-resolution macroparticle-based diagnostic is used to evaluate residual structure in phase space:
+
+\begin{figure}[H]
+\centering
+% =========================
+% PLACEHOLDER FIGURE 6
+% =========================
+\fbox{\begin{minipage}{0.95\textwidth}
+\vspace{5cm}
+\centering
+\textbf{Figure Placeholder: Macroparticle Residual Structure Analysis}\\
+\small
+(Full phase-space correlation + residual distributions for Transformer vs GNO predictions)
+\vspace{5cm}
+\end{minipage}}
+\caption{\small High-resolution macroparticle diagnostic of residual structure. The plots quantify systematic deviations in reconstructed phase-space coordinates and highlight differences in residual distributions between models.}
+\label{fig:macro_residuals}
+\end{figure}
+
+\paragraph{Reconstruction and training objective}
+
+After propagation through the full lattice, the latent state is decoded as
+\begin{equation}
+\widehat{\mathcal{H}}_N = \mathcal{D}_\psi(z_N),
+\end{equation}
+
+with training objective
+\begin{equation}
+\mathcal{L}
+=
+\mathcal{L}_{\mathrm{rec}}
++
+\lambda \mathcal{L}_{\mathrm{mom}}
++
+\beta D_{KL}(q_{\phi}(z|\mathcal{H}) \| \mathcal{N}(0,I)).
+\end{equation}
+
+The combination of latent regularization, conditional reconstruction, and lattice-aware propagation yields a physically consistent surrogate capable of reproducing both global and local beam dynamics.
+
+Across the 2D phase-space marginals, a systematic difference in reconstruction quality is observed between the Transformer-based propagator and the Graph Neural Operator (GNO). The Transformer exhibits a mild but consistent distortion in reconstructed distributions, visible as a bias in the 2D projections and a smoothing of high-density structures, particularly in low-amplitude regions. In contrast, the GNO preserves sharper phase-space features and yields improved agreement in both core and tail regions.
+
+To make this difference explicit, let $\rho(x)$ denote the true phase-space density and $\hat{\rho}_\theta(x)$ the reconstructed distribution. We define the reconstruction error as
+\begin{equation}
+\varepsilon(x) = \hat{\rho}_\theta(x) - \rho(x),
+\end{equation}
+and its projection onto a 2D marginal $\Pi_{ij}$ as
+\begin{equation}
+\varepsilon_{ij}(u,v)
+=
+\int \varepsilon(x)\, \delta\!\big(\Pi_{ij}(x) - (u,v)\big)\, dx.
+\end{equation}
+
+A systematic bias in the Transformer can then be understood as a non-zero mean residual field:
+\begin{equation}
+b_{ij}(u,v)
+=
+\mathbb{E}[\varepsilon_{ij}(u,v)] \neq 0,
+\end{equation}
+which manifests as a structured deformation of the reconstructed marginals.
+
+This bias can be traced to the structure of the latent evolution operator. The Transformer propagator is effectively a learned autoregressive map:
+\begin{equation}
+z_{i+1} = z_i + f_\theta\!\left(z_0, h_{1:i}, \mu\right),
+\end{equation}
+where $f_\theta$ is a highly expressive but unconstrained function approximator. In practice, this leads to a closure approximation of the form
+\begin{equation}
+f_\theta \approx \mathcal{T}_{\text{true}} + \eta_\theta,
+\end{equation}
+where $\eta_\theta$ represents data-driven modeling error that is not constrained by any underlying transport structure.
+
+As the evolution is integrated along the lattice, these local errors accumulate:
+\begin{equation}
+z_N = z_0 + \sum_{i=1}^{N} \left(\Delta z_i^{\text{true}} + \eta_{\theta,i}\right),
+\end{equation}
+leading to a systematic drift term
+\begin{equation}
+\mathbb{E}[z_N] = z_N^{\text{true}} + \sum_{i=1}^{N} \mathbb{E}[\eta_{\theta,i}],
+\end{equation}
+which directly translates into biased marginal projections.
+
+In contrast, the GNO formulation introduces a structured operator bias through its kernel representation:
+\begin{equation}
+v^{(l+1)}(x)
+=
+\sigma\!\left(
+W v^{(l)}(x)
++
+\int_{\Omega} K_\theta(x,y)\, v^{(l)}(y)\, dy
+\right),
+\end{equation}
+which can be interpreted as a learned discretization of an integral transport operator. This form enforces a locality and conservation-aware structure, making the evolution closer to a numerical approximation of the underlying kinetic Vlasov-type transport equation.
+
+Discretizing the kernel yields a message-passing form:
+\begin{equation}
+\Delta z_i
+=
+\sum_{j \le i} K_\theta(h_i, h_j)\, \phi(z_j),
+\end{equation}
+which constrains updates to physically meaningful interactions rather than global unconstrained mixing. As a result, the error term remains approximately centered:
+\begin{equation}
+\mathbb{E}[\varepsilon_{ij}(u,v)] \approx 0,
+\end{equation}
+explaining the absence of systematic bias in the reconstructed marginals.
+
+Overall, the Transformer acts as a highly expressive global sequence model with unconstrained error accumulation, while the GNO encodes an inductive bias closer to the underlying integro-differential structure of collective beam dynamics, leading to improved stability and resolution in phase-space reconstructions.
 
 \newpage
 \section{Conclusion et perspectives}

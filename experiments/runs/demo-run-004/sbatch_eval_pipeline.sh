@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --job-name=demo004-eval
+#SBATCH --output=/pbs/home/s/smartinez/ML4CollEffects/outputs/demo004-eval-%j.out
+#SBATCH --error=/pbs/home/s/smartinez/ML4CollEffects/outputs/demo004-eval-%j.err
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=02:00:00
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=smartinezsa@unal.edu.co
+
+set -euo pipefail
+
+export CONDA_BASE="$HOME/miniconda3"
+source "$CONDA_BASE/etc/profile.d/conda.sh"
+conda activate xsuite-py310
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export NUMEXPR_NUM_THREADS=4
+export TORCH_NUM_THREADS=${SLURM_CPUS_PER_TASK:-8}
+
+export DATASET_PATH="/pbs/home/s/smartinez/ML4CollEffects/data/neural/neural_xsuite_dataset_2026-05-13T08:37:06.npz"
+export DEMO004_ROOT="/pbs/home/s/smartinez/ML4CollEffects/experiments/runs/demo-run-004"
+export STAGE="${STAGE:-1}"
+
+export PYTHONPATH="$DEMO004_ROOT:${PYTHONPATH:-}"
+cd "$DEMO004_ROOT"
+
+if [ "$STAGE" = "1" ]; then
+  srun python -u -m scripts.evaluation.evaluate_vae \
+    --data "$DATASET_PATH" \
+    --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
+    --outdir "$DEMO004_ROOT/output/stage1_vae" \
+    --device cuda \
+    --split val
+elif [ "$STAGE" = "2" ]; then
+  srun python -u -m scripts.evaluation.evaluate_dynamics_1step \
+    --latent-npz "$DEMO004_ROOT/output/stage1_vae/latent/latent_dataset.npz" \
+    --vae-ckpt "$DEMO004_ROOT/output/stage1_vae/checkpoints/vae_ep019.pt" \
+    --dyn-ckpt "$DEMO004_ROOT/output/stage2_dynamics/checkpoints/dyn_ep029.pt" \
+    --outdir "$DEMO004_ROOT/output/stage2_dynamics" \
+    --device cuda \
+    --split val \
+    --n-plots 8
+else
+  echo "Unknown STAGE=$STAGE (use STAGE=1 or STAGE=2)"
+  exit 2
+fi
