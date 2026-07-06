@@ -1,0 +1,1933 @@
+
+\section{Machine-learning methodology}
+\label{sec:methodology}
+% =============================================================================
+\subsection{Machine-learning foundations}
+\label{subsec:ml_foundations}
+% =============================================================================
+
+Before introducing the operator-learning and latent-dynamics architectures used in this work, it is useful to summarize the basic machine-learning concepts from which these models are constructed. At its most general level, supervised machine learning seeks to infer a parameterized mapping between an input representation and a desired output from a finite collection of examples. In the present application, the inputs may be beam distributions, phase-space histograms, latent states, lattice-element descriptors, or machine parameters, while the outputs may be evolved densities, reconstructed distributions, or propagated latent states.
+
+\subsubsection{From data to prediction}
+\label{subsubsec:data_to_prediction}
+
+Consider a dataset
+\begin{equation}
+    \mathcal{D}
+    =
+    \left\{
+    \bigl(
+    x^{(s)},
+    y^{(s)}
+    \bigr)
+    \right\}_{s=1}^{N},
+\end{equation}
+where $x^{(s)}$ denotes an input example and $y^{(s)}$ the corresponding target. A machine-learning model introduces a parameterized function
+\begin{equation}
+    f_{\theta}
+    :
+    \mathcal{X}
+    \longrightarrow
+    \mathcal{Y},
+\end{equation}
+with trainable parameters $\theta$. The model prediction is
+\begin{equation}
+    \widehat{y}^{(s)}
+    =
+    f_{\theta}
+    \left(
+    x^{(s)}
+    \right),
+\end{equation}
+and the parameters are determined by minimizing an empirical loss,
+\begin{equation}
+    \theta^{\star}
+    =
+    \argmin_{\theta}
+    \frac{1}{N}
+    \sum_{s=1}^{N}
+    \ell
+    \left(
+    f_{\theta}
+    \left(
+    x^{(s)}
+    \right),
+    y^{(s)}
+    \right).
+    \label{eq:basic_ml_training}
+\end{equation}
+For regression problems, a common choice is the mean-squared error,
+\begin{equation}
+    \mathcal{L}_{\mathrm{MSE}}
+    =
+    \frac{1}{N}
+    \sum_{s=1}^{N}
+    \norm{
+    \widehat{y}^{(s)}
+    -
+    y^{(s)}
+    }_{2}^{2}.
+\end{equation}
+
+Training is therefore an iterative process. A batch of examples is propagated through the model, the discrepancy between predictions and targets is evaluated, and derivatives of the loss with respect to the parameters are computed through backpropagation. An optimizer then updates the parameters according to
+\begin{equation}
+    \theta_{k+1}
+    =
+    \theta_k
+    -
+    \eta_k
+    \widehat{\nabla_{\theta}\mathcal{L}},
+    \label{eq:gradient_update_basic}
+\end{equation}
+where $\eta_k$ is the learning rate and
+$\widehat{\nabla_{\theta}\mathcal{L}}$
+is generally a batch estimate of the loss gradient.
+
+The complete procedure is summarized schematically in
+Fig.~\ref{fig:basic_ml_pipeline}.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        node distance=1.5cm and 1.8cm,
+        box/.style={
+            draw,
+            rounded corners,
+            minimum width=2.8cm,
+            minimum height=1.1cm,
+            align=center
+        },
+        smallbox/.style={
+            draw,
+            rounded corners,
+            minimum width=2.4cm,
+            minimum height=0.95cm,
+            align=center
+        },
+        arrow/.style={
+            -{Latex[length=3mm]},
+            thick
+        }
+    ]
+
+    \node[box] (data) {
+        Training data\\
+        $\{(x^{(s)},y^{(s)})\}_{s=1}^{N}$
+    };
+
+    \node[box, right=of data] (model) {
+        Parameterized model\\
+        $\widehat{y}=f_{\theta}(x)$
+    };
+
+    \node[box, right=of model] (pred) {
+        Prediction\\
+        $\widehat{y}$
+    };
+
+    \node[box, below=of pred] (loss) {
+        Loss function\\
+        $\ell(\widehat{y},y)$
+    };
+
+    \node[box, left=of loss] (grad) {
+        Backpropagation\\
+        $\nabla_{\theta}\mathcal{L}$
+    };
+
+    \node[box, left=of grad] (update) {
+        Parameter update\\
+        $\theta\leftarrow\theta-\eta\nabla_{\theta}\mathcal{L}$
+    };
+
+    \draw[arrow] (data) -- (model);
+    \draw[arrow] (model) -- (pred);
+    \draw[arrow] (pred) -- (loss);
+    \draw[arrow] (loss) -- (grad);
+    \draw[arrow] (grad) -- (update);
+    \draw[arrow] (update) -- (model);
+
+    % \node[smallbox, above=of loss] (target) {
+    %     Ground truth\\
+    %     $y$
+    % };
+
+    %\draw[arrow] (target) -- (loss);
+
+    \end{tikzpicture}%
+    }
+    \caption{
+        Basic supervised machine-learning workflow. Input examples are propagated
+        through a parameterized model to obtain predictions. A loss function
+        compares the predictions with the ground-truth targets, and
+        backpropagation provides gradients used by an optimizer to update the
+        model parameters. After training, inference consists only of the forward
+        map $x\mapsto f_{\theta^{\star}}(x)$.
+    }
+    \label{fig:basic_ml_pipeline}
+\end{figure}
+
+Once training is complete, the optimization loop is removed. For a previously unseen input $x_{\mathrm{new}}$, inference consists of the forward evaluation
+\begin{equation}
+    \widehat{y}_{\mathrm{new}}
+    =
+    f_{\theta^{\star}}
+    \left(
+    x_{\mathrm{new}}
+    \right).
+\end{equation}
+The purpose of the surrogate models developed in this work is precisely to make this forward evaluation substantially cheaper than rerunning the complete reference simulation for every new beam and machine configuration.
+
+\subsubsection{Dense neural networks}
+\label{subsubsec:dense_neural_networks}
+
+The simplest neural-network building block used throughout the architectures of this work is the fully connected, or dense, layer. Let
+\begin{equation}
+    h^{(0)}=x
+\end{equation}
+denote the input vector. A dense layer computes
+\begin{equation}
+    a^{(\ell+1)}
+    =
+    W^{(\ell)}h^{(\ell)}
+    +
+    b^{(\ell)},
+\end{equation}
+followed by a nonlinear activation,
+\begin{equation}
+    h^{(\ell+1)}
+    =
+    \sigma
+    \left(
+    a^{(\ell+1)}
+    \right).
+    \label{eq:dense_layer_basic}
+\end{equation}
+Here,
+$W^{(\ell)}$
+is a trainable weight matrix,
+$b^{(\ell)}$
+a trainable bias vector, and
+$\sigma$
+a nonlinear activation function such as ReLU or GELU,
+\begin{equation}
+    \operatorname{ReLU}(x)
+    =
+    \max(0,x),
+    \qquad
+    \operatorname{GELU}(x)
+    =
+    \frac{x}{2}
+    \left[
+        1
+        +
+        \operatorname{erf}
+        \left(
+            \frac{x}{\sqrt{2}}
+        \right)
+    \right],
+\end{equation}
+where $\Phi(x)$ denotes the cumulative distribution function of the standard normal distribution.
+
+A multilayer perceptron (MLP) is obtained by composing several such transformations:
+\begin{equation}
+    f_{\theta}(x)
+    =
+    W^{(L)}
+    \sigma
+    \left(
+    W^{(L-1)}
+    \cdots
+    \sigma
+    \left(
+    W^{(0)}x+b^{(0)}
+    \right)
+    \cdots
+    +
+    b^{(L-1)}
+    \right)
+    +
+    b^{(L)}.
+    \label{eq:mlp_basic}
+\end{equation}
+
+The role of the nonlinear activation is essential. Without it, any composition of dense linear layers reduces to a single affine transformation. Nonlinear layers allow the network to represent complex input--output relations.
+
+Dense networks appear repeatedly in the models used in this work even when the complete architecture is not an MLP. They are used, for example, to:
+\begin{itemize}
+    \item project physical parameters into learned embedding spaces;
+    \item map latent variables to hidden feature dimensions;
+    \item parameterize graph interaction kernels;
+    \item construct output prediction heads;
+    \item fuse beam, lattice, and conditioning variables.
+\end{itemize}
+
+A dense layer treats all components of its input as entries of one vector. This is appropriate for global descriptors such as machine parameters or latent states, but it does not explicitly exploit spatial organization in gridded data. For the pairwise phase-space histograms used in the six-dimensional beam representation, convolutional layers provide a more natural inductive bias.
+
+\subsubsection{Convolutional neural networks}
+\label{subsubsec:cnn_foundations}
+
+A convolutional neural network (CNN) is designed for data with local spatial organization. In the present work, each pairwise phase-space marginal is represented as a two-dimensional histogram, and the complete beam representation contains fifteen such channels:
+\begin{equation}
+    X
+    =
+    \mathcal{H}(\rho)
+    \in
+    \mathbb{R}^{15\times N_b\times N_b}.
+\end{equation}
+The channel dimension identifies the fifteen projected phase-space planes, while the two spatial dimensions correspond to histogram bins.
+
+For an input feature tensor
+$h^{(\ell)}$,
+a two-dimensional convolutional layer computes
+\begin{equation}
+    h_{c_{\mathrm{out}}}^{(\ell+1)}(i,j)
+    =
+    \sigma
+    \left[
+    b_{c_{\mathrm{out}}}
+    +
+    \sum_{c_{\mathrm{in}}}
+    \sum_{r}
+    \sum_{q}
+    K_{c_{\mathrm{out}},c_{\mathrm{in}}}(r,q)
+    h_{c_{\mathrm{in}}}^{(\ell)}(i-r,j-q)
+    \right],
+    \label{eq:cnn_convolution_basic}
+\end{equation}
+where
+$K_{c_{\mathrm{out}},c_{\mathrm{in}}}$
+is a learned convolution kernel.
+
+The essential distinction from a dense layer is parameter sharing. The same kernel is applied at different spatial positions. Consequently, a CNN can learn local structures such as:
+\begin{itemize}
+    \item compact beam cores;
+    \item elongated correlations;
+    \item tilted phase-space ellipses;
+    \item halo structures;
+    \item localized distortions;
+    \item multimodal projected densities.
+\end{itemize}
+
+Successive convolutional layers increase the effective receptive field. Early layers detect local structures, while deeper layers combine them into progressively more global representations. Downsampling operations can reduce spatial resolution while increasing the number of feature channels,
+\begin{equation}
+    15\times N_b\times N_b
+    \longrightarrow
+    C_1\times \frac{N_b}{2}\times\frac{N_b}{2}
+    \longrightarrow
+    C_2\times \frac{N_b}{4}\times\frac{N_b}{4}
+    \longrightarrow
+    \cdots,
+\end{equation}
+thereby compressing the histogram representation.
+
+Conversely, transposed convolutions or interpolation followed by convolution can reconstruct high-resolution outputs from compressed feature maps. This encoder--decoder structure is the basis of the variational latent representation introduced below.
+
+\subsubsection{Autoencoders and latent representations}
+\label{subsubsec:autoencoder_foundations}
+
+An autoencoder learns a lower-dimensional representation of high-dimensional data. It consists of an encoder
+\begin{equation}
+    \mathcal{E}_{\phi}
+    :
+    X
+    \longmapsto
+    z,
+\end{equation}
+and a decoder
+\begin{equation}
+    \mathcal{D}_{\psi}
+    :
+    z
+    \longmapsto
+    \widehat{X},
+\end{equation}
+where
+\begin{equation}
+    z\in\mathbb{R}^{d_z}
+\end{equation}
+is a latent vector with dimension typically much smaller than the dimension of the original input.
+
+The reconstruction is
+\begin{equation}
+    \widehat{X}
+    =
+    \mathcal{D}_{\psi}
+    \left(
+    \mathcal{E}_{\phi}(X)
+    \right),
+\end{equation}
+and the simplest training objective minimizes
+\begin{equation}
+    \mathcal{L}_{\mathrm{AE}}
+    =
+    \norm{
+    \widehat{X}
+    -
+    X
+    }_{2}^{2}.
+\end{equation}
+
+For the beam representation used here, this corresponds schematically to
+\begin{equation}
+    \underbrace{
+    \mathbb{R}^{15\times N_b\times N_b}
+    }_{\text{pairwise histograms}}
+    \xrightarrow{\ \mathcal{E}_{\phi}\ }
+    \underbrace{
+    \mathbb{R}^{d_z}
+    }_{\text{latent beam state}}
+    \xrightarrow{\ \mathcal{D}_{\psi}\ }
+    \underbrace{
+    \mathbb{R}^{15\times N_b\times N_b}
+    }_{\text{reconstructed histograms}}.
+    \label{eq:autoencoder_beam_projection}
+\end{equation}
+
+This compression is central to the present methodology. Propagating fifteen $N_b\times N_b$ distributions directly through every lattice element would be computationally expensive. Instead, the beam shape is compressed into a latent state $z$, the dynamics are learned in latent space, and the propagated state is decoded only when a physical distribution is required.
+
+\subsubsection{Variational autoencoders}
+\label{subsubsec:vae_foundations}
+
+A standard autoencoder maps each input deterministically to one latent vector. A variational autoencoder (VAE) instead represents each input by a probability distribution in latent space \cite{kingma_autoencoding_2014}. The encoder predicts the parameters of an approximate posterior,
+\begin{equation}
+    q_{\phi}(z\mid X)
+    =
+    \mathcal{N}
+    \left(
+    \bm{\mu}_{\phi}(X),
+    \operatorname{diag}
+    \bm{\sigma}_{\phi}^{2}(X)
+    \right).
+    \label{eq:vae_posterior_intro}
+\end{equation}
+
+A latent sample is generated through the reparameterization trick,
+\begin{equation}
+    z
+    =
+    \bm{\mu}_{\phi}(X)
+    +
+    \bm{\sigma}_{\phi}(X)
+    \odot
+    \epsilon,
+    \qquad
+    \epsilon
+    \sim
+    \mathcal{N}(0,I),
+    \label{eq:vae_reparameterization_intro}
+\end{equation}
+where $\odot$ denotes elementwise multiplication. This formulation separates the random sampling operation from the trainable encoder parameters and allows gradients to propagate through the latent sampling step.
+
+The decoder then reconstructs the input from the sampled latent state,
+\begin{equation}
+    \widehat{X}
+    =
+    \mathcal{D}_{\psi}(z).
+\end{equation}
+Training balances reconstruction quality against regularity of the latent distribution:
+\begin{equation}
+    \mathcal{L}_{\mathrm{VAE}}
+    =
+    \mathcal{L}_{\mathrm{rec}}
+    +
+    \beta
+    \KL
+    \left(
+    q_{\phi}(z\mid X)
+    \,\Vert\,
+    p(z)
+    \right),
+    \label{eq:vae_loss_intro}
+\end{equation}
+where the prior is commonly
+\begin{equation}
+    p(z)
+    =
+    \mathcal{N}(0,I).
+\end{equation}
+
+The reconstruction term requires the latent state to retain information about the input, while the Kullback--Leibler term regularizes the latent space. Compared with a purely deterministic autoencoder, this provides a smoother latent representation and permits sampling-based reconstruction and uncertainty studies.
+
+\subsubsection{Conditional variational autoencoders}
+\label{subsubsec:cvae_foundations}
+
+The beam distributions studied in this work are not arbitrary images. Their location, scale, shape, and evolution depend on known physical quantities. These may include centroids, RMS sizes, bunch or machine parameters, and properties of the accelerator lattice. A conditional variational autoencoder (CVAE) explicitly includes such information through a conditioning vector $c$ \cite{sohn_cvae_2015}.
+
+The encoder becomes
+\begin{equation}
+    q_{\phi}(z\mid X,c),
+\end{equation}
+and the decoder becomes
+\begin{equation}
+    p_{\psi}(X\mid z,c).
+\end{equation}
+The complete reconstruction path is therefore
+\begin{equation}
+    (X,c)
+    \xrightarrow{\ \mathcal{E}_{\phi}\ }
+    (\bm{\mu}_z,\bm{\sigma}_z)
+    \xrightarrow{\ \text{sampling}\ }
+    z
+    \xrightarrow{\ \mathcal{D}_{\psi}(\cdot,c)\ }
+    \widehat{X}.
+    \label{eq:cvae_basic_pipeline}
+\end{equation}
+
+In the present beam model, the distinction between latent shape information and explicit physical scale information is particularly important. The fifteen normalized histograms primarily describe projected distributional shape, while auxiliary variables retain information about physical position and extension. This motivates the dual representation
+\begin{equation}
+    X
+    =
+    \mathcal{H}(\rho),
+    \qquad
+    \bm q
+    =
+    \left\{
+    (\mu_r,\sigma_r)
+    \right\}_{r=1}^{15},
+    \label{eq:dual_hist_physical_representation}
+\end{equation}
+where $X$ contains the fifteen projected distributions and
+$\bm q$
+contains their corresponding location and scale descriptors.
+
+The latent model therefore separates two complementary tasks:
+\begin{equation}
+    X
+    \longrightarrow
+    z
+    \longrightarrow
+    \widehat{X},
+\end{equation}
+for distributional structure, and
+\begin{equation}
+    (z,\bm q,\mu)
+    \longrightarrow
+    \widehat{\bm q},
+\end{equation}
+for explicit physical position and extension.
+
+\subsubsection{From basic neural networks to the models used in this work}
+\label{subsubsec:ml_models_used_overview}
+
+The machine-learning architectures used in this work can be understood as natural extensions of the preceding building blocks. They differ primarily in the mathematical structure of the data on which they operate and in the inductive bias imposed on information propagation.
+
+The complete relationship is summarized in
+Fig.~\ref{fig:ml_architecture_overview}.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        node distance=1.25cm and 1.45cm,
+        box/.style={
+            draw,
+            rounded corners,
+            minimum width=2.75cm,
+            minimum height=1.0cm,
+            align=center
+        },
+        widebox/.style={
+            draw,
+            rounded corners,
+            minimum width=3.5cm,
+            minimum height=1.05cm,
+            align=center
+        },
+        arrow/.style={
+            -{Latex[length=2.8mm]},
+            thick
+        }
+    ]
+
+    % ------------------------------------------------------------------
+    % Input representations
+    % ------------------------------------------------------------------
+    \node[widebox] (raw) {
+        Simulation data\\
+        particle clouds and machine parameters
+    };
+
+    \node[box, below left=1.4cm and 2.0cm of raw] (lambda) {
+        Longitudinal profile\\
+        $\lambda(z)$
+    };
+
+    \node[box, below=1.4cm of raw] (hist) {
+        Fifteen pairwise histograms\\
+        $\mathcal{H}(\rho)$
+    };
+
+    \node[box, below right=1.4cm and 2.0cm of raw] (phys) {
+        Physical descriptors\\
+        $\bm q,\mu$
+    };
+
+    \draw[arrow] (raw) -- (lambda);
+    \draw[arrow] (raw) -- (hist);
+    \draw[arrow] (raw) -- (phys);
+
+    % ------------------------------------------------------------------
+    % Longitudinal branch
+    % ------------------------------------------------------------------
+    \node[box, below=of lambda] (fno) {
+        Fourier Neural Operator\\
+        spectral operator layers
+    };
+
+    \node[box, below=of fno] (lambdaout) {
+        Predicted profile\\
+        $\widehat{\lambda}_{\mathrm{out}}$
+    };
+
+    \draw[arrow] (lambda) -- (fno);
+    \draw[arrow] (fno) -- (lambdaout);
+
+    % ------------------------------------------------------------------
+    % CVAE branch
+    % ------------------------------------------------------------------
+    \node[box, below=of hist] (cnnenc) {
+        CNN encoder\\
+        local histogram features
+    };
+
+    \node[box, below=of cnnenc] (latentdist) {
+        Variational latent state\\
+        $(\bm{\mu}_z,\bm{\sigma}_z)\rightarrow z$
+    };
+
+    \draw[arrow] (hist) -- (cnnenc);
+    \draw[arrow] (cnnenc) -- (latentdist);
+    \draw[arrow] (phys) |- (cnnenc);
+
+    % ------------------------------------------------------------------
+    % Propagators
+    % ------------------------------------------------------------------
+    \node[box, below left=1.4cm and 1.8cm of latentdist] (tf) {
+        Causal Transformer\\
+        global upstream attention
+    };
+
+    \node[box, below=1.4cm of latentdist] (wtf) {
+        Window Transformer\\
+        local causal attention
+    };
+
+    \node[box, below right=1.4cm and 1.8cm of latentdist] (gno) {
+        Graph Neural Operator\\
+        graph-supported kernel
+    };
+
+    \draw[arrow] (latentdist) -- (tf);
+    \draw[arrow] (latentdist) -- (wtf);
+    \draw[arrow] (latentdist) -- (gno);
+
+    % ------------------------------------------------------------------
+    % Propagated latent state
+    % ------------------------------------------------------------------
+    \node[widebox, below=1.6cm of wtf] (zout) {
+        Propagated latent beam state\\
+        $z_0\rightarrow z_N$
+    };
+
+    \draw[arrow] (tf) -- (zout);
+    \draw[arrow] (wtf) -- (zout);
+    \draw[arrow] (gno) -- (zout);
+
+    % ------------------------------------------------------------------
+    % Outputs
+    % ------------------------------------------------------------------
+    \node[box, below left=1.4cm and 1.6cm of zout] (decoder) {
+        CNN decoder\\
+        $\widehat{\mathcal{H}}(\rho_N)$
+    };
+
+    \node[box, below right=1.4cm and 1.6cm of zout] (head) {
+        Dense physical head\\
+        $\widehat{\bm q}_N$
+    };
+
+    \draw[arrow] (zout) -- (decoder);
+    \draw[arrow] (zout) -- (head);
+    \draw[arrow]
+    (phys.east)
+    -- +(1.0,0)
+    |- (head.east);
+
+    \end{tikzpicture}%
+    }
+    \caption{
+        Relationship between the principal machine-learning components used in
+        this work. One-dimensional longitudinal densities are propagated with an
+        FNO. Six-dimensional particle clouds are represented by fifteen pairwise
+        histograms and physical descriptors. A convolutional conditional
+        variational autoencoder compresses the histogram representation into a
+        latent beam state, which is then propagated through the lattice using a
+        causal Transformer, a local-window Transformer, or a Graph Neural
+        Operator. The propagated latent state is decoded into projected
+        distributions, while an auxiliary dense head predicts their physical
+        location and extension.
+    }
+    \label{fig:ml_architecture_overview}
+\end{figure}
+
+The first branch of Fig.~\ref{fig:ml_architecture_overview} acts on a regular one-dimensional grid. The input is a longitudinal density
+\begin{equation}
+    \lambda_{\mathrm{in}}
+    \in
+    \mathbb{R}^{N_{\zeta}},
+\end{equation}
+and the target is another function sampled on the same domain,
+\begin{equation}
+    \lambda_{\mathrm{out}}
+    \in
+    \mathbb{R}^{N_{\zeta}}.
+\end{equation}
+This motivates the Fourier Neural Operator introduced later, because the desired prediction is a map between discretized functions and the underlying collective interaction possesses a natural spectral structure.
+
+The second branch begins with the projected six-dimensional beam representation
+\begin{equation}
+    \mathcal{H}(\rho)
+    \in
+    \mathbb{R}^{15\times N_b\times N_b}.
+\end{equation}
+Here, CNN layers are used because the inputs are spatially organized two-dimensional histograms. The CVAE compresses this high-dimensional representation into
+\begin{equation}
+    z
+    \in
+    \mathbb{R}^{d_z},
+\end{equation}
+which acts as a reduced beam state.
+
+Once the beam has been compressed, the problem changes from image reconstruction to sequence or graph propagation. The accelerator lattice is an ordered collection of elements, and the latent state must evolve under their cumulative action. Three propagators are therefore compared:
+\begin{enumerate}
+    \item a causal Transformer, allowing each location to attend to all upstream elements;
+    \item a local-window Transformer, restricting attention to a finite upstream neighborhood;
+    \item a Graph Neural Operator, restricting information transfer according to directed graph connectivity.
+\end{enumerate}
+
+For the Transformer, information transfer is determined by self-attention \cite{vaswani_attention_2017},
+\begin{equation}
+    \operatorname{Attn}(Q,K,V)
+    =
+    \operatorname{softmax}
+    \left(
+    \frac{QK^{\top}}{\sqrt{d_k}}
+    +
+    M
+    \right)V,
+    \label{eq:ml_intro_attention}
+\end{equation}
+where the mask $M$ determines which upstream elements are accessible.
+
+For the GNO, information is propagated through a learned graph kernel,
+\begin{equation}
+    v_i^{(\ell+1)}
+    =
+    \sigma
+    \left(
+    W_{\ell}v_i^{(\ell)}
+    +
+    \sum_{j\in\mathcal{N}(i)}
+    K_{\theta,\ell}(i,j)
+    v_j^{(\ell)}
+    \right).
+    \label{eq:ml_intro_gno}
+\end{equation}
+The difference between these models is therefore not simply one of network size. It concerns the assumed structure of information transfer: dense causal interaction, finite causal support, or graph-defined interaction support.
+
+Finally, the latent prediction is mapped back to physically interpretable quantities. A convolutional decoder reconstructs
+\begin{equation}
+    z_N
+    \longmapsto
+    \widehat{\mathcal{H}}(\rho_N),
+\end{equation}
+while a dense auxiliary head predicts the physical descriptors
+\begin{equation}
+    (z_N,\bm q_0,\mu)
+    \longmapsto
+    \widehat{\bm q}_N.
+\end{equation}
+
+The complete methodology can therefore be viewed as a hierarchy of learned representations starting from the raw particle clouds and machine parameters and ending with the reconstructed beam after propagation through the lattice. This motivates the more specialized models introduced in the following sections. Dense neural networks provide the elementary trainable transformations and prediction heads, CNNs exploit local structure in the projected distributions, the CVAE constructs a regularized compressed beam representation, the FNO learns evolution between gridded functions, and the Transformer and GNO architectures learn the propagation of compressed beam states through an ordered accelerator lattice. The following operator-learning formulation places these apparently different models within a common mathematical framework.
+
+
+
+%===============================================================
+
+\subsection{Operator-learning formulation}
+\label{subsec:operator_learning_formulation}
+
+The beam-dynamics problems introduced in the preceding sections are naturally formulated at the level of functions and probability densities. In the absence of collective effects, a phase-space density is transported by the pushforward of a single-particle map. Once self-consistent forces, wakefields, damping, or diffusion are included, however, the evolution becomes a generally nonlinear transformation acting on the distribution itself. The learning problem is therefore more naturally posed as the approximation of an operator rather than as conventional finite-dimensional regression. This would allow to learn different lattice configurations, collective-effect parameters, and initial conditions within a single model.
+
+Let $A$ and $U$ denote suitable spaces of input and output functions, densities, or reduced beam representations, and let
+\begin{equation}
+\mathcal{M}\subset\mathbb{R}^{m}
+\end{equation}
+denote the admissible machine-parameter domain. The physical target is an operator
+\begin{equation}
+\mathcal{G}^{\dagger}
+:
+A\times\mathcal{M}
+\longrightarrow
+U,
+\qquad
+(a,\mu)\longmapsto u,
+\label{eq:true_operator_revised}
+\end{equation}
+where $a\in A$ denotes the input state, $u\in U$ the output state, and $\mu\in\mathcal{M}$ contains machine or collective-effect parameters.
+
+Representative operator-learning tasks arising in the present work include
+\begin{align}
+(a,u)
+&=
+(\lambda_{\mathrm{in}},\lambda_{\mathrm{out}}),
+\label{eq:operator_task_density}
+\\
+(a,u)
+&=
+\bigl(
+\mathcal{H}(\rho_{\mathrm{in}}),
+\mathcal{H}(\rho_{\mathrm{out}})
+\bigr),
+\label{eq:operator_task_histograms}
+\end{align}
+Here, $\lambda$ denotes a longitudinal line density, $\rho$ a phase-space density, and $\mathcal{H}(\rho)$ the collection of pairwise phase-space projections used later to construct the latent six-dimensional representation.
+
+Given $\mathcal{D}$, the set of physical observations corresponding to the operator $\mathcal{G}^{\dagger}$,
+\begin{equation}
+\mathcal{D} =\left\{\bigl(a^{(s)},\mu^{(s)},u^{(s)}\bigr)\right\}_{s=1}^{N},
+\end{equation}
+the empirical objective is to approximate
+$\mathcal{G}^{\dagger}$ by a parameterized family
+$\mathcal{G}_{\theta}$,
+\begin{equation}
+\theta^{\star}
+=
+\argmin_{\theta}
+\frac{1}{N}
+\sum_{s=1}^{N}
+\norm{
+\mathcal{G}_{\theta}
+\bigl(a^{(s)},\mu^{(s)}\bigr)
+-
+u^{(s)}
+}_{U}^{2}.
+\label{eq:operator_training_revised}
+\end{equation}
+The choice of norm depends on the physical object being learned. A discrete $L^{2}$ loss is natural for smooth density profiles, while moment penalties, Sobolev-type losses, or optimal-transport discrepancies may be more informative when gradients, tails, filamentation, or displacement of probability mass are relevant.
+
+This formulation is particularly important for the present work because the different machine-learning models do not necessarily operate on the same discretized representation. The longitudinal FNO acts directly on gridded line densities, whereas the six-dimensional models act on compressed representations of projected phase-space densities. Nevertheless, both can be interpreted as approximations of physical evolution operators at different levels of description.
+
+\subsection{Neural operators}
+\label{subsec:neural_operators}
+
+\subsubsection{From kinetic equations to solution operators}
+\label{subsubsec:pde_solution_operators}
+
+The motivation for neural operators becomes clearer by returning to the governing equations. A generic collective beam-density evolution may be written schematically as
+\begin{equation}
+\partial_s\rho
++
+\nabla_{\xi}\cdot
+\left[
+F_{\mathrm{ext}}(\xi,s,\mu)\rho
+\right]
++
+\nabla_{\xi}\cdot
+\left[
+F_{\mathrm{coll}}[\rho](\xi,s,\mu)\rho
+\right]
+=
+\mathcal{D}^{\mu}[\rho],
+\label{eq:NO_generic_beam_pde}
+\end{equation}
+where
+\begin{equation}
+\xi
+=
+(x,p_x,y,p_y,\zeta,\delta)
+\in\mathbb{R}^{6}
+\end{equation}
+denotes the six-dimensional phase-space coordinate,
+$F_{\mathrm{ext}}$ is the external lattice force,
+$F_{\mathrm{coll}}[\rho]$ is a density-dependent collective force,
+and $\mathcal{D}^{\mu}[\rho]$ represents dissipative or diffusive effects.
+
+Equation~\eqref{eq:NO_generic_beam_pde} may be written abstractly as
+\begin{equation}
+\partial_s\rho
+=
+\mathcal{L}_{\mu}[\rho],
+\label{eq:NO_abstract_generator}
+\end{equation}
+where $\mathcal{L}_{\mu}$ denotes the generally nonlinear kinetic generator. For suitable initial data $\rho_0$, the corresponding evolution defines a parameter-dependent solution operator
+\begin{equation}
+\mathcal{S}^{\mu}_{s}
+:
+\rho_0
+\longmapsto
+\rho_s.
+\label{eq:NO_solution_operator}
+\end{equation}
+Equivalently, over a finite propagation step $\Delta s$, the solution operator may be written as
+\begin{equation}
+\rho_{s+\Delta s}
+=
+\mathcal{S}^{\mu}_{\Delta s}[\rho_s].
+\label{eq:NO_timestep_operator}
+\end{equation}
+
+This distinction is fundamental. A classical numerical solver approximates the solution of the governing equation for each new initial condition and parameter choice. An operator-learning model instead attempts to approximate the map
+\begin{equation}
+(\rho_s,\mu)
+\longmapsto
+\rho_{s+\Delta s}
+\end{equation}
+over a family of admissible initial states and machine configurations.
+
+The same perspective applies to reduced longitudinal collective dynamics. The induced wake potential is already an integral operator acting on the bunch profile:
+\begin{equation}
+V_{\parallel}(z)
+=
+\int_{-\infty}^{\infty}
+W_{\parallel}(z-z')
+\lambda(z')
+\dd z'.
+\label{eq:NO_wake_conv}
+\end{equation}
+Thus,
+\begin{equation}
+\mathcal{W}
+:
+\lambda
+\longmapsto
+V_{\parallel}
+\end{equation}
+is a functional map whose kernel is the wake function.
+
+Likewise, the Ha"issinski problem defines a nonlinear self-consistent relation between the bunch density and its induced field. If
+$\mathcal{H}$ denotes the nonlinear update associated with the stationary equation, the equilibrium profile satisfies
+\begin{equation}
+\lambda_h
+=
+\mathcal{H}
+\left[
+\lambda_h;
+W,
+I,
+\mu
+\right].
+\label{eq:NO_haissinski_fixedpoint}
+\end{equation}
+The equilibrium density is therefore a fixed point of a nonlinear operator. One may consequently seek to learn either the fixed-point solution map
+\begin{equation}
+\mathcal{G}^{\dagger}_{\mathrm{H}}
+:
+(W,I,\mu)
+\longmapsto
+\lambda_h,
+\label{eq:NO_haissinski_operator}
+\end{equation}
+or a finite-step relaxation operator
+\begin{equation}
+\mathcal{G}^{\dagger}_{\Delta k}
+:
+(\lambda^{(k)},\mu)
+\longmapsto
+\lambda^{(k+\Delta k)}.
+\label{eq:NO_relaxation_operator}
+\end{equation}
+
+At the full kinetic level, an analogous target is
+\begin{equation}
+\mathcal{G}^{\dagger}_{t}
+:
+(\rho_0,\mu)
+\longmapsto
+\rho_t,
+\label{eq:NO_VFP_operator}
+\end{equation}
+which approximates the evolution generated by a Vlasov--Fokker--Planck-type equation.
+
+From this standpoint, collective beam dynamics is naturally an operator-learning problem: the target is not merely the value of a scalar observable at one point, but the transformation of an entire density, field, or functional representation under parameter-dependent physical dynamics.
+
+\subsubsection{General neural-operator architecture}
+\label{subsubsec:general_neural_operator}
+
+Neural operators are parameterized models designed to approximate maps between function spaces. Following the general framework described by Kovachki et al., the continuous object of interest is
+\begin{equation}
+\mathcal{G}^{\dagger}
+:
+\mathcal{A}
+\longrightarrow
+\mathcal{U},
+\end{equation}
+where $\mathcal{A}$ and $\mathcal{U}$ are suitable function spaces, typically Banach spaces of scalar- or vector-valued fields \cite{kovachki_neural_2023}.
+
+A neural operator is commonly constructed from three stages:
+
+\begin{enumerate}[label=(\roman*)]
+\item a lifting map from the input field to a higher-dimensional channel representation;
+\item a sequence of learned operator layers;
+\item a projection map from the latent field back to the target representation.
+\end{enumerate}
+
+Given an input field $a(x)$, the lifting stage is written as
+\begin{equation}
+v_0(x)
+=
+P
+\bigl(
+a(x),
+x,
+\mu
+\bigr),
+\label{eq:NO_lift}
+\end{equation}
+where $P$ is generally a pointwise neural network. The explicit inclusion of the coordinate $x$ allows the model to retain information about domain geometry, while $\mu$ provides parametric dependence on machine or beam settings.
+
+The latent field is then propagated through $T$ operator layers,
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma
+\left(
+W_t v_t(x)
++
+\mathcal{K}_{\theta,t}[v_t](x)
++
+b_t(x)
+\right),
+\qquad
+t=0,\ldots,T-1,
+\label{eq:NO_layer_abstract}
+\end{equation}
+where $W_t$ is a local linear transformation,
+$b_t$ is a bias,
+$\sigma$ a pointwise nonlinearity,
+and $\mathcal{K}_{\theta,t}$ a learned nonlocal operator.
+
+For an integral-kernel parameterization,
+\begin{equation}
+\mathcal{K}_{\theta,t}[v_t](x)
+=
+\int_D
+\kappa_{\theta,t}
+(x,y,\mu)
+v_t(y)
+\dd\nu(y),
+\label{eq:NO_kernel_operator}
+\end{equation}
+so that
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma
+\left(
+W_t v_t(x)
++
+\int_D
+\kappa_{\theta,t}(x,y,\mu)
+v_t(y)
+\dd\nu(y)
++
+b_t(x)
+\right).
+\label{eq:NO_layer_full}
+\end{equation}
+Here, $\kappa_{\theta,t}(x,y,\mu)$ is the learned kernel and
+is the learned kernel and $\nu$ is the measure associated with the domain discretization.
+
+Finally, a projection map produces the output:
+\begin{equation}
+u(x)
+=
+Q(v_T(x)).
+\label{eq:NO_project}
+\end{equation}
+
+This formulation is particularly relevant to collective beam physics. The local term
+\begin{equation}
+W_t v_t(x)
+\end{equation}
+can represent pointwise or local corrections, while the kernel term
+\begin{equation}
+\int_D
+\kappa_{\theta,t}(x,y)
+v_t(y)
+\dd\nu(y)
+\end{equation}
+represents structured nonlocal interactions. Such a decomposition is conceptually compatible with beam dynamics, where local lattice transport coexists with nonlocal collective interactions generated by wakefields and self-consistent fields.
+
+The architecture should not, however, be interpreted as automatically enforcing the governing equations. Unless physical constraints are inserted explicitly, the learned kernel remains data driven. The advantage is instead one of representation as the model class is constructed to approximate operators acting on fields and distributions in functional spaces emerging form underlying parametrized differential equations, rather than only maps between fixed finite-dimensional vectors.
+
+\subsubsection{Discretization and approximation}
+\label{subsubsec:NO_discretization}
+
+One of the central motivations for neural operators is that the model is conceptually defined at the level of functions rather than at the level of one fixed coordinate vector. In the theoretical neural-operator framework, the parameterization can be constructed so that its number of learned parameters does not depend directly on the number of discretization points \cite{kovachki_neural_2023}.
+
+This property is especially relevant in accelerator modelling, where the same underlying density may be represented using different:
+
+\begin{itemize}
+\item longitudinal grid resolutions;
+\item histogram bin numbers;
+\item macroparticle populations;
+\item spectral truncations;
+\item observation meshes.
+\end{itemize}
+
+Nevertheless, cross-resolution transfer should be interpreted carefully. A discretization-invariant architecture does not imply that predictions are automatically identical on arbitrary meshes or that no numerical error is introduced by changing resolution. Rather, the continuous operator and its discrete realization must be distinguished.
+
+Let $D_L$ denote a discretization with resolution parameter $L$, and let
+$\widehat{\mathcal{G}}_{\theta}$
+denote the numerical realization of the continuous learned operator
+$\mathcal{G}_{\theta}$.
+Then
+\begin{equation}
+\begin{split}
+&
+\norm{
+\widehat{\mathcal{G}}_{\theta}
+\bigl(
+D_L,
+a|_{D_L}
+\bigr)
+-
+\mathcal{G}^{\dagger}(a)
+}_{\mathcal{U}}
+\\
+&\qquad\le
+\underbrace{
+\norm{
+\widehat{\mathcal{G}}_{\theta}
+\bigl(
+D_L,
+a|_{D_L}
+\bigr)
+-
+\mathcal{G}_{\theta}(a)
+}_{\mathcal{U}}
+}_{\text{discretization error}}
++
+\underbrace{
+\norm{
+\mathcal{G}_{\theta}(a)
+-
+\mathcal{G}^{\dagger}(a)
+}_{\mathcal{U}}
+}_{\text{approximation error}}.
+\end{split}
+\label{eq:NO_error_decomp}
+\end{equation}
+
+This decomposition is particularly useful in the present application. Errors may arise because the learned operator does not approximate the physical dynamics sufficiently well, but they may also arise because the chosen representation does not adequately resolve the underlying density. For example, increasing the number of histogram bins can reduce discretization error while leaving model approximation error essentially unchanged.
+
+Under appropriate assumptions, neural-operator classes satisfy universal-approximation results for continuous operators on compact subsets of function spaces \cite{kovachki_neural_2023}. Such results provide theoretical motivation for the framework, but they do not remove the practical requirements of representative data, stable optimization, adequate discretization, and physically meaningful validation.
+
+
+The central kernel operator
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y)
+v(y)
+\dd\nu(y)
+\end{equation}
+can be parameterized in several ways. The choice of parameterization determines the inductive bias, computational complexity, and geometry of the learned interaction.
+
+A direct kernel parameterization leads to Graph Neural Operator-type models, in which the integral is approximated over sampled points or graph neighborhoods. A low-rank operator imposes a factorized representation of the kernel. Hierarchical variants introduce multiscale interaction structures. On regular grids, a Fourier Neural Operator instead represents the kernel action in spectral space.
+
+The two parameterizations most relevant to this work are therefore:
+
+\begin{enumerate}[label=(\roman*)]
+\item the Fourier Neural Operator, used for reduced longitudinal density evolution;
+\item the Graph Neural Operator, used later for latent propagation along a directed lattice representation.
+\end{enumerate}
+
+These models approximate different operators and act on different representations, but they arise from the same conceptual framework. The FNO parameterizes nonlocal interaction through spectral multipliers, whereas the GNO parameterizes it through a learned kernel evaluated over graph neighborhoods.
+
+This common interpretation will later be important when comparing the GNO with the local-window Transformer. Although attention and graph message passing are different computational mechanisms, both can be interpreted as learned interaction kernels with different support constraints.
+
+\subsection{Fourier Neural Operator}
+\label{subsec:fourier_neural_operator}
+
+For reduced longitudinal problems defined on a regular grid, the Fourier Neural Operator provides a natural specialization of the general architecture. The starting point is the kernel operator
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y)
+v(y)
+\dd y.
+\end{equation}
+If the kernel is translation invariant,
+\begin{equation}
+\kappa_{\theta}(x,y)
+=
+\kappa_{\theta}(x-y),
+\end{equation}
+the integral becomes a convolution,
+\begin{equation}
+\mathcal{K}_{\theta}[v]
+=
+\kappa_{\theta}*v.
+\end{equation}
+By the convolution theorem,
+\begin{equation}
+\mathcal{F}
+\left(
+\mathcal{K}_{\theta}[v]
+\right)(k)
+=
+\mathcal{F}
+(\kappa_{\theta})(k)
+,
+\mathcal{F}(v)(k).
+\end{equation}
+The FNO replaces the explicit Fourier transform of the kernel by a learned spectral multiplier
+$R_{\theta}(k)$,
+\begin{equation}
+\mathcal{K}_{\theta}v
+=
+\mathcal{F}^{-1}
+\left(
+R_{\theta}(k)
+\mathcal{F}(v)(k)
+\right).
+\label{eq:fno_core_revised}
+\end{equation}
+
+A complete FNO layer therefore takes the form
+\begin{equation}
+v_{\ell+1}(x)
+=
+\sigma
+\left(
+W_{\ell}v_{\ell}(x)
++
+\mathcal{F}^{-1}
+\left(
+R_{\theta,\ell}(k)
+\mathcal{F}(v_{\ell})(k)
+\right)(x)
++
+b_{\ell}(x)
+\right).
+\label{eq:fno_layer_revised}
+\end{equation}
+
+In practice, only a finite set of Fourier modes is retained. If $K_{\max}$ denotes the maximum retained mode,
+\begin{equation}
+\widehat{v}(k)
+=
+\mathcal{F}(v)(k),
+\qquad
+|k|
+\le
+K_{\max},
+\end{equation}
+then the spectral branch acts as
+\begin{equation}
+\widehat{\mathcal{K}_{\theta}v}(k)
+=
+R_{\theta}(k)
+\widehat{v}(k),
+\qquad
+|k|
+\le
+K_{\max}.
+\label{eq:fno_mode_truncation}
+\end{equation}
+Modes outside the retained range do not pass through the learned spectral multiplier and are either truncated or represented indirectly through the local branch and nonlinear layer composition.
+
+The computational appeal of this construction comes from the use of FFT-based transforms on uniform grids. For a grid containing $N_g$ points, the Fourier transforms scale approximately as
+\begin{equation}
+\mathcal{O}
+\left(
+N_g\log N_g
+\right),
+\end{equation}
+up to channel dimensions and spectral-mode multiplication costs.
+
+The FNO is particularly appropriate for the longitudinal collective-effects problem because the underlying physics already possesses a spectral formulation. The induced voltage satisfies
+\begin{equation}
+V_{\mathrm{ind}}(z)
+=
+-
+\mathcal{F}^{-1}
+\left[
+Z_{\parallel}(\omega)
+\widehat{\lambda}(\omega)
+\right](z),
+\label{eq:fno_induced_voltage_relation}
+\end{equation}
+which has the same mathematical structure as multiplication by a spectral response followed by inverse transformation.
+
+This does not imply that the learned multiplier $R_{\theta}(k)$ is identical to the physical impedance $Z_{\parallel}(\omega)$. The FNO is trained to approximate the complete target operator represented in the data, which may include nonlinear relaxation, RF confinement, parameter dependence, discretization effects, and several successive physical transformations. Nevertheless, the spectral architecture introduces an inductive bias consistent with the convolutional and frequency-domain structure of longitudinal collective interactions.
+
+In the present work, the primary reduced FNO task is
+\begin{equation}
+\widehat{\mathcal{T}}_{\theta}
+:
+(\lambda_{\mathrm{in}},\mu)
+\longmapsto
+\lambda_{\mathrm{out}},
+\label{eq:fno_main_task}
+\end{equation}
+where $\mu$ contains the physical parameters controlling the simulated collective response.
+
+For stationary problems, a second possible formulation is
+\begin{equation}
+\widehat{\mathcal{G}}_{\theta}^{\mathrm{H}}
+:
+(W,I,\mu)
+\longmapsto
+\lambda_h,
+\label{eq:fno_haissinski_task}
+\end{equation}
+where the target is the self-consistent Ha"issinski equilibrium.
+
+A third formulation acts directly on the collective field:
+\begin{equation}
+\widehat{\mathcal{W}}_{\theta}
+:
+(\lambda,\mu)
+\longmapsto
+V_{\mathrm{ind}},
+\label{eq:fno_voltage_task}
+\end{equation}
+which is the closest learned analogue of the physical wake-convolution operator.
+
+These distinct formulations emphasize an important methodological point: operator learning does not prescribe a unique surrogate target. Depending on the intended application, one may learn the evolved density, the stationary solution, the collective field, or reduced observables. The experiments presented later focus on the mappings supported by the available simulation datasets, while the broader formulations define natural extensions of the present work.
+
+\subsection{Graph Neural Operator}
+\label{subsec:graph_neural_operator}
+
+The Fourier Neural Operator provides an efficient parameterization of nonlocal operators on regular grids, but its spectral construction is less natural when the underlying domain is irregular, nonuniformly sampled, or intrinsically represented as a set of interacting elements. In such cases, a Graph Neural Operator (GNO) provides an alternative discretization of the generic kernel operator introduced in Section~\ref{subsec:neural_operators}. Rather than representing the action of the kernel in Fourier space, the GNO evaluates learned interactions directly between points or nodes of a graph \cite{kovachki_neural_2023}.
+
+Starting from the continuous operator layer
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y,\mu)
+v(y)
+\dd\nu(y),
+\label{eq:gno_continuous_kernel}
+\end{equation}
+let
+\begin{equation}
+\mathcal{X}
+=
+{x_i}_{i=1}^{N}
+\end{equation}
+be a discrete set of nodes sampling the domain (D). A quadrature approximation of Eq.~\eqref{eq:gno_continuous_kernel} gives
+\begin{equation}
+\mathcal{K}_{\theta}[v](x_i)
+\approx
+\sum_{j=1}^{N}
+\omega_j
+\kappa_{\theta}
+\bigl(
+x_i,
+x_j,
+\mu
+\bigr)
+v(x_j),
+\label{eq:gno_quadrature}
+\end{equation}
+where $\omega_j$ denotes a quadrature weight associated with node $x_j$. When interactions are restricted to a neighborhood
+$\mathcal{N}(i)$ of node $i$,
+the discrete operator becomes
+\begin{equation}
+\mathcal{K}_{\theta}[v](x_i)
+\approx
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta}
+\bigl(
+x_i,
+x_j,
+\mu
+\bigr)
+v(x_j).
+\label{eq:gno_local_quadrature}
+\end{equation}
+The neighborhood definition therefore determines the support of the learned interaction kernel.
+
+A complete GNO layer may be written as
+\begin{equation}
+v_i^{(\ell+1)}
+=
+\sigma
+\left(
+W_{\ell}v_i^{(\ell)}
++
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta,\ell}
+\left(
+x_i,
+x_j,
+v_i^{(\ell)},
+v_j^{(\ell)},
+\mu
+\right)
+v_j^{(\ell)}
++
+b_{\ell}
+\right),
+\label{eq:gno_layer_general}
+\end{equation}
+where $W_{\ell}$ is a local linear transformation,
+$\kappa_{\theta,\ell}$ is a learned kernel,
+$\sigma$ is a nonlinear activation,
+and $b_{\ell}$ is a bias term.
+
+Equivalently, the operator can be expressed in message-passing form. Defining an edge message
+\begin{equation}
+m_{ij}^{(\ell)}
+=
+\phi_{\theta,\ell}
+\left(
+v_i^{(\ell)},
+v_j^{(\ell)},
+e_{ij},
+\mu
+\right),
+\label{eq:gno_message}
+\end{equation}
+where $e_{ij}$ contains relative geometric or physical information associated with the interaction between nodes $i$ and $j$, the aggregated message is
+\begin{equation}
+m_i^{(\ell)}
+=
+\sum_{j\in\mathcal{N}(i)}
+m_{ij}^{(\ell)},
+\label{eq:gno_message_aggregation}
+\end{equation}
+and the node update becomes
+\begin{equation}
+v_i^{(\ell+1)}
+=
+\psi_{\theta,\ell}
+\left(
+v_i^{(\ell)},
+m_i^{(\ell)}
+\right).
+\label{eq:gno_node_update}
+\end{equation}
+This representation makes explicit that graph message passing is a discrete approximation of a learned integral operator rather than merely a generic graph-processing mechanism.
+
+The distinction with the FNO is therefore primarily a distinction in kernel parameterization. The FNO evaluates a global translation-compatible interaction through spectral multiplication,
+\begin{equation}
+\mathcal{K}_{\theta}^{\mathrm{FNO}}v
+=
+\mathcal{F}^{-1}
+\left(
+R_{\theta}(k)\mathcal{F}(v)(k)
+\right),
+\end{equation}
+whereas the GNO evaluates interactions directly between sampled locations,
+\begin{equation}
+\mathcal{K}_{\theta}^{\mathrm{GNO}}v(x_i)
+=
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta}(x_i,x_j,\mu)
+v(x_j).
+\label{eq:gno_vs_fno}
+\end{equation}
+The FNO is therefore particularly natural for regular grids and approximately translation-structured interactions, while the GNO is more flexible when geometry, connectivity, or interaction support vary across the domain.
+
+\subsubsection{Directed graph representation of the accelerator lattice}
+\label{subsubsec:gno_lattice_graph}
+
+In the present work, the GNO is used not directly on a six-dimensional Cartesian grid, but as a latent propagator along the accelerator lattice. The lattice is represented as a directed graph
+\begin{equation}
+\mathcal{G}
+=
+(\mathcal{V},\mathcal{E}),
+\end{equation}
+where each node
+\begin{equation}
+i\in\mathcal{V}
+\end{equation}
+corresponds to a lattice element or observation point and each directed edge
+\begin{equation}
+(j\rightarrow i)\in\mathcal{E}
+\end{equation}
+represents an admissible upstream interaction.
+
+Each node is associated with a feature vector
+\begin{equation}
+h_i
+=
+\operatorname{Tok}
+\left(
+\mathrm{type}_i,
+L_i,
+p_i,
+s_i,
+\mu
+\right),
+\label{eq:gno_node_token}
+\end{equation}
+where $\mathrm{type}_i$ denotes the element category, $L_i$ its length, $p_i$ the associated element parameters, $s_i$ its longitudinal coordinate, and $\mu$ the global machine and collective-effect parameters.
+
+The directed neighborhood may be defined as
+\begin{equation}
+\mathcal{N}(i)
+=
+\left\{
+j:
+j<i,;
+d(i,j)\le r
+\right\},
+\label{eq:gno_directed_neighborhood}
+\end{equation}
+where $d(i,j)$ is a graph or longitudinal distance and $r$ is an interaction radius. An alternative is a fixed upstream neighborhood containing the previous (K) elements, 
+\begin{equation}
+\mathcal{N}_{K}(i)
+=
+{
+\max(1,i-K),
+\ldots,
+i-1
+}.
+\label{eq:gno_k_neighborhood}
+\end{equation}
+Both constructions enforce causal directionality while controlling the spatial support of the learned kernel.
+
+This representation is particularly relevant for beam transport. The evolution through an accelerator is intrinsically ordered, and the state observed downstream results from the accumulated action of upstream lattice elements. The graph construction therefore introduces a structured inductive bias without assuming that every upstream element must interact equally with every downstream state.
+
+\subsubsection{Latent-state propagation}
+\label{subsubsec:gno_latent_propagation}
+
+The six-dimensional beam distribution is not propagated directly. Instead, the CVAE encoder produces a latent representation
+\begin{equation}
+z_i
+=
+\mathcal{E}_{\phi}
+\left(
+\mathcal{H}(\rho_i),
+c_i
+\right)
+\in
+\mathbb{R}^{d_z},
+\label{eq:gno_latent_state}
+\end{equation}
+where $\mathcal{H}(\rho_i)$ contains the fifteen pairwise phase-space projections and $(c_i)$ contains physical conditioning information.
+
+The latent state is first lifted to the graph feature dimension,
+\begin{equation}
+v_i^{(0)}
+=
+P_z(z_i)
++
+P_h(h_i),
+\label{eq:gno_latent_lift}
+\end{equation}
+where $P_z$ and $P_h$ are learned projections.
+
+A general latent GNO layer then takes the form
+\begin{equation}
+\begin{split}
+v_i^{(\ell+1)}
+=
+\sigma
+\Bigg(
+&
+W_{\ell}v_i^{(\ell)}
+\\
+&+
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+K_{\theta,\ell}
+\left(
+h_i,
+h_j,
+v_i^{(\ell)},
+v_j^{(\ell)},
+\mu
+\right)
+v_j^{(\ell)}
+\Bigg).
+\end{split}
+\label{eq:gno_latent_layer}
+\end{equation}
+After (L) operator layers, the latent increment is predicted through
+\begin{equation}
+\Delta z_i
+=
+Q_z
+\left(
+v_i^{(L)}
+\right),
+\label{eq:gno_latent_increment}
+\end{equation}
+and the propagated latent state is updated residually:
+\begin{equation}
+z_{i+1}
+=
+z_i
++
+\Delta z_i.
+\label{eq:gno_residual_update}
+\end{equation}
+
+The residual formulation is motivated by the fact that each lattice section modifies, rather than reconstructs from scratch, the incoming beam state. It also makes the GNO structurally comparable with the Transformer propagator used later in the model comparison.
+
+For an entire sequence of (N) lattice elements, the accumulated evolution is
+\begin{equation}
+z_N
+=
+z_0
++
+\sum_{i=0}^{N-1}
+\Delta z_i,
+\label{eq:gno_cumulative_latent_evolution}
+\end{equation}
+with each increment determined by the local directed graph neighborhood.
+
+\subsubsection{Kernel parameterization}
+\label{subsubsec:gno_kernel_parameterization}
+
+The learned kernel may depend on relative node coordinates, element properties, latent features, and global conditioning variables. A general parameterization is
+\begin{equation}
+K_{\theta}
+\left(
+h_i,
+h_j,
+v_i,
+v_j,
+\mu
+\right)
+=
+\operatorname{MLP}_{\theta}
+\left(
+h_i,
+h_j,
+h_i-h_j,
+v_i,
+v_j,
+\mu
+\right).
+\label{eq:gno_kernel_mlp}
+\end{equation}
+
+If the longitudinal positions $s_i$ are explicitly available, the relative coordinate
+\begin{equation}
+\Delta s_{ij}
+=
+s_i-s_j
+\end{equation}
+may also be supplied to the kernel:
+\begin{equation}
+K_{\theta,ij}
+=
+\operatorname{MLP}_{\theta}
+\left(
+h_i,
+h_j,
+\Delta s_{ij},
+v_i,
+v_j,
+\mu
+\right).
+\label{eq:gno_relative_kernel}
+\end{equation}
+This allows the learned interaction to depend explicitly on physical separation along the lattice.
+
+In the implemented model, continuous positional information may be further expanded through Fourier features,
+\begin{equation}
+\gamma(s)
+=
+\left[
+\sin(\omega_1 s),
+\cos(\omega_1 s),
+\ldots,
+\sin(\omega_M s),
+\cos(\omega_M s)
+\right],
+\label{eq:gno_fourier_features}
+\end{equation}
+so that the kernel receives a multi-scale representation of element position. This is useful when relevant interactions span several characteristic length scales.
+
+The resulting kernel should not be interpreted as an exact reconstruction of a physical wake function, transfer matrix, or Green function. Rather, it is a learned effective interaction kernel for the reduced latent dynamics. Its physical relevance arises from the structure of the parameterization and graph support, not from an a priori identification with one specific analytical quantity.
+
+The GNO formulation provides a useful comparison with the Transformer models introduced later\textbf{CITE TRANSFORMER PAPER}. Causal self-attention computes
+\begin{equation}
+y_i
+=
+\sum_{j\le i}
+\alpha_{ij}
+V_j,
+\label{eq:gno_attention_general}
+\end{equation}
+with
+\begin{equation}
+\alpha_{ij}
+=
+\operatorname{softmax}_{j}
+\left(
+\frac{
+Q_iK_j^{\top}
+}{
+\sqrt{d_k}
+}
+\right).
+\label{eq:gno_attention_weights}
+\end{equation}
+The GNO instead computes
+\begin{equation}
+y_i
+=
+\sum_{j\in\mathcal{N}(i)}
+K_{\theta}
+\left(
+h_i,
+h_j,
+v_i,
+v_j,
+\mu
+\right)
+v_j.
+\label{eq:gno_kernel_sum}
+\end{equation}
+
+Both mechanisms therefore aggregate information from other locations using data-dependent interaction weights. The principal distinction lies in how the interaction kernel and its support are defined. Global causal attention allows every upstream token to influence the current state,
+\begin{equation}
+\mathcal{N}_{\mathrm{TF}}(i)
+=
+{1,\ldots,i},
+\end{equation}
+whereas the local-window Transformer restricts this support to
+\begin{equation}
+\mathcal{N}_{w}(i)
+=
+{
+j:
+0\le i-j\le w
+}.
+\end{equation}
+The GNO uses a graph-defined neighborhood
+\begin{equation}
+\mathcal{N}_{\mathrm{GNO}}(i)
+\end{equation}
+that can be selected directly from lattice geometry or interaction assumptions.
+
+This leads to the schematic correspondence
+\begin{equation}
+\underbrace{
+\operatorname{softmax}
+\left(
+QK^{\top}
+\right)V
+}_{\text{learned attention kernel}}
+\qquad
+\longleftrightarrow
+\qquad
+\underbrace{
+\sum_{j\in\mathcal{N}(i)}
+K_{\theta}(i,j)v_j
+}_{\text{learned graph kernel}}.
+\label{eq:gno_attention_correspondence}
+\end{equation}
+
+This correspondence is central to the experimental comparison developed later in this report. The global Transformer, local-window Transformer, and GNO can be viewed as three different assumptions about the support and parameterization of information transfer. The global Transformer learns dense upstream interactions, the windowed Transformer imposes finite support through masking, and the GNO defines interaction support directly through graph connectivity.
+
+The empirical observation that reducing the Transformer window moves its predictions closer to those of the GNO can therefore be interpreted as evidence that the support of the learned interaction kernel is an important inductive bias for the latent beam-dynamics problem.
+
+The GNO is used in this work to learn the conditional latent evolution
+\begin{equation}
+\widehat{\mathcal{G}}_{\theta}^{\mathrm{GNO}}
+:
+(z_0,\mathcal{G}_{\mathrm{lat}},\mu)
+\longmapsto
+z_N,
+\label{eq:gno_present_task}
+\end{equation}
+where $z_0$ is the low dimension latent representation of the initial beam, $\mathcal{G}_{\mathrm{lat}}$ is the directed lattice graph, and $(\mu)$ contains global physical parameters.
+
+The propagated latent state is then decoded as
+\begin{equation}
+\widehat{\mathcal{H}}(\rho_N)
+=
+\mathcal{D}_{\psi}(z_N,c_N),
+\label{eq:gno_decoding}
+\end{equation}
+providing reconstructed pairwise phase-space marginals at the downstream location.
+
+In the dual-output formulation, a second head predicts the physical position and extension of the projected distributions,
+\begin{equation}
+\widehat{\bm q}_{N}
+=
+\mathcal{P}_{\mathrm{phys}}
+\left(
+z_N,
+\bm q_0,
+\mu
+\right),
+\label{eq:gno_physics_head}
+\end{equation}
+where
+\begin{equation}
+\bm q
+=
+\left\{
+(\mu_r,\sigma_r)
+\right\}_{r=1}^{15}
+\end{equation}
+collects the location and scale descriptors associated with the fifteen projected distributions.
+
+The complete GNO surrogate therefore approximates
+\begin{equation}
+\begin{split}
+&
+\Bigl(
+z_0,
+\bm q_0,
+\mathcal{G}_{\mathrm{lat}},
+\mu
+\Bigr)
+\longmapsto
+\Bigl(
+z_N,
+\bm q_N
+\Bigr)
+\longmapsto
+\Bigl(
+\widehat{\mathcal{H}}(\rho_N),
+\widehat{\bm q}_N
+\Bigr).
+\end{split}
+\label{eq:gno_complete_surrogate}
+\end{equation}
+
+This formulation separates two complementary aspects of beam evolution. The latent state carries information about the shape and correlations of the projected phase-space density, while the auxiliary physical head tracks the position and extension of those distributions. The GNO acts as the structured propagator connecting these representations along the accelerator lattice.
+
+The comparison with the Transformer-based propagators presented later is therefore not merely a comparison between unrelated architectures. It is a comparison between different approximations of the same latent evolution operator, with different assumptions regarding the support, geometry, and parameterization of the learned interaction kernel.
+
+
+\subsection{Variational latent representation}
+\subsubsection{VAE formulation}
+For the six-dimensional problem, the fifteen projected histograms are high-dimensional objects. A variational autoencoder (VAE) is used to learn a compressed latent representation. Given a beam representation $X=\mathcal{H}(\rho)$, the encoder defines an approximate posterior
+\begin{equation}
+    q_{\phi}(z\mid X)=\mathcal{N}\big(\mu_{\phi}(X),\operatorname{diag}\sigma_{\phi}^{2}(X)\big),
+\end{equation}
+while the decoder defines a likelihood $p_{\psi}(X\mid z)$. The evidence lower bound is
+\begin{equation}
+    \mathcal{L}_{\mathrm{ELBO}}(\phi,\psi)=\E_{q_{\phi}(z\mid X)}[\log p_{\psi}(X\mid z)]-\KL\big(q_{\phi}(z\mid X)\|p(z)\big),
+    \label{eq:vae_elbo_revised}
+\end{equation}
+with prior $p(z)=\mathcal{N}(0,I)$ \cite{kingma_autoencoding_2014}.
+
+\subsubsection{Conditional VAE}
+In the conditional model, the posterior and decoder also depend on physical conditioning variables $c$, such as centroids, RMS sizes, lattice parameters, and collective-effect parameters:
+\begin{equation}
+    q_{\phi}(z\mid X,c),\qquad p_{\psi}(X\mid z,c).
+\end{equation}
+The corresponding objective is
+\begin{equation}
+    \mathcal{L}_{\mathrm{CVAE}}=\E_{q_{\phi}(z\mid X,c)}[\log p_{\psi}(X\mid z,c)]-\beta\KL\big(q_{\phi}(z\mid X,c)\|p(z\mid c)\big),
+    \label{eq:cvae_elbo_revised}
+\end{equation}
+where $\beta$ controls the strength of latent regularization \cite{sohn_cvae_2015}. The conditional formulation is useful because beam distributions are not arbitrary images: their scale, position, and evolution depend on physical parameters. Conditioning helps separate geometric variability from dynamical evolution, and it naturally opens the possibility of uncertainty quantification by sampling several latent states at fixed $c$.
+
+\placeholderfigure{CVAE architecture}{Insert a diagram showing the encoder receiving the 15 histograms plus moment/parameter conditioning, a latent Gaussian distribution, and a decoder reconstructing the 15 histograms. Include the physical-dimensions head predicting $(\sigma_i,\mu_i)_{i=1}^{15}$ if used.}
+
+\subsection{Tokenized latent dynamics}
+The latent representation reduces the beam state to a vector $z_i\in\mathbb{R}^{d_z}$ at lattice element or observation index $i$. The goal is then to learn a propagator
+\begin{equation}
+    z_{i+1}=\mathcal{T}_{\theta}(z_i,h_i,\mu),
+    \label{eq:latent_propagator_revised}
+\end{equation}
+where $h_i$ is an element token encoding the local lattice element and $\mu$ contains global parameters. In residual form,
+\begin{equation}
+    z_{i+1}=z_i+\Delta z_i,\qquad \Delta z_i=f_{\theta}(z_i,h_i,\mu).
+\end{equation}
+
+\subsubsection{Element tokenization}
+Each lattice element is represented by a token containing categorical type information, element length, local optical information, and relevant physical parameters. A general token can be written as
+\begin{equation}
+    h_i=\operatorname{Tok}(\mathrm{type}_i,L_i,k_i,\beta_i,\alpha_i,\mu),
+\end{equation}
+then projected to the latent model dimension through a learned embedding. Tokenization makes the model aware that beam evolution is not a single black-box map, but a composition of local transformations along a lattice.
+
+\subsubsection{Transformer baseline}
+The Transformer baseline processes the element sequence using causal self-attention \cite{vaswani_attention_2017}. Given token embeddings $H\in\mathbb{R}^{N\times d}$, attention is
+\begin{equation}
+    \operatorname{Attn}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}+M_{\mathrm{causal}}\right)V.
+    \label{eq:attention_revised}
+\end{equation}
+The causal mask prevents dependence on future elements. However, it does not enforce locality: every previous element may still interact with the current one. Thus, the baseline is expressive but may introduce global mixing artifacts when the physical dynamics are dominated by local or near-local transport.
+
+\subsubsection{Local-window Transformer}
+To test the role of locality, a windowed attention mask is introduced:
+\begin{equation}
+    M_{ij}=\begin{cases}
+    0, & 0\le i-j\le w,\\
+    -\infty, & \text{otherwise},
+    \end{cases}
+    \label{eq:window_mask_revised}
+\end{equation}
+where $w$ is the attention window. This architecture preserves causality while restricting information flow to the most recent upstream elements. Empirically, this modification is expected to reduce nonphysical global mixing and to improve stability of long-lattice rollouts.
+
+\placeholderfigure{Causal and windowed attention masks}{Insert a side-by-side plot of the full causal mask and the local-window mask. This figure should visually explain why the windowed Transformer is not merely a smaller Transformer but an inductive-bias modification.}
+
+\subsubsection{Graph Neural Operator latent propagator}
+A Graph Neural Operator represents the lattice as a directed graph. Nodes correspond to lattice elements or observation points, and directed edges encode physically admissible interactions. The continuous operator layer
+\begin{equation}
+    v_{\ell+1}(x)=\sigma\left(Wv_{\ell}(x)+\int_{\Omega}K_{\theta}(x,y)v_{\ell}(y)\dd y\right)
+\end{equation}
+is discretized as message passing,
+\begin{equation}
+    v_i^{\ell+1}=\sigma\left(Wv_i^{\ell}+\sum_{j\in\mathcal{N}(i)}K_{\theta}(h_i,h_j)v_j^{\ell}\right).
+    \label{eq:gno_message_passing_revised}
+\end{equation}
+In the beam-dynamics setting, $\mathcal{N}(i)$ can be chosen to respect directionality and locality along the lattice. This makes the GNO a natural approximation of a localized transport kernel. It also provides a physical interpretation of why its behavior may resemble that of a local-window Transformer while being more explicitly tied to operator learning and message passing.
+
+\subsection{Loss functions and validation metrics}
+The total training objective combines reconstruction, latent regularization, moment consistency, and rollout accuracy. A representative loss is
+\begin{equation}
+    \mathcal{L}=\mathcal{L}_{\mathrm{rec}}+\lambda_{\mathrm{mom}}\mathcal{L}_{\mathrm{mom}}+\beta\mathcal{L}_{\mathrm{KL}}+\lambda_{\mathrm{roll}}\mathcal{L}_{\mathrm{roll}}.
+    \label{eq:global_loss_revised}
+\end{equation}
+The reconstruction loss is applied to the fifteen histograms,
+\begin{equation}
+    \mathcal{L}_{\mathrm{rec}}=\frac{1}{15}\sum_{(i,j)\in\mathcal{P}}\norm{\widehat{H}_{ij}-H_{ij}}_{2}^{2},
+\end{equation}
+while the moment loss is
+\begin{equation}
+    \mathcal{L}_{\mathrm{mom}}=\norm{\widehat{\bm m}-\bm m}_{2}^{2}+\norm{\widehat{\bm\sigma}-\bm\sigma}_{2}^{2}.
+\end{equation}
+For rollouts,
+\begin{equation}
+    \mathcal{L}_{\mathrm{roll}}=\sum_{k=1}^{K}\gamma_k d\big(\widehat{\rho}_k,\rho_k\big),
+\end{equation}
+where $d$ may be an $L^2$ histogram error, Wasserstein distance, sliced Wasserstein distance, or a moment-weighted discrepancy.
+
+The principal validation metrics are summarized in Table~\ref{tab:metrics_definitions}.
+
+\begin{table}[H]
+\centering
+\caption{Metrics used for quantitative comparison of surrogate models.}
+\label{tab:metrics_definitions}
+\begin{tabular}{lll}
+\toprule
+Metric & Symbol & Interpretation \\
+\midrule
+Relative histogram error & $\norm{\widehat{H}-H}_2/\norm{H}_2$ & Distributional fidelity \\
+Mean absolute centroid error & $\norm{\widehat{\bm m}-\bm m}_1/6$ & Orbit/centroid accuracy \\
+Mean RMS-size error & $\norm{\widehat{\bm\sigma}-\bm\sigma}_1/6$ & Envelope accuracy \\
+Wasserstein distance & $W_1(\widehat{\rho},\rho)$ & Shape and mass displacement \\
+Sliced Wasserstein distance & $SW(\widehat{\rho},\rho)$ & High-dimensional distributional error \\
+Residual bias & $\E[\widehat{H}-H]$ & Systematic model artifacts \\
+Inference time & $t_{\mathrm{inf}}$ & Speed-up versus simulation \\
+\bottomrule
+\end{tabular}
+\end{table}
+% =============================================================================

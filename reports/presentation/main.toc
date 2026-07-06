@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Theoretical framework}{2}{0}{1}
+\beamer@sectionintoc {2}{Neural Operators}{7}{0}{2}
+\beamer@sectionintoc {3}{Architecture}{11}{0}{3}
+\beamer@sectionintoc {4}{Preliminary Results}{15}{0}{4}

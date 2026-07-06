@@ -1,0 +1,2770 @@
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+\input{glossary}
+\addbibresource{ML_collefects_revised.bib}
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[figurename=Fig.]{caption}
+\usepackage[tablename=Tab.]{caption}
+\usepackage{fancyhdr,graphicx,lastpage}
+
+% Safe helper commands ---------------------------------------------------------
+\newcommand{\rmq}[1]{\textcolor{red}{#1}}
+\newcommand\ignore[1]\null
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\argmin}{\operatorname*{arg\,min}}
+\providecommand{\argmax}{\operatorname*{arg\,max}}
+\providecommand{\dd}{\,\mathrm{d}}
+\providecommand{\E}{\mathbb{E}}
+\providecommand{\KL}{D_{\mathrm{KL}}}
+
+\newcommand{\safeincludegraphics}[2][]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+  \fbox{\begin{minipage}[c][0.16\textheight][c]{0.85\textwidth}
+  \centering \small Missing figure file:\\ \texttt{#2}
+  \end{minipage}}}}
+
+\newcommand{\placeholderfigure}[2]{%
+\begin{figure}[H]
+    \centering
+    \fbox{\begin{minipage}[c][0.26\textheight][c]{0.92\textwidth}
+    \centering
+    \textbf{#1}\\[0.6em]
+    \small #2
+    \end{minipage}}
+\end{figure}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[R]{\textit{Internship report}}
+  \fancyhead[L]{\textit{Santiago Martinez Saenz}}
+  \fancyfoot[L]{\textit{Université Paris-Saclay 2026}}
+  \fancyfoot[R]{\thepage\ / \pageref{LastPage}}
+}
+\pagestyle{plain}
+
+\begin{document}
+\begin{sloppypar}
+\pagestyle{empty}
+
+% -----------------------------------------------------------------------------
+% Title page
+% -----------------------------------------------------------------------------
+\newgeometry{margin=1in}
+\newcommand\titleofdoc{\bfseries Internship Report M2}
+\newcommand\subtitleofdoc{Exploratory modelling of collective effects in the FCC-ee High-Energy Booster using machine learning}
+
+\begin{titlepage}
+   \begin{center}
+        \vspace*{0.5cm}
+        \begin{center}
+        \begin{tabular}{cccc}
+        \safeincludegraphics[height=1.7cm]{images/logo/lascala.png} &
+        \safeincludegraphics[height=1.7cm]{images/logo/ijclab.jpg} &
+        \safeincludegraphics[height=0.8cm]{images/logo/LogoGANIL.png} &
+        \safeincludegraphics[height=1.7cm]{images/logo/cnrs.png}
+        \end{tabular}
+        \end{center}
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        \vspace{2.3cm}
+
+        {\Huge \titleofdoc}\par
+        \vspace{0.6cm}
+        {\LARGE \subtitleofdoc}\par
+
+        \vspace{2.0cm}
+        {\large Santiago Martinez Saenz}\par
+        {\large\bfseries Internship carried out from April to August 2026}\par
+
+        \vspace{3.5cm}
+        \leftline{\small \textbf{Internship tutors:} Dr. Adnan Ghribi (GANIL) and Dr. Hayg Guler (IJCLab)}
+        \leftline{\small \textbf{Referent teacher:} Dr. Sophie Kazamias (Université Paris-Saclay)}
+        \vspace{0.8cm}
+        \leftline{\small \textbf{Educational institutions:} Université Paris-Saclay / Università di Roma La Sapienza}
+        \leftline{\small \textbf{Internship host laboratory:} Grand Accélérateur National d'Ions Lourds (GANIL)}
+        \vfill
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        \begin{center}
+        \begin{tabular}{ccccc}
+        \safeincludegraphics[height=1cm]{images/logo/saclay.png} &
+        \safeincludegraphics[height=1cm]{images/logo/Uniroma1.svg.png} &
+        \safeincludegraphics[height=1cm]{images/logo/szeged.png} &
+        \safeincludegraphics[height=1cm]{images/logo/lund.png} &
+        \safeincludegraphics[height=1cm]{images/logo/erasmus.png}
+        \end{tabular}
+        \end{center}
+   \end{center}
+\setcounter{page}{0}
+\end{titlepage}
+\restoregeometry
+
+\newpage
+\tableofcontents
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+% =============================================================================
+\section{Introduction}
+% =============================================================================
+
+\subsection{Motivation}
+Collective effects are among the main performance-limiting phenomena in modern circular accelerators. As the beam intensity increases, the beam can no longer be described as a collection of independent particles evolving only under externally applied electromagnetic fields. Instead, the beam interacts with its environment and with itself through wake fields, impedance, space charge, radiation effects, and other collective mechanisms. These interactions may lead to emittance growth, coherent tune shifts, bunch lengthening, coupled-bunch motion, transverse mode coupling, and single-bunch instabilities. The wakefield and impedance formalisms therefore provide the standard language for describing beam--environment interactions and for assessing the stability margins of a machine \cite{metral_wake_2021}.
+
+These questions are particularly relevant in the context of the Future Circular Collider for electrons and positrons (FCC-ee), a proposed high-luminosity machine designed to operate over a broad energy range and to deliver precision measurements of the $Z$, $W$, and Higgs bosons, as well as of the top quark. Within this complex, the High-Energy Booster (HEB) is a key element of the injector chain, responsible for accumulating and ramping beams to collider operating energies while preserving beam quality. Even if the booster bunch population is lower than that of the collider rings, collective effects at injection remain a significant concern, especially when resistive-wall effects, transverse coupled-bunch motion, wakefields, space charge, intrabeam scattering, and synchrotron-radiation effects interact within the same dynamical system \cite{gibellieri_impact_fcc_heb}.
+
+A reliable study of these effects generally requires multi-particle tracking over many turns, together with detailed impedance and wakefield models. Such simulations are indispensable because collective instabilities arise from the coupling of many degrees of freedom and from the non-trivial interplay between machine optics, beam parameters, feedback systems, and material properties. However, this level of fidelity comes at substantial computational cost. Parameter scans over intensity, RF settings, vacuum chamber properties, optics choices, and impedance scaling are therefore difficult to perform exhaustively. This creates a natural motivation for surrogate modelling: one seeks a learned approximation that is much cheaper to evaluate than the original simulator while preserving the physical information required for exploratory studies, stability scans, and design-space reduction.
+
+Machine learning has recently become an important tool in accelerator physics, with applications including diagnostics, optics correction, anomaly detection, online optimization, and surrogate modelling of numerical simulations \cite{arpaia_machine_2021,roussel_bayesian_2024}. In the present work, the objective is not to replace high-fidelity tracking codes. Rather, the objective is to investigate whether machine-learning models can learn reduced representations of collective beam dynamics accurately enough to accelerate exploration and to reveal which architectural biases are appropriate for high-dimensional beam-distribution evolution.
+
+\subsection{Problem statement}
+The central object of this report is the evolution of a beam distribution in six-dimensional phase space. Let
+\begin{equation}
+    \xi=(x,p_x,y,p_y,\zeta,\delta)\in\mathbb{R}^{6}
+\end{equation}
+denote the transverse and longitudinal phase-space coordinates, and let $\rho_s(\xi)$ be the beam density at longitudinal position or turn index $s$. For fixed machine and collective-effect parameters $\mu$, the ideal target is a nonlinear evolution operator
+\begin{equation}
+    \mathcal{G}_{\Delta s,\mu}: \rho_s \mapsto \rho_{s+\Delta s}.
+    \label{eq:intro_operator_target}
+\end{equation}
+When collective effects are absent, this operator reduces to the pushforward of the distribution under a single-particle lattice map. When collective effects are present, the force depends on the distribution itself and the operator becomes nonlinear. The research question can therefore be stated as follows:
+
+\begin{quote}
+Can the evolution of high-dimensional beam distributions, generated by expensive tracking and collective-effects simulations, be approximated by learned surrogate operators that preserve the physically relevant structure of the beam dynamics?
+\end{quote}
+
+The exploratory nature of the project is important. Several architectures were investigated not as disconnected benchmarks, but as different inductive biases for approximating the same underlying operator. In particular, the work compares spectral/global operator learning, latent sequence modelling, local-window attention, and graph-kernel message passing. The main conclusion emerging from this comparison is that locality is a decisive structural prior for learning six-dimensional beam evolution in latent space.
+
+
+
+% =============================================================================
+\section{Beam dynamics}
+\label{sec:beam_dynamics_data}
+% =============================================================================
+
+\subsection{Linear and Nonlinear beam dynamics}
+
+Considering the theoretical description of a charged particle through a series of lattice elements, in the absence of collective forces and strong nonlinearities, its coordinates $\xi_j$ at the entrance of element $j$ are mapped to the coordinates $\xi_{j+1}$ at the exit of the element by a linear transfer map
+\begin{equation}
+    \xi_{j+1}=M_j(\mu_j)\xi_j,
+    \label{eq:linear_particle_transport}
+\end{equation}
+where $M_j$ is the transfer matrix of element or section $j$, and $\mu_j$ denotes local lattice parameters such as quadrupole strengths or optical functions. For a sequence of $N$ elements, the one-pass transport is
+\begin{equation}
+    \xi_N=M_{N-1}\cdots M_1M_0\xi_0.
+\end{equation}
+At the distribution level, the corresponding evolution is the pushforward
+\begin{equation}
+    \rho_{j+1}=(M_j)_\#\rho_j,
+    \label{eq:linear_pushforward}
+\end{equation}
+defined weakly by the following the phase space incompressibility condition for all suitable test functions $\varphi$,
+\begin{equation}
+    \int \varphi(\xi)\dd (M_j)_\#\rho_j(\xi)=\int \varphi(M_j\xi)\dd\rho_j(\xi).
+\end{equation}
+
+The dynamics of intense charged-particle beams in circular accelerators cannot generally be described by independent single-particle motion alone. The beam interacts with the surrounding vacuum chamber and accelerator components, generating electromagnetic fields that act back on trailing particles. The time-domain response is described by wake functions, while the frequency-domain response is described by the beam coupling impedance. Together, wakefields and impedance determine energy loss, tune shifts, emittance growth, bunch lengthening, and the onset of collective instabilities \cite{metral_wake_2021}.
+
+If $\lambda(z)$ denotes the normalized longitudinal line density of a bunch, the induced longitudinal wake potential can be written as the convolution
+\begin{equation}
+    V_{\parallel}(z)=\int_{-\infty}^{\infty} W_{\parallel}(z-z')\lambda(z')\dd z'.
+    \label{eq:long_wake_potential_revised}
+\end{equation}
+Similarly, the transverse wake potential is
+\begin{equation}
+    \bm V_{\perp}(z)=\int_{-\infty}^{\infty}\bm W_{\perp}(z-z')\lambda(z')\dd z'.
+    \label{eq:trans_wake_potential_revised}
+\end{equation}
+These equations show why collective effects naturally suggest an operator-learning viewpoint: the bunch profile is mapped to an induced field through an integral kernel.
+
+The impedance is the Fourier transform of the wake function. Up to sign conventions, one may write
+\begin{equation}
+    Z_{\parallel}(\omega)=\frac{1}{c}\int_{-\infty}^{\infty} W_{\parallel}(z)e^{i\omega z/c}\dd z,
+    \label{eq:Zparallel_revised}
+\end{equation}
+
+The wake formalism is naturally expressed as a Green-function description of the beam-environment response. In the rigid-beam and impulse approximations, one focuses on the integrated Lorentz force experienced by a trailing test particle rather than on the instantaneous force during the traversal of the structure. The longitudinal and transverse wake functions, denoted respectively by $W_{\parallel}$ and $\mathbf W_{\perp}$, represent the response of the environment to a point-like source charge. In that sense, the wake function is the shock response, or Green kernel, of the beam pipe and its discontinuities. The wake function is associated with the integrated force, and the wake potential is obtained by convolving that Green function with the beam distribution \cite{metral_wake_2021}.
+
+If $\lambda(z)$ denotes the normalized longitudinal line density of a bunch, then the wake potentials generated by the bunch are
+\begin{equation}
+V_{\parallel}(z)
+=
+\int_{-\infty}^{\infty}
+W_{\parallel}(z-z')\,\lambda(z')\,dz',
+\label{eq:long_wake_potential}
+\end{equation}
+\begin{equation}
+\mathbf V_{\perp}(z)
+=
+\int_{-\infty}^{\infty}
+\mathbf W_{\perp}(z-z')\,\lambda(z')\,dz'.
+\label{eq:trans_wake_potential}
+\end{equation}
+These are convolution laws, and they make the Green-function interpretation explicit. The bunch profile acts as a source, and the wake function encodes the linear response kernel of the surrounding structure. 
+
+It is often more convenient to work in the frequency domain because material properties and resonant structures are more naturally characterized spectrally. The longitudinal impedance is the Fourier transform of the longitudinal wake, and similarly for the transverse case. A common convention is
+\begin{equation}
+Z_{\parallel}(\omega)
+=
+\frac{1}{c}
+\int_{-\infty}^{\infty}
+W_{\parallel}(z)\,e^{i\omega z/c}\,dz,
+\label{eq:Zlong}
+\end{equation}
+\begin{equation}
+\mathbf Z_{\perp}(\omega)
+=
+\frac{i}{c}
+\int_{-\infty}^{\infty}
+\mathbf W_{\perp}(z)\,e^{i\omega z/c}\,dz,
+\label{eq:Ztrans}
+\end{equation}
+up to sign conventions. The inverse transforms recover the wake functions. Because the wake is real-valued, the impedance satisfies the Hermitian symmetry relation
+\begin{equation}
+Z^*(\omega)=Z(-\omega).
+\label{eq:impedance_symmetry}
+\end{equation}
+This is one of the basic structural properties emphasized in Métral’s discussion of wakefields and impedance \cite{metral_wake_2021}. A related formulation, written explicitly as inverse Fourier transform relations for wake functions, is given by Kim \cite{kim_mbtrack2_cuda_2025}:
+\begin{equation}
+W_{\parallel}(\tau_d)
+=
+\frac{L}{2\pi}
+\int_{-\infty}^{\infty}
+Z_{\parallel}(\omega)\,e^{-i\omega \tau_d}\,d\omega,
+\end{equation}
+\begin{equation}
+W_{\perp}(\tau_d)
+=
+\frac{iL}{2\pi}
+\int_{-\infty}^{\infty}
+Z_{\perp}(\omega)\,e^{-i\omega \tau_d}\,d\omega,
+\end{equation}
+with $L$ the effective interaction length and $\tau_d$ the longitudinal delay variable. 
+
+A crucial theoretical relation is the Panofsky-Wenzel theorem, Connecting longitudinal and transverse wakefields. In one standard form,
+\begin{equation}
+\nabla_{\perp} W_{\parallel}(z,\mathbf r_{\perp})
+=
+\frac{\partial}{\partial z}\mathbf W_{\perp}(z,\mathbf r_{\perp}),
+\label{eq:PW}
+\end{equation}
+or equivalently, in terms of the delay variable $\tau_d$,
+\begin{equation}
+\frac{1}{c}\frac{\partial}{\partial \tau_d}\mathbf W_{\perp}
+=
+\nabla_{\perp}W_{\parallel}.
+\label{eq:PW_tau}
+\end{equation}
+This theorem follows from Maxwell’s equations under the rigid-beam and impulse approximations and does not require a specific boundary condition. It is therefore one of the most general structural constraints in wakefield theory. In practice, it is used to relate transverse and longitudinal impedances and to check the consistency of numerical or experimental impedance data \cite{metral_wake_2021}. Kim \cite{kim_mbtrack2_cuda_2025} gives the same relation explicitly as Eq. (3.11) and emphasizes that it is one of the bases of beam-instability analysis. 
+
+
+
+
+
+\subsection{Longitudinal Beam Dynamics}
+Considering the simplified case for longitudinal beam dynamics, we write the system as a Hamiltonian system. With $z$ the longitudinal position relative to the synchronous particle and $\delta$ the relative energy deviation, a simplified dynamical formulation is the following
+\begin{equation}
+    z'=-\eta\delta,\qquad \delta'=K(z),
+    \label{eq:longitudinal_hamiltonian_equations}
+\end{equation}
+where $\eta$ is the phase-slip factor and $K(z)$ is the longitudinal restoring force. In the conservative limit, the distribution $\psi(z,\delta,s)$ satisfies the Vlasov equation
+\begin{equation}
+    \frac{\partial \psi}{\partial s}-\eta\delta\frac{\partial \psi}{\partial z}+K(z)\frac{\partial \psi}{\partial \delta}=0,
+    \label{eq:vlasov_revised}
+\end{equation}
+or, equivalently,
+\begin{equation}
+    \frac{\partial \psi}{\partial s}+\{\psi,H\}=0.
+    \label{eq:vlasov_hamiltonian_revised}
+\end{equation}
+This formulation describes explicitly Liouville's theorem and the incompressibility of phase-space flow. By following this approach, the Vlasov equation is the starting point for many analytical and numerical studies of collective effects, including linear stability analysis, mode decomposition, and perturbative treatments of wakefield-induced instabilities.
+
+When considering a more complete description including synchrotron-radiation damping and quantum excitation, the resulting kinetic model has Vlasov--Fokker--Planck form,
+\begin{equation}
+    \frac{\partial \psi}{\partial s}-\eta\delta\frac{\partial \psi}{\partial z}+K(z)\frac{\partial \psi}{\partial \delta}
+    =\frac{2}{c\tau_z}\frac{\partial}{\partial\delta}\left(\delta\psi+\sigma_\delta^2\frac{\partial\psi}{\partial\delta}\right),
+    \label{eq:vfp_revised}
+\end{equation}
+where $\tau_z$ is the longitudinal damping time and $\sigma_\delta$ the equilibrium energy spread. The right-hand side introduces relaxation and diffusion, making stationary distributions possible.
+Below the microwave-instability threshold, the stationary solution of the Vlasov-Fokker-Planck equation is given by the Ha\"issinski equation. In the formulation given by Zhou et al., the equilibrium line density $\lambda_h(z)$ satisfies
+\begin{equation}
+\frac{d\lambda_h(z)}{dz}
++
+\left[
+\frac{z}{\sigma_{z0}^2}
+-
+\frac{1}{\eta\sigma_\delta^2}F_h(z)
+\right]
+\lambda_h(z)
+=
+0,
+\label{eq:haissinski_diff}
+\end{equation}
+where $F_h(z)$ is the longitudinal wake force generated self-consistently by the bunch itself. Its explicit solution can be written
+\begin{equation}
+\lambda_h(z)
+=
+A\,
+\exp\!\left[
+-\frac{z^2}{2\sigma_{z0}^2}
+-
+\frac{I}{\sigma_{z0}}
+\int_z^\infty W_k(z')\,dz'
+\right],
+\label{eq:haissinski_sol}
+\end{equation}
+with normalization constant $A$ such that
+\begin{equation}
+\int_{-\infty}^{\infty}\lambda_h(z)\,dz=1,
+\end{equation}
+and bunch wake potential
+\begin{equation}
+W_k(z)
+=
+\int_{-\infty}^{\infty}
+W_k(z-z')\,\lambda_h(z')\,dz'.
+\label{eq:wake_potential_self}
+\end{equation}
+The dimensionless intensity parameter in Zhou’s notation is
+\begin{equation}
+I=\frac{I_n\sigma_{z0}}{\eta\sigma_\delta^2},
+\end{equation}
+or equivalently, in terms of bunch population and ring parameters,
+\begin{equation}
+I=-\frac{Ne^2}{2\pi\nu_s E\sigma_\delta}.
+\end{equation}
+Zhou further rewrites the solution as
+\begin{equation}
+\lambda_h(z)=A e^{-V(z)},
+\end{equation}
+with the effective potential well
+\begin{equation}
+V(z)
+=
+\frac{z^2}{2\sigma_{z0}^2}
++
+\frac{I}{\sigma_{z0}}
+\int_z^\infty W_k(z')\,dz'.
+\label{eq:effective_potential}
+\end{equation}
+With this formulation, it is clear that the natural RF Gaussian confinement is modified by the self-induced wake potential, and the stationary bunch profile is the Boltzmann-like density corresponding to that deformed effective potential.
+
+\subsection{Beam dynamics maps and pushforward operators}
+The full dimensionality study of the dynamics can be considered by studying macroparticles in six-dimensional phase space, derived from the canonical coordinates $(x,p_x,y,p_y,\zeta,\delta)$, where $x$ and $y$ are the transverse positions, $p_x$ and $p_y$ are the corresponding momenta, $\zeta$ is the longitudinal position relative to the synchronous particle, and $\delta$ is the relative energy deviation. The state vector is
+\begin{equation}
+    \xi=(x,p_x,y,p_y,\zeta,\delta)\in\mathbb{R}^{6}.
+\end{equation}
+For a lattice section with parameters $\mu$, the microscopic dynamics are described by a map
+\begin{equation}
+    \Phi_\mu:\mathbb{R}^{6}\rightarrow\mathbb{R}^{6},\qquad \xi_{\mathrm{out}}=\Phi_\mu(\xi_{\mathrm{in}}).
+    \label{eq:microscopic_map_revised}
+\end{equation}
+At the distribution level, the corresponding density evolution is the pushforward
+\begin{equation}
+    \mathcal{T}_{\mu}[\rho]=(\Phi_\mu)_\#\rho,
+    \label{eq:pushforward_revised}
+\end{equation}
+characterized weakly by
+\begin{equation}
+    \int \varphi(\xi)\dd\mathcal{T}_{\mu}[\rho](\xi)=\int \varphi(\Phi_\mu(\xi))\dd\rho(\xi)
+\end{equation}
+for all suitable test functions $\varphi$. When collective effects are included, the map becomes density dependent. A generic continuum description is
+\begin{equation}
+    \partial_s\rho+\nabla_\xi\cdot\big(F_{\mathrm{ext}}(\xi,s,\mu)\rho\big)+\nabla_\xi\cdot\big(F_{\mathrm{coll}}[\rho](\xi,s,\mu)\rho\big)=\mathcal{D}[\rho],
+    \label{eq:generic_vfp_6d_revised}
+\end{equation}
+where $F_{\mathrm{ext}}$ is the external lattice force, $F_{\mathrm{coll}}[\rho]$ is the self-consistent collective force, and $\mathcal{D}$ denotes damping and diffusion.
+
+A useful conceptual splitting for one lattice section is
+\begin{equation}
+    \rho_{j+1}\approx \exp(\Delta s\,\mathcal{D}_j)\exp\big(\Delta s\,\mathcal{C}_j[\rho_j]\big)(M_{j,\mu_j})_\#\rho_j,
+    \label{eq:section_splitting_revised}
+\end{equation}
+where $M_{j,\mu_j}$ denotes external transport and $\mathcal{C}_j$ the collective generator. By considering this splitting, it is possible to consider the nonlinear operator as the main object of interest for surrogates and to study the collective effects in isolation from the external transport. This is particularly useful for the longitudinal dynamics, where the collective effects are often the dominant source of nonlinearity.
+
+\section{Simulation workflow}
+\subsection{Xsuite tracking data}
+The first part of the data-generation workflow uses Xsuite-style tracking to produce paired input--output clouds. For each sample index $s$, one draws a parameter vector $\mu^{(s)}$ and an input beam family, samples a cloud
+\begin{equation}
+    Z_{\mathrm{in}}^{(s)}=\{\xi_i^{(s)}\}_{i=1}^{N_p},
+\end{equation}
+and tracks it through the lattice to obtain
+\begin{equation}
+    Z_{\mathrm{out}}^{(s)}=\Phi_{\mu^{(s)}}\big(Z_{\mathrm{in}}^{(s)}\big).
+\end{equation}
+The resulting dataset consists of tuples
+\begin{equation}
+    \mathcal{D}_{\mathrm{track}}=\left\{\big(Z_{\mathrm{in}}^{(s)},\mu^{(s)},Z_{\mathrm{out}}^{(s)}\big)\right\}_{s=1}^{N_s}.
+    \label{eq:tracking_dataset_revised}
+\end{equation}
+In preliminary tests, $\mu$ may represent quadrupole strengths or other lattice-control parameters. In collective-effects studies, the natural parameters include bunch current, vacuum chamber radius, material resistivity, RF parameters, impedance scaling factors, and synchrotron tune.
+
+\subsection{PyColleff-based longitudinal data}
+For longitudinal collective-effects studies, synthetic data are generated by sampling machine and material parameters
+\begin{equation}
+    \mu^{(s)}=\big(I_b^{(s)},R^{(s)},\rho_{\mathrm{mat}}^{(s)},\ldots\big),
+\end{equation}
+then solving or approximating the self-consistent longitudinal response. The induced voltage may be written spectrally as
+\begin{equation}
+    V_{\mathrm{ind}}(z)=-\mathcal{F}^{-1}\left[Z_{\parallel}(\omega)\widehat{\lambda}(\omega)\right](z),
+    \label{eq:induced_voltage_revised}
+\end{equation}
+and the total voltage is
+\begin{equation}
+    V_{\mathrm{tot}}(z)=V_{\mathrm{RF}}(z)+V_{\mathrm{ind}}[\lambda](z).
+\end{equation}
+A truncated fixed-point relaxation may then be written as
+\begin{equation}
+    \lambda^{(k+1)}=(1-\alpha)\lambda^{(k)}+\alpha\mathcal{T}_{\mu}\big(\lambda^{(k)}\big),
+    \label{eq:pycolleff_relaxation_revised}
+\end{equation}
+where $\alpha\in(0,1)$ is an under-relaxation parameter. After $K$ iterations, the output profile is defined as $\lambda_{\mathrm{out}}=\lambda^{(K)}$. This produces paired data
+\begin{equation}
+    \mathcal{D}_{\lambda}=\left\{\big(\lambda_{\mathrm{in}}^{(s)},\mu^{(s)},\lambda_{\mathrm{out}}^{(s)}\big)\right\}_{s=1}^{N_s}.
+\end{equation}
+
+\subsection{Computational cost}
+The motivation for surrogate modelling should be made explicit by documenting the computational cost of the reference pipeline. Table~\ref{tab:simulation_cost_template} is a template to be filled with measured values.
+
+\begin{table}[H]
+\centering
+\caption{Template for reporting the computational cost of the simulation pipeline. Replace the dashes with measured values.}
+\label{tab:simulation_cost_template}
+\begin{tabular}{lcccc}
+\toprule
+Data source & Samples & Particles / grid & Time per sample & Total time \\
+\midrule
+Xsuite tracking & --- & --- & --- & --- \\
+PyColleff longitudinal solver & --- & --- & --- & --- \\
+6D histogram generation & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Data representation}
+\subsubsection{Empirical measures and reduced profiles}
+A particle cloud defines an empirical measure
+\begin{equation}
+    \rho^N=\frac{1}{N_p}\sum_{i=1}^{N_p}\delta_{\xi_i}.
+\end{equation}
+For reduced longitudinal tasks, the cloud is projected onto a one-dimensional grid to form
+\begin{equation}
+    \lambda^h=\big(\lambda(\zeta_1),\ldots,\lambda(\zeta_{N_\zeta})\big)\in\mathbb{R}^{N_\zeta}.
+\end{equation}
+This is the natural input representation for the one-dimensional FNO baseline.
+
+\subsubsection{Fifteen pairwise phase-space projections}
+For the six-dimensional problem, directly representing the full density on a grid is infeasible. Instead, the beam is represented through the fifteen pairwise two-dimensional marginals associated with the coordinate pairs
+\begin{equation}
+    \mathcal{P}=\{(i,j):1\le i<j\le 6\}.
+\end{equation}
+The histogram representation is therefore
+\begin{equation}
+    \mathcal{H}(\rho)\in\mathbb{R}^{15\times N_b\times N_b},
+    \label{eq:histogram_representation_revised}
+\end{equation}
+where $N_b$ is the number of bins per dimension. In addition, low-order physical descriptors are stored, including centroids and RMS sizes,
+\begin{equation}
+    m_i=\langle \xi_i\rangle,\qquad \sigma_i=\sqrt{\langle(\xi_i-m_i)^2\rangle}.
+\end{equation}
+This dual representation is important: the histograms preserve projected shape information, while the moments preserve global physical scale and extension. In the final implementation, these observables are used both for conditioning and for auxiliary prediction heads.
+
+\placeholderfigure{Dataset representation}{Insert a 15-panel figure showing all pairwise 2D histograms for one representative beam, together with the corresponding centroid and RMS vectors. This figure should appear early because it defines what the CVAE sees.}
+
+% =============================================================================
+\section{Machine-learning methodology}
+\label{sec:methodology}
+% =============================================================================
+
+\subsection{Operator-learning formulation}
+\label{subsec:operator_learning_formulation}
+
+The beam-dynamics problems introduced in the preceding sections are naturally formulated at the level of functions and probability densities. In the absence of collective effects, a phase-space density is transported by the pushforward of a single-particle map. Once self-consistent forces, wakefields, damping, or diffusion are included, however, the evolution becomes a generally nonlinear transformation acting on the distribution itself. The learning problem is therefore more naturally posed as the approximation of an operator rather than as conventional finite-dimensional regression. This would allow to learn different lattice configurations, collective-effect parameters, and initial conditions within a single model.
+
+Let $A$ and $U$ denote suitable spaces of input and output functions, densities, or reduced beam representations, and let
+\begin{equation}
+\mathcal{M}\subset\mathbb{R}^{m}
+\end{equation}
+denote the admissible machine-parameter domain. The physical target is an operator
+\begin{equation}
+\mathcal{G}^{\dagger}
+:
+A\times\mathcal{M}
+\longrightarrow
+U,
+\qquad
+(a,\mu)\longmapsto u,
+\label{eq:true_operator_revised}
+\end{equation}
+where $a\in A$ denotes the input state, $u\in U$ the output state, and $\mu\in\mathcal{M}$ contains machine or collective-effect parameters.
+
+Representative operator-learning tasks arising in the present work include
+\begin{align}
+(a,u)
+&=
+(\lambda_{\mathrm{in}},\lambda_{\mathrm{out}}),
+\label{eq:operator_task_density}
+\\
+(a,u)
+&=
+\bigl(
+\mathcal{H}(\rho_{\mathrm{in}}),
+\mathcal{H}(\rho_{\mathrm{out}})
+\bigr),
+\label{eq:operator_task_histograms}
+\end{align}
+Here, $\lambda$ denotes a longitudinal line density, $\rho$ a phase-space density, and $\mathcal{H}(\rho)$ the collection of pairwise phase-space projections used later to construct the latent six-dimensional representation.
+
+Given $\mathcal{D}$, the set of physical observations corresponding to the operator $\mathcal{G}^{\dagger}$,
+\begin{equation}
+\mathcal{D} =\left\{\bigl(a^{(s)},\mu^{(s)},u^{(s)}\bigr)\right\}_{s=1}^{N},
+\end{equation}
+the empirical objective is to approximate
+$\mathcal{G}^{\dagger}$ by a parameterized family
+$\mathcal{G}_{\theta}$,
+\begin{equation}
+\theta^{\star}
+=
+\argmin_{\theta}
+\frac{1}{N}
+\sum_{s=1}^{N}
+\norm{
+\mathcal{G}_{\theta}
+\bigl(a^{(s)},\mu^{(s)}\bigr)
+-
+u^{(s)}
+}_{U}^{2}.
+\label{eq:operator_training_revised}
+\end{equation}
+The choice of norm depends on the physical object being learned. A discrete $L^{2}$ loss is natural for smooth density profiles, while moment penalties, Sobolev-type losses, or optimal-transport discrepancies may be more informative when gradients, tails, filamentation, or displacement of probability mass are relevant.
+
+This formulation is particularly important for the present work because the different machine-learning models do not necessarily operate on the same discretized representation. The longitudinal FNO acts directly on gridded line densities, whereas the six-dimensional models act on compressed representations of projected phase-space densities. Nevertheless, both can be interpreted as approximations of physical evolution operators at different levels of description.
+
+\subsection{Neural operators}
+\label{subsec:neural_operators}
+
+\subsubsection{From kinetic equations to solution operators}
+\label{subsubsec:pde_solution_operators}
+
+The motivation for neural operators becomes clearer by returning to the governing equations. A generic collective beam-density evolution may be written schematically as
+\begin{equation}
+\partial_s\rho
++
+\nabla_{\xi}\cdot
+\left[
+F_{\mathrm{ext}}(\xi,s,\mu)\rho
+\right]
++
+\nabla_{\xi}\cdot
+\left[
+F_{\mathrm{coll}}[\rho](\xi,s,\mu)\rho
+\right]
+=
+\mathcal{D}^{\mu}[\rho],
+\label{eq:NO_generic_beam_pde}
+\end{equation}
+where
+\begin{equation}
+\xi
+=
+(x,p_x,y,p_y,\zeta,\delta)
+\in\mathbb{R}^{6}
+\end{equation}
+denotes the six-dimensional phase-space coordinate,
+$F_{\mathrm{ext}}$ is the external lattice force,
+$F_{\mathrm{coll}}[\rho]$ is a density-dependent collective force,
+and $\mathcal{D}^{\mu}[\rho]$ represents dissipative or diffusive effects.
+
+Equation~\eqref{eq:NO_generic_beam_pde} may be written abstractly as
+\begin{equation}
+\partial_s\rho
+=
+\mathcal{L}_{\mu}[\rho],
+\label{eq:NO_abstract_generator}
+\end{equation}
+where $\mathcal{L}_{\mu}$ denotes the generally nonlinear kinetic generator. For suitable initial data $\rho_0$, the corresponding evolution defines a parameter-dependent solution operator
+\begin{equation}
+\mathcal{S}^{\mu}_{s}
+:
+\rho_0
+\longmapsto
+\rho_s.
+\label{eq:NO_solution_operator}
+\end{equation}
+Equivalently, over a finite propagation step $\Delta s$, the solution operator may be written as
+\begin{equation}
+\rho_{s+\Delta s}
+=
+\mathcal{S}^{\mu}_{\Delta s}[\rho_s].
+\label{eq:NO_timestep_operator}
+\end{equation}
+
+This distinction is fundamental. A classical numerical solver approximates the solution of the governing equation for each new initial condition and parameter choice. An operator-learning model instead attempts to approximate the map
+\begin{equation}
+(\rho_s,\mu)
+\longmapsto
+\rho_{s+\Delta s}
+\end{equation}
+over a family of admissible initial states and machine configurations.
+
+The same perspective applies to reduced longitudinal collective dynamics. The induced wake potential is already an integral operator acting on the bunch profile:
+\begin{equation}
+V_{\parallel}(z)
+=
+\int_{-\infty}^{\infty}
+W_{\parallel}(z-z')
+\lambda(z')
+\dd z'.
+\label{eq:NO_wake_conv}
+\end{equation}
+Thus,
+\begin{equation}
+\mathcal{W}
+:
+\lambda
+\longmapsto
+V_{\parallel}
+\end{equation}
+is a functional map whose kernel is the wake function.
+
+Likewise, the Ha"issinski problem defines a nonlinear self-consistent relation between the bunch density and its induced field. If
+$\mathcal{H}$ denotes the nonlinear update associated with the stationary equation, the equilibrium profile satisfies
+\begin{equation}
+\lambda_h
+=
+\mathcal{H}
+\left[
+\lambda_h;
+W,
+I,
+\mu
+\right].
+\label{eq:NO_haissinski_fixedpoint}
+\end{equation}
+The equilibrium density is therefore a fixed point of a nonlinear operator. One may consequently seek to learn either the fixed-point solution map
+\begin{equation}
+\mathcal{G}^{\dagger}_{\mathrm{H}}
+:
+(W,I,\mu)
+\longmapsto
+\lambda_h,
+\label{eq:NO_haissinski_operator}
+\end{equation}
+or a finite-step relaxation operator
+\begin{equation}
+\mathcal{G}^{\dagger}_{\Delta k}
+:
+(\lambda^{(k)},\mu)
+\longmapsto
+\lambda^{(k+\Delta k)}.
+\label{eq:NO_relaxation_operator}
+\end{equation}
+
+At the full kinetic level, an analogous target is
+\begin{equation}
+\mathcal{G}^{\dagger}_{t}
+:
+(\rho_0,\mu)
+\longmapsto
+\rho_t,
+\label{eq:NO_VFP_operator}
+\end{equation}
+which approximates the evolution generated by a Vlasov--Fokker--Planck-type equation.
+
+From this standpoint, collective beam dynamics is naturally an operator-learning problem: the target is not merely the value of a scalar observable at one point, but the transformation of an entire density, field, or functional representation under parameter-dependent physical dynamics.
+
+\subsubsection{General neural-operator architecture}
+\label{subsubsec:general_neural_operator}
+
+Neural operators are parameterized models designed to approximate maps between function spaces. Following the general framework described by Kovachki et al., the continuous object of interest is
+\begin{equation}
+\mathcal{G}^{\dagger}
+:
+\mathcal{A}
+\longrightarrow
+\mathcal{U},
+\end{equation}
+where $\mathcal{A}$ and $\mathcal{U}$ are suitable function spaces, typically Banach spaces of scalar- or vector-valued fields \cite{kovachki_neural_2023}.
+
+A neural operator is commonly constructed from three stages:
+
+\begin{enumerate}[label=(\roman*)]
+\item a lifting map from the input field to a higher-dimensional channel representation;
+\item a sequence of learned operator layers;
+\item a projection map from the latent field back to the target representation.
+\end{enumerate}
+
+Given an input field $a(x)$, the lifting stage is written as
+\begin{equation}
+v_0(x)
+=
+P
+\bigl(
+a(x),
+x,
+\mu
+\bigr),
+\label{eq:NO_lift}
+\end{equation}
+where $P$ is generally a pointwise neural network. The explicit inclusion of the coordinate $x$ allows the model to retain information about domain geometry, while $\mu$ provides parametric dependence on machine or beam settings.
+
+The latent field is then propagated through $T$ operator layers,
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma
+\left(
+W_t v_t(x)
++
+\mathcal{K}_{\theta,t}[v_t](x)
++
+b_t(x)
+\right),
+\qquad
+t=0,\ldots,T-1,
+\label{eq:NO_layer_abstract}
+\end{equation}
+where $W_t$ is a local linear transformation,
+$b_t$ is a bias,
+$\sigma$ a pointwise nonlinearity,
+and $\mathcal{K}_{\theta,t}$ a learned nonlocal operator.
+
+For an integral-kernel parameterization,
+\begin{equation}
+\mathcal{K}_{\theta,t}[v_t](x)
+=
+\int_D
+\kappa_{\theta,t}
+(x,y,\mu)
+v_t(y)
+\dd\nu(y),
+\label{eq:NO_kernel_operator}
+\end{equation}
+so that
+\begin{equation}
+v_{t+1}(x)
+=
+\sigma
+\left(
+W_t v_t(x)
++
+\int_D
+\kappa_{\theta,t}(x,y,\mu)
+v_t(y)
+\dd\nu(y)
++
+b_t(x)
+\right).
+\label{eq:NO_layer_full}
+\end{equation}
+Here, $\kappa_{\theta,t}(x,y,\mu)$ is the learned kernel and
+is the learned kernel and $\nu$ is the measure associated with the domain discretization.
+
+Finally, a projection map produces the output:
+\begin{equation}
+u(x)
+=
+Q(v_T(x)).
+\label{eq:NO_project}
+\end{equation}
+
+This formulation is particularly relevant to collective beam physics. The local term
+\begin{equation}
+W_t v_t(x)
+\end{equation}
+can represent pointwise or local corrections, while the kernel term
+\begin{equation}
+\int_D
+\kappa_{\theta,t}(x,y)
+v_t(y)
+\dd\nu(y)
+\end{equation}
+represents structured nonlocal interactions. Such a decomposition is conceptually compatible with beam dynamics, where local lattice transport coexists with nonlocal collective interactions generated by wakefields and self-consistent fields.
+
+The architecture should not, however, be interpreted as automatically enforcing the governing equations. Unless physical constraints are inserted explicitly, the learned kernel remains data driven. The advantage is instead one of representation as the model class is constructed to approximate operators acting on fields and distributions in functional spaces emerging form underlying parametrized differential equations, rather than only maps between fixed finite-dimensional vectors.
+
+\subsubsection{Discretization and approximation}
+\label{subsubsec:NO_discretization}
+
+One of the central motivations for neural operators is that the model is conceptually defined at the level of functions rather than at the level of one fixed coordinate vector. In the theoretical neural-operator framework, the parameterization can be constructed so that its number of learned parameters does not depend directly on the number of discretization points \cite{kovachki_neural_2023}.
+
+This property is especially relevant in accelerator modelling, where the same underlying density may be represented using different:
+
+\begin{itemize}
+\item longitudinal grid resolutions;
+\item histogram bin numbers;
+\item macroparticle populations;
+\item spectral truncations;
+\item observation meshes.
+\end{itemize}
+
+Nevertheless, cross-resolution transfer should be interpreted carefully. A discretization-invariant architecture does not imply that predictions are automatically identical on arbitrary meshes or that no numerical error is introduced by changing resolution. Rather, the continuous operator and its discrete realization must be distinguished.
+
+Let $D_L$ denote a discretization with resolution parameter $L$, and let
+$\widehat{\mathcal{G}}_{\theta}$
+denote the numerical realization of the continuous learned operator
+$\mathcal{G}_{\theta}$.
+Then
+\begin{equation}
+\begin{split}
+&
+\norm{
+\widehat{\mathcal{G}}_{\theta}
+\bigl(
+D_L,
+a|_{D_L}
+\bigr)
+-
+\mathcal{G}^{\dagger}(a)
+}_{\mathcal{U}}
+\\
+&\qquad\le
+\underbrace{
+\norm{
+\widehat{\mathcal{G}}_{\theta}
+\bigl(
+D_L,
+a|_{D_L}
+\bigr)
+-
+\mathcal{G}_{\theta}(a)
+}_{\mathcal{U}}
+}_{\text{discretization error}}
++
+\underbrace{
+\norm{
+\mathcal{G}_{\theta}(a)
+-
+\mathcal{G}^{\dagger}(a)
+}_{\mathcal{U}}
+}_{\text{approximation error}}.
+\end{split}
+\label{eq:NO_error_decomp}
+\end{equation}
+
+This decomposition is particularly useful in the present application. Errors may arise because the learned operator does not approximate the physical dynamics sufficiently well, but they may also arise because the chosen representation does not adequately resolve the underlying density. For example, increasing the number of histogram bins can reduce discretization error while leaving model approximation error essentially unchanged.
+
+Under appropriate assumptions, neural-operator classes satisfy universal-approximation results for continuous operators on compact subsets of function spaces \cite{kovachki_neural_2023}. Such results provide theoretical motivation for the framework, but they do not remove the practical requirements of representative data, stable optimization, adequate discretization, and physically meaningful validation.
+
+\subsubsection{Operator parameterizations relevant to this work}
+\label{subsubsec:NO_parameterizations}
+
+The central kernel operator
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y)
+v(y)
+\dd\nu(y)
+\end{equation}
+can be parameterized in several ways. The choice of parameterization determines the inductive bias, computational complexity, and geometry of the learned interaction.
+
+A direct kernel parameterization leads to Graph Neural Operator-type models, in which the integral is approximated over sampled points or graph neighborhoods. A low-rank operator imposes a factorized representation of the kernel. Hierarchical variants introduce multiscale interaction structures. On regular grids, a Fourier Neural Operator instead represents the kernel action in spectral space.
+
+The two parameterizations most relevant to this work are therefore:
+
+\begin{enumerate}[label=(\roman*)]
+\item the Fourier Neural Operator, used for reduced longitudinal density evolution;
+\item the Graph Neural Operator, used later for latent propagation along a directed lattice representation.
+\end{enumerate}
+
+These models approximate different operators and act on different representations, but they arise from the same conceptual framework. The FNO parameterizes nonlocal interaction through spectral multipliers, whereas the GNO parameterizes it through a learned kernel evaluated over graph neighborhoods.
+
+This common interpretation will later be important when comparing the GNO with the local-window Transformer. Although attention and graph message passing are different computational mechanisms, both can be interpreted as learned interaction kernels with different support constraints.
+
+\subsection{Fourier Neural Operator}
+\label{subsec:fourier_neural_operator}
+
+For reduced longitudinal problems defined on a regular grid, the Fourier Neural Operator provides a natural specialization of the general architecture. The starting point is the kernel operator
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y)
+v(y)
+\dd y.
+\end{equation}
+If the kernel is translation invariant,
+\begin{equation}
+\kappa_{\theta}(x,y)
+=
+\kappa_{\theta}(x-y),
+\end{equation}
+the integral becomes a convolution,
+\begin{equation}
+\mathcal{K}_{\theta}[v]
+=
+\kappa_{\theta}*v.
+\end{equation}
+By the convolution theorem,
+\begin{equation}
+\mathcal{F}
+\left(
+\mathcal{K}_{\theta}[v]
+\right)(k)
+=
+\mathcal{F}
+(\kappa_{\theta})(k)
+,
+\mathcal{F}(v)(k).
+\end{equation}
+The FNO replaces the explicit Fourier transform of the kernel by a learned spectral multiplier
+$R_{\theta}(k)$,
+\begin{equation}
+\mathcal{K}_{\theta}v
+=
+\mathcal{F}^{-1}
+\left(
+R_{\theta}(k)
+\mathcal{F}(v)(k)
+\right).
+\label{eq:fno_core_revised}
+\end{equation}
+
+A complete FNO layer therefore takes the form
+\begin{equation}
+v_{\ell+1}(x)
+=
+\sigma
+\left(
+W_{\ell}v_{\ell}(x)
++
+\mathcal{F}^{-1}
+\left(
+R_{\theta,\ell}(k)
+\mathcal{F}(v_{\ell})(k)
+\right)(x)
++
+b_{\ell}(x)
+\right).
+\label{eq:fno_layer_revised}
+\end{equation}
+
+In practice, only a finite set of Fourier modes is retained. If $K_{\max}$ denotes the maximum retained mode,
+\begin{equation}
+\widehat{v}(k)
+=
+\mathcal{F}(v)(k),
+\qquad
+|k|
+\le
+K_{\max},
+\end{equation}
+then the spectral branch acts as
+\begin{equation}
+\widehat{\mathcal{K}_{\theta}v}(k)
+=
+R_{\theta}(k)
+\widehat{v}(k),
+\qquad
+|k|
+\le
+K_{\max}.
+\label{eq:fno_mode_truncation}
+\end{equation}
+Modes outside the retained range do not pass through the learned spectral multiplier and are either truncated or represented indirectly through the local branch and nonlinear layer composition.
+
+The computational appeal of this construction comes from the use of FFT-based transforms on uniform grids. For a grid containing $N_g$ points, the Fourier transforms scale approximately as
+\begin{equation}
+\mathcal{O}
+\left(
+N_g\log N_g
+\right),
+\end{equation}
+up to channel dimensions and spectral-mode multiplication costs.
+
+The FNO is particularly appropriate for the longitudinal collective-effects problem because the underlying physics already possesses a spectral formulation. The induced voltage satisfies
+\begin{equation}
+V_{\mathrm{ind}}(z)
+=
+-
+\mathcal{F}^{-1}
+\left[
+Z_{\parallel}(\omega)
+\widehat{\lambda}(\omega)
+\right](z),
+\label{eq:fno_induced_voltage_relation}
+\end{equation}
+which has the same mathematical structure as multiplication by a spectral response followed by inverse transformation.
+
+This does not imply that the learned multiplier $R_{\theta}(k)$ is identical to the physical impedance $Z_{\parallel}(\omega)$. The FNO is trained to approximate the complete target operator represented in the data, which may include nonlinear relaxation, RF confinement, parameter dependence, discretization effects, and several successive physical transformations. Nevertheless, the spectral architecture introduces an inductive bias consistent with the convolutional and frequency-domain structure of longitudinal collective interactions.
+
+In the present work, the primary reduced FNO task is
+\begin{equation}
+\widehat{\mathcal{T}}_{\theta}
+:
+(\lambda_{\mathrm{in}},\mu)
+\longmapsto
+\lambda_{\mathrm{out}},
+\label{eq:fno_main_task}
+\end{equation}
+where $\mu$ contains the physical parameters controlling the simulated collective response.
+
+For stationary problems, a second possible formulation is
+\begin{equation}
+\widehat{\mathcal{G}}_{\theta}^{\mathrm{H}}
+:
+(W,I,\mu)
+\longmapsto
+\lambda_h,
+\label{eq:fno_haissinski_task}
+\end{equation}
+where the target is the self-consistent Ha"issinski equilibrium.
+
+A third formulation acts directly on the collective field:
+\begin{equation}
+\widehat{\mathcal{W}}_{\theta}
+:
+(\lambda,\mu)
+\longmapsto
+V_{\mathrm{ind}},
+\label{eq:fno_voltage_task}
+\end{equation}
+which is the closest learned analogue of the physical wake-convolution operator.
+
+These distinct formulations emphasize an important methodological point: operator learning does not prescribe a unique surrogate target. Depending on the intended application, one may learn the evolved density, the stationary solution, the collective field, or reduced observables. The experiments presented later focus on the mappings supported by the available simulation datasets, while the broader formulations define natural extensions of the present work.
+
+\subsection{Graph Neural Operator}
+\label{subsec:graph_neural_operator}
+
+The Fourier Neural Operator provides an efficient parameterization of nonlocal operators on regular grids, but its spectral construction is less natural when the underlying domain is irregular, nonuniformly sampled, or intrinsically represented as a set of interacting elements. In such cases, a Graph Neural Operator (GNO) provides an alternative discretization of the generic kernel operator introduced in Section~\ref{subsec:neural_operators}. Rather than representing the action of the kernel in Fourier space, the GNO evaluates learned interactions directly between points or nodes of a graph \cite{kovachki_neural_2023}.
+
+Starting from the continuous operator layer
+\begin{equation}
+\mathcal{K}_{\theta}[v](x)
+=
+\int_D
+\kappa_{\theta}(x,y,\mu)
+v(y)
+\dd\nu(y),
+\label{eq:gno_continuous_kernel}
+\end{equation}
+let
+\begin{equation}
+\mathcal{X}
+=
+{x_i}_{i=1}^{N}
+\end{equation}
+be a discrete set of nodes sampling the domain (D). A quadrature approximation of Eq.~\eqref{eq:gno_continuous_kernel} gives
+\begin{equation}
+\mathcal{K}_{\theta}[v](x_i)
+\approx
+\sum_{j=1}^{N}
+\omega_j
+\kappa_{\theta}
+\bigl(
+x_i,
+x_j,
+\mu
+\bigr)
+v(x_j),
+\label{eq:gno_quadrature}
+\end{equation}
+where $\omega_j$ denotes a quadrature weight associated with node $x_j$. When interactions are restricted to a neighborhood
+$\mathcal{N}(i)$ of node $i$,
+the discrete operator becomes
+\begin{equation}
+\mathcal{K}_{\theta}[v](x_i)
+\approx
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta}
+\bigl(
+x_i,
+x_j,
+\mu
+\bigr)
+v(x_j).
+\label{eq:gno_local_quadrature}
+\end{equation}
+The neighborhood definition therefore determines the support of the learned interaction kernel.
+
+A complete GNO layer may be written as
+\begin{equation}
+v_i^{(\ell+1)}
+=
+\sigma
+\left(
+W_{\ell}v_i^{(\ell)}
++
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta,\ell}
+\left(
+x_i,
+x_j,
+v_i^{(\ell)},
+v_j^{(\ell)},
+\mu
+\right)
+v_j^{(\ell)}
++
+b_{\ell}
+\right),
+\label{eq:gno_layer_general}
+\end{equation}
+where $W_{\ell}$ is a local linear transformation,
+$\kappa_{\theta,\ell}$ is a learned kernel,
+$\sigma$ is a nonlinear activation,
+and $b_{\ell}$ is a bias term.
+
+Equivalently, the operator can be expressed in message-passing form. Defining an edge message
+\begin{equation}
+m_{ij}^{(\ell)}
+=
+\phi_{\theta,\ell}
+\left(
+v_i^{(\ell)},
+v_j^{(\ell)},
+e_{ij},
+\mu
+\right),
+\label{eq:gno_message}
+\end{equation}
+where $e_{ij}$ contains relative geometric or physical information associated with the interaction between nodes $i$ and $j$, the aggregated message is
+\begin{equation}
+m_i^{(\ell)}
+=
+\sum_{j\in\mathcal{N}(i)}
+m_{ij}^{(\ell)},
+\label{eq:gno_message_aggregation}
+\end{equation}
+and the node update becomes
+\begin{equation}
+v_i^{(\ell+1)}
+=
+\psi_{\theta,\ell}
+\left(
+v_i^{(\ell)},
+m_i^{(\ell)}
+\right).
+\label{eq:gno_node_update}
+\end{equation}
+This representation makes explicit that graph message passing is a discrete approximation of a learned integral operator rather than merely a generic graph-processing mechanism.
+
+The distinction with the FNO is therefore primarily a distinction in kernel parameterization. The FNO evaluates a global translation-compatible interaction through spectral multiplication,
+\begin{equation}
+\mathcal{K}_{\theta}^{\mathrm{FNO}}v
+=
+\mathcal{F}^{-1}
+\left(
+R_{\theta}(k)\mathcal{F}(v)(k)
+\right),
+\end{equation}
+whereas the GNO evaluates interactions directly between sampled locations,
+\begin{equation}
+\mathcal{K}_{\theta}^{\mathrm{GNO}}v(x_i)
+=
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+\kappa_{\theta}(x_i,x_j,\mu)
+v(x_j).
+\label{eq:gno_vs_fno}
+\end{equation}
+The FNO is therefore particularly natural for regular grids and approximately translation-structured interactions, while the GNO is more flexible when geometry, connectivity, or interaction support vary across the domain.
+
+\subsubsection{Directed graph representation of the accelerator lattice}
+\label{subsubsec:gno_lattice_graph}
+
+In the present work, the GNO is used not directly on a six-dimensional Cartesian grid, but as a latent propagator along the accelerator lattice. The lattice is represented as a directed graph
+\begin{equation}
+\mathcal{G}
+=
+(\mathcal{V},\mathcal{E}),
+\end{equation}
+where each node
+\begin{equation}
+i\in\mathcal{V}
+\end{equation}
+corresponds to a lattice element or observation point and each directed edge
+\begin{equation}
+(j\rightarrow i)\in\mathcal{E}
+\end{equation}
+represents an admissible upstream interaction.
+
+Each node is associated with a feature vector
+\begin{equation}
+h_i
+=
+\operatorname{Tok}
+\left(
+\mathrm{type}_i,
+L_i,
+p_i,
+s_i,
+\mu
+\right),
+\label{eq:gno_node_token}
+\end{equation}
+where $\mathrm{type}_i$ denotes the element category, $L_i$ its length, $p_i$ the associated element parameters, $s_i$ its longitudinal coordinate, and $\mu$ the global machine and collective-effect parameters.
+
+The directed neighborhood may be defined as
+\begin{equation}
+\mathcal{N}(i)
+=
+\left\{
+j:
+j<i,;
+d(i,j)\le r
+\right\},
+\label{eq:gno_directed_neighborhood}
+\end{equation}
+where $d(i,j)$ is a graph or longitudinal distance and $r$ is an interaction radius. An alternative is a fixed upstream neighborhood containing the previous (K) elements, 
+\begin{equation}
+\mathcal{N}_{K}(i)
+=
+{
+\max(1,i-K),
+\ldots,
+i-1
+}.
+\label{eq:gno_k_neighborhood}
+\end{equation}
+Both constructions enforce causal directionality while controlling the spatial support of the learned kernel.
+
+This representation is particularly relevant for beam transport. The evolution through an accelerator is intrinsically ordered, and the state observed downstream results from the accumulated action of upstream lattice elements. The graph construction therefore introduces a structured inductive bias without assuming that every upstream element must interact equally with every downstream state.
+
+\subsubsection{Latent-state propagation}
+\label{subsubsec:gno_latent_propagation}
+
+The six-dimensional beam distribution is not propagated directly. Instead, the CVAE encoder produces a latent representation
+\begin{equation}
+z_i
+=
+\mathcal{E}_{\phi}
+\left(
+\mathcal{H}(\rho_i),
+c_i
+\right)
+\in
+\mathbb{R}^{d_z},
+\label{eq:gno_latent_state}
+\end{equation}
+where $\mathcal{H}(\rho_i)$ contains the fifteen pairwise phase-space projections and $(c_i)$ contains physical conditioning information.
+
+The latent state is first lifted to the graph feature dimension,
+\begin{equation}
+v_i^{(0)}
+=
+P_z(z_i)
++
+P_h(h_i),
+\label{eq:gno_latent_lift}
+\end{equation}
+where $P_z$ and $P_h$ are learned projections.
+
+A general latent GNO layer then takes the form
+\begin{equation}
+\begin{split}
+v_i^{(\ell+1)}
+=
+\sigma
+\Bigg(
+&
+W_{\ell}v_i^{(\ell)}
+\\
+&+
+\sum_{j\in\mathcal{N}(i)}
+\omega_{ij}
+K_{\theta,\ell}
+\left(
+h_i,
+h_j,
+v_i^{(\ell)},
+v_j^{(\ell)},
+\mu
+\right)
+v_j^{(\ell)}
+\Bigg).
+\end{split}
+\label{eq:gno_latent_layer}
+\end{equation}
+After (L) operator layers, the latent increment is predicted through
+\begin{equation}
+\Delta z_i
+=
+Q_z
+\left(
+v_i^{(L)}
+\right),
+\label{eq:gno_latent_increment}
+\end{equation}
+and the propagated latent state is updated residually:
+\begin{equation}
+z_{i+1}
+=
+z_i
++
+\Delta z_i.
+\label{eq:gno_residual_update}
+\end{equation}
+
+The residual formulation is motivated by the fact that each lattice section modifies, rather than reconstructs from scratch, the incoming beam state. It also makes the GNO structurally comparable with the Transformer propagator used later in the model comparison.
+
+For an entire sequence of (N) lattice elements, the accumulated evolution is
+\begin{equation}
+z_N
+=
+z_0
++
+\sum_{i=0}^{N-1}
+\Delta z_i,
+\label{eq:gno_cumulative_latent_evolution}
+\end{equation}
+with each increment determined by the local directed graph neighborhood.
+
+\subsubsection{Kernel parameterization}
+\label{subsubsec:gno_kernel_parameterization}
+
+The learned kernel may depend on relative node coordinates, element properties, latent features, and global conditioning variables. A general parameterization is
+\begin{equation}
+K_{\theta}
+\left(
+h_i,
+h_j,
+v_i,
+v_j,
+\mu
+\right)
+=
+\operatorname{MLP}_{\theta}
+\left(
+h_i,
+h_j,
+h_i-h_j,
+v_i,
+v_j,
+\mu
+\right).
+\label{eq:gno_kernel_mlp}
+\end{equation}
+
+If the longitudinal positions $s_i$ are explicitly available, the relative coordinate
+\begin{equation}
+\Delta s_{ij}
+=
+s_i-s_j
+\end{equation}
+may also be supplied to the kernel:
+\begin{equation}
+K_{\theta,ij}
+=
+\operatorname{MLP}_{\theta}
+\left(
+h_i,
+h_j,
+\Delta s_{ij},
+v_i,
+v_j,
+\mu
+\right).
+\label{eq:gno_relative_kernel}
+\end{equation}
+This allows the learned interaction to depend explicitly on physical separation along the lattice.
+
+In the implemented model, continuous positional information may be further expanded through Fourier features,
+\begin{equation}
+\gamma(s)
+=
+\left[
+\sin(\omega_1 s),
+\cos(\omega_1 s),
+\ldots,
+\sin(\omega_M s),
+\cos(\omega_M s)
+\right],
+\label{eq:gno_fourier_features}
+\end{equation}
+so that the kernel receives a multi-scale representation of element position. This is useful when relevant interactions span several characteristic length scales.
+
+The resulting kernel should not be interpreted as an exact reconstruction of a physical wake function, transfer matrix, or Green function. Rather, it is a learned effective interaction kernel for the reduced latent dynamics. Its physical relevance arises from the structure of the parameterization and graph support, not from an a priori identification with one specific analytical quantity.
+
+The GNO formulation provides a useful comparison with the Transformer models introduced later\textbf{CITE TRANSFORMER PAPER}. Causal self-attention computes
+\begin{equation}
+y_i
+=
+\sum_{j\le i}
+\alpha_{ij}
+V_j,
+\label{eq:gno_attention_general}
+\end{equation}
+with
+\begin{equation}
+\alpha_{ij}
+=
+\operatorname{softmax}_{j}
+\left(
+\frac{
+Q_iK_j^{\top}
+}{
+\sqrt{d_k}
+}
+\right).
+\label{eq:gno_attention_weights}
+\end{equation}
+The GNO instead computes
+\begin{equation}
+y_i
+=
+\sum_{j\in\mathcal{N}(i)}
+K_{\theta}
+\left(
+h_i,
+h_j,
+v_i,
+v_j,
+\mu
+\right)
+v_j.
+\label{eq:gno_kernel_sum}
+\end{equation}
+
+Both mechanisms therefore aggregate information from other locations using data-dependent interaction weights. The principal distinction lies in how the interaction kernel and its support are defined. Global causal attention allows every upstream token to influence the current state,
+\begin{equation}
+\mathcal{N}_{\mathrm{TF}}(i)
+=
+{1,\ldots,i},
+\end{equation}
+whereas the local-window Transformer restricts this support to
+\begin{equation}
+\mathcal{N}_{w}(i)
+=
+{
+j:
+0\le i-j\le w
+}.
+\end{equation}
+The GNO uses a graph-defined neighborhood
+\begin{equation}
+\mathcal{N}_{\mathrm{GNO}}(i)
+\end{equation}
+that can be selected directly from lattice geometry or interaction assumptions.
+
+This leads to the schematic correspondence
+\begin{equation}
+\underbrace{
+\operatorname{softmax}
+\left(
+QK^{\top}
+\right)V
+}_{\text{learned attention kernel}}
+\qquad
+\longleftrightarrow
+\qquad
+\underbrace{
+\sum_{j\in\mathcal{N}(i)}
+K_{\theta}(i,j)v_j
+}_{\text{learned graph kernel}}.
+\label{eq:gno_attention_correspondence}
+\end{equation}
+
+This correspondence is central to the experimental comparison developed later in this report. The global Transformer, local-window Transformer, and GNO can be viewed as three different assumptions about the support and parameterization of information transfer. The global Transformer learns dense upstream interactions, the windowed Transformer imposes finite support through masking, and the GNO defines interaction support directly through graph connectivity.
+
+The empirical observation that reducing the Transformer window moves its predictions closer to those of the GNO can therefore be interpreted as evidence that the support of the learned interaction kernel is an important inductive bias for the latent beam-dynamics problem.
+
+The GNO is used in this work to learn the conditional latent evolution
+\begin{equation}
+\widehat{\mathcal{G}}_{\theta}^{\mathrm{GNO}}
+:
+(z_0,\mathcal{G}_{\mathrm{lat}},\mu)
+\longmapsto
+z_N,
+\label{eq:gno_present_task}
+\end{equation}
+where $z_0$ is the low dimension latent representation of the initial beam, $\mathcal{G}_{\mathrm{lat}}$ is the directed lattice graph, and $(\mu)$ contains global physical parameters.
+
+The propagated latent state is then decoded as
+\begin{equation}
+\widehat{\mathcal{H}}(\rho_N)
+=
+\mathcal{D}_{\psi}(z_N,c_N),
+\label{eq:gno_decoding}
+\end{equation}
+providing reconstructed pairwise phase-space marginals at the downstream location.
+
+In the dual-output formulation, a second head predicts the physical position and extension of the projected distributions,
+\begin{equation}
+\widehat{\bm q}_{N}
+=
+\mathcal{P}_{\mathrm{phys}}
+\left(
+z_N,
+\bm q_0,
+\mu
+\right),
+\label{eq:gno_physics_head}
+\end{equation}
+where
+\begin{equation}
+\bm q
+=
+\left\{
+(\mu_r,\sigma_r)
+\right\}_{r=1}^{15}
+\end{equation}
+collects the location and scale descriptors associated with the fifteen projected distributions.
+
+The complete GNO surrogate therefore approximates
+\begin{equation}
+\begin{split}
+&
+\Bigl(
+z_0,
+\bm q_0,
+\mathcal{G}_{\mathrm{lat}},
+\mu
+\Bigr)
+\longmapsto
+\Bigl(
+z_N,
+\bm q_N
+\Bigr)
+\longmapsto
+\Bigl(
+\widehat{\mathcal{H}}(\rho_N),
+\widehat{\bm q}_N
+\Bigr).
+\end{split}
+\label{eq:gno_complete_surrogate}
+\end{equation}
+
+This formulation separates two complementary aspects of beam evolution. The latent state carries information about the shape and correlations of the projected phase-space density, while the auxiliary physical head tracks the position and extension of those distributions. The GNO acts as the structured propagator connecting these representations along the accelerator lattice.
+
+The comparison with the Transformer-based propagators presented later is therefore not merely a comparison between unrelated architectures. It is a comparison between different approximations of the same latent evolution operator, with different assumptions regarding the support, geometry, and parameterization of the learned interaction kernel.
+
+
+\subsection{Variational latent representation}
+\subsubsection{VAE formulation}
+For the six-dimensional problem, the fifteen projected histograms are high-dimensional objects. A variational autoencoder (VAE) is used to learn a compressed latent representation. Given a beam representation $X=\mathcal{H}(\rho)$, the encoder defines an approximate posterior
+\begin{equation}
+    q_{\phi}(z\mid X)=\mathcal{N}\big(\mu_{\phi}(X),\operatorname{diag}\sigma_{\phi}^{2}(X)\big),
+\end{equation}
+while the decoder defines a likelihood $p_{\psi}(X\mid z)$. The evidence lower bound is
+\begin{equation}
+    \mathcal{L}_{\mathrm{ELBO}}(\phi,\psi)=\E_{q_{\phi}(z\mid X)}[\log p_{\psi}(X\mid z)]-\KL\big(q_{\phi}(z\mid X)\|p(z)\big),
+    \label{eq:vae_elbo_revised}
+\end{equation}
+with prior $p(z)=\mathcal{N}(0,I)$ \cite{kingma_autoencoding_2014}.
+
+\subsubsection{Conditional VAE}
+In the conditional model, the posterior and decoder also depend on physical conditioning variables $c$, such as centroids, RMS sizes, lattice parameters, and collective-effect parameters:
+\begin{equation}
+    q_{\phi}(z\mid X,c),\qquad p_{\psi}(X\mid z,c).
+\end{equation}
+The corresponding objective is
+\begin{equation}
+    \mathcal{L}_{\mathrm{CVAE}}=\E_{q_{\phi}(z\mid X,c)}[\log p_{\psi}(X\mid z,c)]-\beta\KL\big(q_{\phi}(z\mid X,c)\|p(z\mid c)\big),
+    \label{eq:cvae_elbo_revised}
+\end{equation}
+where $\beta$ controls the strength of latent regularization \cite{sohn_cvae_2015}. The conditional formulation is useful because beam distributions are not arbitrary images: their scale, position, and evolution depend on physical parameters. Conditioning helps separate geometric variability from dynamical evolution, and it naturally opens the possibility of uncertainty quantification by sampling several latent states at fixed $c$.
+
+\placeholderfigure{CVAE architecture}{Insert a diagram showing the encoder receiving the 15 histograms plus moment/parameter conditioning, a latent Gaussian distribution, and a decoder reconstructing the 15 histograms. Include the physical-dimensions head predicting $(\sigma_i,\mu_i)_{i=1}^{15}$ if used.}
+
+\subsection{Tokenized latent dynamics}
+The latent representation reduces the beam state to a vector $z_i\in\mathbb{R}^{d_z}$ at lattice element or observation index $i$. The goal is then to learn a propagator
+\begin{equation}
+    z_{i+1}=\mathcal{T}_{\theta}(z_i,h_i,\mu),
+    \label{eq:latent_propagator_revised}
+\end{equation}
+where $h_i$ is an element token encoding the local lattice element and $\mu$ contains global parameters. In residual form,
+\begin{equation}
+    z_{i+1}=z_i+\Delta z_i,\qquad \Delta z_i=f_{\theta}(z_i,h_i,\mu).
+\end{equation}
+
+\subsubsection{Element tokenization}
+Each lattice element is represented by a token containing categorical type information, element length, local optical information, and relevant physical parameters. A general token can be written as
+\begin{equation}
+    h_i=\operatorname{Tok}(\mathrm{type}_i,L_i,k_i,\beta_i,\alpha_i,\mu),
+\end{equation}
+then projected to the latent model dimension through a learned embedding. Tokenization makes the model aware that beam evolution is not a single black-box map, but a composition of local transformations along a lattice.
+
+\subsubsection{Transformer baseline}
+The Transformer baseline processes the element sequence using causal self-attention \cite{vaswani_attention_2017}. Given token embeddings $H\in\mathbb{R}^{N\times d}$, attention is
+\begin{equation}
+    \operatorname{Attn}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}+M_{\mathrm{causal}}\right)V.
+    \label{eq:attention_revised}
+\end{equation}
+The causal mask prevents dependence on future elements. However, it does not enforce locality: every previous element may still interact with the current one. Thus, the baseline is expressive but may introduce global mixing artifacts when the physical dynamics are dominated by local or near-local transport.
+
+\subsubsection{Local-window Transformer}
+To test the role of locality, a windowed attention mask is introduced:
+\begin{equation}
+    M_{ij}=\begin{cases}
+    0, & 0\le i-j\le w,\\
+    -\infty, & \text{otherwise},
+    \end{cases}
+    \label{eq:window_mask_revised}
+\end{equation}
+where $w$ is the attention window. This architecture preserves causality while restricting information flow to the most recent upstream elements. Empirically, this modification is expected to reduce nonphysical global mixing and to improve stability of long-lattice rollouts.
+
+\placeholderfigure{Causal and windowed attention masks}{Insert a side-by-side plot of the full causal mask and the local-window mask. This figure should visually explain why the windowed Transformer is not merely a smaller Transformer but an inductive-bias modification.}
+
+\subsubsection{Graph Neural Operator latent propagator}
+A Graph Neural Operator represents the lattice as a directed graph. Nodes correspond to lattice elements or observation points, and directed edges encode physically admissible interactions. The continuous operator layer
+\begin{equation}
+    v_{\ell+1}(x)=\sigma\left(Wv_{\ell}(x)+\int_{\Omega}K_{\theta}(x,y)v_{\ell}(y)\dd y\right)
+\end{equation}
+is discretized as message passing,
+\begin{equation}
+    v_i^{\ell+1}=\sigma\left(Wv_i^{\ell}+\sum_{j\in\mathcal{N}(i)}K_{\theta}(h_i,h_j)v_j^{\ell}\right).
+    \label{eq:gno_message_passing_revised}
+\end{equation}
+In the beam-dynamics setting, $\mathcal{N}(i)$ can be chosen to respect directionality and locality along the lattice. This makes the GNO a natural approximation of a localized transport kernel. It also provides a physical interpretation of why its behavior may resemble that of a local-window Transformer while being more explicitly tied to operator learning and message passing.
+
+\subsection{Loss functions and validation metrics}
+The total training objective combines reconstruction, latent regularization, moment consistency, and rollout accuracy. A representative loss is
+\begin{equation}
+    \mathcal{L}=\mathcal{L}_{\mathrm{rec}}+\lambda_{\mathrm{mom}}\mathcal{L}_{\mathrm{mom}}+\beta\mathcal{L}_{\mathrm{KL}}+\lambda_{\mathrm{roll}}\mathcal{L}_{\mathrm{roll}}.
+    \label{eq:global_loss_revised}
+\end{equation}
+The reconstruction loss is applied to the fifteen histograms,
+\begin{equation}
+    \mathcal{L}_{\mathrm{rec}}=\frac{1}{15}\sum_{(i,j)\in\mathcal{P}}\norm{\widehat{H}_{ij}-H_{ij}}_{2}^{2},
+\end{equation}
+while the moment loss is
+\begin{equation}
+    \mathcal{L}_{\mathrm{mom}}=\norm{\widehat{\bm m}-\bm m}_{2}^{2}+\norm{\widehat{\bm\sigma}-\bm\sigma}_{2}^{2}.
+\end{equation}
+For rollouts,
+\begin{equation}
+    \mathcal{L}_{\mathrm{roll}}=\sum_{k=1}^{K}\gamma_k d\big(\widehat{\rho}_k,\rho_k\big),
+\end{equation}
+where $d$ may be an $L^2$ histogram error, Wasserstein distance, sliced Wasserstein distance, or a moment-weighted discrepancy.
+
+The principal validation metrics are summarized in Table~\ref{tab:metrics_definitions}.
+
+\begin{table}[H]
+\centering
+\caption{Metrics used for quantitative comparison of surrogate models.}
+\label{tab:metrics_definitions}
+\begin{tabular}{lll}
+\toprule
+Metric & Symbol & Interpretation \\
+\midrule
+Relative histogram error & $\norm{\widehat{H}-H}_2/\norm{H}_2$ & Distributional fidelity \\
+Mean absolute centroid error & $\norm{\widehat{\bm m}-\bm m}_1/6$ & Orbit/centroid accuracy \\
+Mean RMS-size error & $\norm{\widehat{\bm\sigma}-\bm\sigma}_1/6$ & Envelope accuracy \\
+Wasserstein distance & $W_1(\widehat{\rho},\rho)$ & Shape and mass displacement \\
+Sliced Wasserstein distance & $SW(\widehat{\rho},\rho)$ & High-dimensional distributional error \\
+Residual bias & $\E[\widehat{H}-H]$ & Systematic model artifacts \\
+Inference time & $t_{\mathrm{inf}}$ & Speed-up versus simulation \\
+\bottomrule
+\end{tabular}
+\end{table}
+% =============================================================================
+\section{Results}
+\label{sec:results}
+% =============================================================================
+
+\subsection{Longitudinal operator learning with FNO}
+\label{subsec:results_fno}
+
+\subsubsection{Learning reduced longitudinal profiles}
+\label{subsubsec:fno_longitudinal_profiles}
+
+The first experimental block evaluates whether a Fourier Neural Operator can learn a reduced longitudinal map
+\begin{equation}
+\widehat{\mathcal{T}}*{\theta}
+:
+(\lambda*{\mathrm{in}},\mu)
+\mapsto
+\lambda_{\mathrm{out}}.
+\label{eq:fno_longitudinal_map_results}
+\end{equation}
+This task is lower-dimensional than full six-dimensional transport, but remains physically meaningful because longitudinal collective effects are naturally expressed through line densities, wake kernels, and impedance spectra. It also provides a controlled setting in which the operator-learning hypothesis can be tested before moving to the latent six-dimensional problem.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.78\textwidth]
+{images/generated/training_pycolleff.png}
+\caption{
+Training and validation curves for the FNO longitudinal surrogate. The final version should report the exact training configuration and identify the corresponding PyColleff dataset. The train--validation evolution provides a first diagnostic of optimization stability and generalization to held-out samples.
+}
+\label{fig:fno_training_curves_revised}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.88\textwidth]
+{images/generated/line_pred_truth_xsuite.png}
+\caption{
+Representative test-set prediction for the reduced FNO longitudinal surrogate. The predicted profile \(\widehat{\lambda}*{\mathrm{out}}\) is compared with the reference profile\(\lambda*{\mathrm{out}}\). A residual representation,
+\(\widehat{\lambda}*{\mathrm{out}}-\lambda*{\mathrm{out}}\),
+provides a complementary view of systematic reconstruction error.
+}
+\label{fig:fno_profile_predictions_revised}
+\end{figure}
+
+\subsubsection{Ha"issinski-profile reconstruction}
+\label{subsubsec:fno_haissinski_results}
+
+For stationary longitudinal problems, the FNO can be used to approximate the equilibrium map
+\begin{equation}
+(W_{\parallel},I,\mu)
+\mapsto
+\lambda_h.
+\label{eq:fno_haissinski_map_results}
+\end{equation}
+This formulation is closely connected to the Ha"issinski equation because the equilibrium profile is determined by a nonlinear self-consistent potential. The relevant validation is therefore not limited to pointwise profile accuracy, but also concerns whether the surrogate reproduces derived physical observables such as centroid shift, bunch lengthening, and peak displacement.
+
+\placeholderfigure
+{Ha"issinski profile reconstruction}
+{Insert profiles from the IPAC or proceedings results: reference Ha"issinski equilibrium, FNO prediction, and residual. Include several currents or impedance settings.}
+
+\begin{table}[H]
+\centering
+\caption{
+Quantitative evaluation of the FNO longitudinal surrogate. Replace the placeholders with final test-set values.
+}
+\label{tab:fno_longitudinal_metrics}
+\begin{tabular}{lccc}
+\toprule
+Metric & Mean & Std.\ dev. & Worst case \
+\midrule
+Relative (L^2) profile error & --- & --- & --- \
+Centroid error & --- & --- & --- \
+Bunch-length error & --- & --- & --- \
+Peak-position error & --- & --- & --- \
+Wasserstein distance & --- & --- & --- \
+Inference time per sample & --- & --- & --- \
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Interpretation}
+\label{subsubsec:fno_interpretation}
+
+The FNO results support the formulation of longitudinal collective effects as operator-learning problems. This interpretation is consistent with the structure of the wake convolution and the spectral representation of impedance. Nevertheless, the FNO also presents limitations. Its formulation is particularly natural on regular grids and for reduced one-dimensional or low-dimensional functional data. Extending the same direct-grid strategy to a complete six-dimensional phase-space density would be computationally prohibitive. The full beam-distribution problem is therefore addressed through a reduced latent representation.
+
+% =============================================================================
+\subsection{Six-dimensional latent representation}
+\label{subsec:results_latent_representation}
+% =============================================================================
+
+\subsubsection{CVAE reconstruction quality}
+\label{subsubsec:cvae_reconstruction_quality}
+
+The next experimental block evaluates whether the fifteen-projection representation can be compressed into a latent variable while preserving physically relevant structure of the beam distribution. The CVAE reconstructs the projected histograms from a latent state \(z\) and conditioning variables \(c\), while auxiliary physical information may be treated through explicit conditioning or a dedicated physical-dimensions head.
+
+\placeholderfigure
+{CVAE reconstruction quality}
+{Insert a five-panel or fifteen-panel comparison containing reference histograms, CVAE reconstructions, and residual maps. Include at least one core-dominated example and one case with visible tails or distortion.}
+
+\begin{table}[H]
+\centering
+\caption{
+Quantitative CVAE reconstruction metrics. Replace the placeholders with final values.
+}
+\label{tab:cvae_reconstruction_metrics}
+\begin{tabular}{lccc}
+\toprule
+Metric & Train & Validation & Test \
+\midrule
+Histogram relative error & --- & --- & --- \
+Moment error & --- & --- & --- \
+KL term & --- & --- & --- \
+Sliced Wasserstein distance & --- & --- & --- \
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Latent-space diagnostics}
+\label{subsubsec:latent_space_diagnostics}
+
+A well-regularized latent space should not simply memorize the training samples. To investigate this point, the latent coordinates are compared with physically interpretable observables. In the present work, Pearson correlations are evaluated between the latent variables and beam statistics including coordinate means and RMS extensions, such as
+\begin{equation}
+\sigma_x,
+\quad
+\sigma_y,
+\quad
+\sigma_{\zeta},
+\quad
+\sigma_{p_x},
+\quad
+\sigma_{p_y},
+\quad
+\sigma_{\delta},
+\end{equation}
+together with
+\begin{equation}
+\langle x\rangle,
+\quad
+\langle p_x\rangle,
+\quad
+\langle y\rangle,
+\quad
+\langle p_y\rangle,
+\quad
+\langle\zeta\rangle,
+\quad
+\langle\delta\rangle.
+\end{equation}
+
+For a physical observable \(q\) and latent coordinate \(z_k\), the Pearson correlation coefficient is
+\begin{equation}
+r_{q,z_k}
+=
+\frac{
+\operatorname{Cov}(q,z_k)
+}{
+\sigma_q \sigma_{z_k}
+}.
+\label{eq:pearson_latent_physics}
+\end{equation}
+
+For each physical observable, the twenty latent coordinates with the largest absolute correlations can be displayed,
+\begin{equation}
+\left{
+z_{k_1},
+\ldots,
+z_{k_{20}}
+\right}
+=
+\operatorname{TopK}*{20}
+\left(
+|r*{q,z_k}|
+\right).
+\label{eq:top20_latent_correlations}
+\end{equation}
+
+\placeholderfigure
+{Latent correlation diagnostics}
+{Insert the Pearson-correlation study between physical statistics and latent coordinates. Include the twenty most correlated latent dimensions for each observable and the global distribution of correlation coefficients. The overall distribution should be discussed relative to its observed concentration around zero.}
+
+The global correlation distribution provides a complementary diagnostic. If most coefficients are concentrated around
+\begin{equation}
+r_{q,z_k}\approx 0,
+\end{equation}
+while only a sparse subset reaches moderate absolute values, then the latent representation does not exhibit a simple one-to-one encoding of physical observables. In the present results, the correlations are sparse, the global distribution is centered around zero, and only a limited number of latent coordinates exhibit appreciable correlations with individual physical statistics. Moreover, the observed absolute correlations remain below approximately
+\begin{equation}
+|r_{q,z_k}|<0.5
+\end{equation}
+for the dominant cases.
+
+This result is compatible with the intended role of the CVAE latent representation. The latent coordinates are not required to coincide individually with specific physical observables. Rather, they are expected to provide a distributed reduced representation of the projected density structure. The fact that only a limited subset of latent coordinates carries moderate information about individual observables suggests sparse physical alignment rather than a trivially encoded hidden parameterization.
+
+Complete disentanglement is neither expected nor necessarily desirable. The relevant question is whether the latent state preserves the dynamical degrees of freedom required for propagation while avoiding excessive leakage of scale and position information that can be handled explicitly through physical conditioning variables or the auxiliary physical-dimensions head.
+
+% =============================================================================
+\subsection{Transformer latent propagation and the effect of locality}
+\label{subsec:results_transformer_locality}
+% =============================================================================
+
+\subsubsection{Global-attention baseline and reconstruction artifacts}
+\label{subsubsec:results_nowindow_transformer}
+
+The first sequence-model baseline investigates whether an expressive Transformer can propagate the CVAE latent representation through the ordered lattice description. In this formulation, the causal mask prevents future or downstream tokens from influencing earlier positions, thereby enforcing upstream-to-downstream information flow. A global causal mask does not, however, impose finite interaction support: the state associated with a given position may, in principle, aggregate information from every preceding token.
+
+This distinction is relevant because the beam state results from an ordered composition of lattice transformations. Although long-range dependence may be physically meaningful, unrestricted upstream mixing can introduce an architectural bias that differs from a predominantly local composition of element-wise transport. The no-window Transformer diagnostics provide a qualitative illustration of this effect.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.94\textwidth]
+{images/results/png/NOWINDOW_marginals_TF.png}
+\caption{
+Representative marginal reconstructions obtained with the no-window Transformer baseline. The figure is interpreted as a diagnostic of decoded distributional structure rather than solely as a pixel-wise reconstruction test. Particular attention is paid to coherent deformation of the high-density core, smoothing of localized structures, and systematic displacement relative to the reference marginals.
+}
+\label{fig:tf_nowindow_marginals}
+\end{figure}
+
+The observed discrepancy is more informative when evaluated through conditional statistics. For a two-dimensional marginal density
+\begin{equation}
+H(u,v),
+\end{equation}
+the conditional mean of (v) at fixed (u) is
+\begin{equation}
+m_{v\mid u}(u)
+=
+\frac{
+\int v,H(u,v),\dd v
+}{
+\int H(u,v),\dd v
+},
+\label{eq:conditional_mean_v_given_u}
+\end{equation}
+with an analogous definition for (m_{u\mid v}(v)). These quantities probe local organization inside a marginal and can therefore expose errors that remain partially hidden by global histogram metrics.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.94\textwidth]
+{images/results/png/artifact_nowindow_conditionals.png}
+\caption{
+Conditional-statistics diagnostic for the no-window Transformer. The comparison probes agreement of local conditional means rather than only global moments. Structured departures from the ideal parity relation indicate that the predicted distribution may reproduce part of the global support while distorting internal phase-space dependence.
+}
+\label{fig:tf_nowindow_conditional_artifact}
+\end{figure}
+
+Let \(H_{ij}\) denote a reference two-dimensional marginal and
+\(\widehat{H}_{ij}\) its prediction. The residual field is
+\begin{equation}
+\varepsilon_{ij}(u,v)
+=
+\widehat{H}_{ij}(u,v)
+-
+H_{ij}(u,v).
+\label{eq:histogram_residual_field}
+\end{equation}
+A systematic reconstruction artifact corresponds to a nonzero mean residual
+\begin{equation}
+b_{ij}(u,v)
+=
+\mathbb{E}
+\left[
+\varepsilon_{ij}(u,v)
+\right]
+\neq 0.
+\label{eq:residual_bias_revised}
+\end{equation}
+
+At the latent level, an accumulated error mechanism can be represented schematically as
+\begin{equation}
+z_{n+1}
+=
+z_n
++
+\Delta z_n^{\mathrm{true}}
++
+\eta_{\theta,n},
+\end{equation}
+which gives, after \(N\) propagation steps,
+\begin{equation}
+z_N
+=
+z_0
++
+\sum_{n=0}^{N-1}
+\Delta z_n^{\mathrm{true}}
++
+\sum_{n=0}^{N-1}
+\eta_{\theta,n}.
+\label{eq:latent_error_accumulation}
+\end{equation}
+If the learned local error has a systematic component,
+\begin{equation}
+\mathbb{E}
+\left[
+\eta_{\theta,n}
+\right]
+\neq 0,
+\end{equation}
+the decoded rollout can develop a coherent distortion rather than a zero-centered random error. This mechanism does not prove that unrestricted attention is uniquely responsible for the observed artifacts. It nevertheless motivates the controlled locality study introduced next.
+
+\subsubsection{Local-window Transformer}
+\label{subsubsec:results_window_transformer}
+
+To test whether unrestricted upstream mixing contributes to the observed reconstruction error, the Transformer attention support is restricted through the local causal mask introduced in Eq.~\eqref{eq:window_mask_revised}. In the principal Transformer--GNO comparison presented below, the Transformer implementation uses an attention window
+\begin{equation}
+w=8.
+\end{equation}
+Thus, the hidden state at sequence position \(i\) can only aggregate information from a finite upstream neighborhood.
+
+The effect of this restriction is evaluated first through the longitudinal marginal
+\begin{equation}
+(\zeta,\delta),
+\end{equation}
+corresponding to pair index
+\begin{equation}
+p=11.
+\end{equation}
+This marginal is especially informative because it simultaneously probes longitudinal position, energy deviation, and their local correlation structure.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.94\textwidth]
+{images/results/png/TF_conditionals_longitudinal.png}
+\caption{
+Conditional-slice consistency of the local-window Transformer for the longitudinal \((\zeta,\delta)\) marginal. The diagnostic compares predicted and reference conditional means for constant-\(\zeta\) and constant-\(\delta\) slices. Error bars encode local conditional spread. Concentration around the ideal parity relation indicates preservation of internal longitudinal phase-space structure beyond agreement of global moments.
+}
+\label{fig:tf_conditionals_longitudinal}
+\end{figure}
+
+The local-window result is important because the architectural modification does not change the underlying CVAE representation or the physical prediction target. Instead, it changes the support of the interaction mechanism used during latent propagation. The resulting comparison therefore isolates, to first order, the role of locality as an inductive bias.
+
+% =============================================================================
+\subsection{CVAE with Graph Neural Operator propagation}
+\label{subsec:results_cvae_gno}
+% =============================================================================
+
+\subsubsection{Conditional longitudinal consistency}
+\label{subsubsec:gno_longitudinal_conditionals}
+
+The Graph Neural Operator provides the second latent propagation mechanism. In contrast with attention-based sequence mixing, the GNO represents information transfer through a learned kernel evaluated over the graph neighborhood introduced in Section~\ref{subsec:graph_neural_operator}. The same longitudinal conditional diagnostic is applied to the GNO reconstruction.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.94\textwidth]
+{images/results/png/GNO_conditionals_longitudinal.png}
+\caption{
+Conditional-slice consistency of the CVAE--GNO surrogate for the longitudinal \((\zeta,\delta)\) marginal. The figure evaluates agreement of local conditional means under constant-\(\zeta\) and constant-\(\delta\) slicing. Comparison with Fig.~\ref{fig:tf_conditionals_longitudinal} isolates differences in internal phase-space reconstruction between local-window attention and graph-kernel propagation.
+}
+\label{fig:gno_conditionals_longitudinal}
+\end{figure}
+
+The conditional analysis complements global histogram errors. Two models may attain similar integrated reconstruction losses while distributing their residuals differently across the support of the beam. Conditional means therefore provide a direct probe of whether correlations between longitudinal position and energy deviation are preserved locally.
+
+% =============================================================================
+\subsection{Direct comparison of local-window Transformer and GNO}
+\label{subsec:results_tf_gno_comparison}
+% =============================================================================
+
+\subsubsection{Two-dimensional marginal reconstruction}
+\label{subsubsec:results_tf_gno_marginals}
+
+A direct comparison is performed on the same selected sample,
+\begin{equation}
+s=3,
+\end{equation}
+for four representative pairwise phase-space projections:
+\begin{equation}
+(x,y),
+\qquad
+(x,\zeta),
+\qquad
+(x,\delta),
+\qquad
+(\zeta,\delta).
+\end{equation}
+Using the pair ordering adopted throughout the implementation, these correspond respectively to
+\begin{equation}
+p
+\in
+{0,1,4,11}.
+\label{eq:selected_pair_indices_results}
+\end{equation}
+
+Each comparison contains five panels:
+\begin{enumerate}[label=(\roman*)]
+\item ground-truth density;
+\item local-window Transformer prediction;
+\item GNO prediction;
+\item Transformer residual;
+\item GNO residual.
+\end{enumerate}
+
+The residuals are evaluated as
+\begin{equation}
+\Delta H_{\mathrm{TF}}
+=
+\widehat{H}_{\mathrm{TF}}-H,
+\qquad
+\Delta H_{\mathrm{GNO}}
+=
+\widehat{H}_{\mathrm{GNO}}-H.
+\label{eq:tf_gno_density_residuals}
+\end{equation}
+
+\begin{figure}[p]
+\centering
+\safeincludegraphics[width=0.96\textwidth]
+{images/results/png/comparison_s3_p0_x_y.png}
+
+```
+\vspace{0.8em}
+
+\safeincludegraphics[width=0.96\textwidth]
+{images/results/png/comparison_s3_p1_x_zeta.png}
+
+\caption{
+Direct density-level comparison of the local-window Transformer and GNO for sample \(s=3\). Top: transverse cross-plane marginal \((x,y)\), pair \(p=0\). Bottom: mixed transverse--longitudinal marginal \((x,\zeta)\), pair \(p=1\). Each row displays the reference density, both model predictions, and their residual fields.
+}
+\label{fig:tf_gno_comparison_xy_xzeta}
+```
+
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\safeincludegraphics[width=0.96\textwidth]
+{images/results/png/comparison_s3_p4_x_delta.png}
+
+```
+\vspace{0.8em}
+
+\safeincludegraphics[width=0.96\textwidth]
+{images/results/png/comparison_s3_p11_zeta_delta.png}
+
+\caption{
+Direct density-level comparison of the local-window Transformer and GNO for sample \(s=3\). Top: mixed transverse--energy marginal \((x,\delta)\), pair \(p=4\). Bottom: longitudinal phase-space marginal \((\zeta,\delta)\), pair \(p=11\). The common residual representation exposes structured model error that may be obscured by scalar reconstruction metrics.
+}
+\label{fig:tf_gno_comparison_xdelta_longitudinal}
+```
+
+\end{figure}
+
+The selected marginals probe complementary structures. The \((x,y)\) distribution tests coupling between transverse coordinates; \((x,\zeta)\) and \((x,\delta)\) probe mixed correlations between transverse and longitudinal degrees of freedom; and \((\zeta,\delta)\) directly tests reconstruction of longitudinal phase-space structure. Consequently, agreement across these projections provides a stronger diagnostic than evaluation of a single preferred plane.
+
+Qualitatively, the comparison should be interpreted through both residual amplitude and residual organization. A model may exhibit a moderate pointwise error while remaining approximately unbiased, whereas coherent positive and negative residual lobes reveal systematic deformation of the predicted distribution. The latter is particularly relevant when evaluating whether the surrogate preserves the location, orientation, and extension of phase-space structures.
+
+\subsubsection{Macroparticle-based distributional diagnostics}
+\label{subsubsec:results_macroparticle_comparison}
+
+Histogram residuals are complemented by a macroparticle-based analysis. Each predicted two-dimensional density is interpreted as a discrete probability distribution and sampled to generate a large synthetic particle ensemble. In the implemented diagnostic,
+\begin{equation}
+N_{\mathrm{sample}}
+=
+10^{6},
+\end{equation}
+macroparticles are drawn from each of the reference, Transformer, and GNO distributions.
+
+The sampled particle coordinates are transformed back to the corresponding physical range using the reference cloud bounds. Sorted coordinate samples are then compared directly. For a coordinate \(q\), the residuals are
+\begin{equation}
+r_{\mathrm{TF}}^{(q)}
+=
+q_{\mathrm{TF}}
+-
+q_{\mathrm{truth}},
+\qquad
+r_{\mathrm{GNO}}^{(q)}
+=
+q_{\mathrm{GNO}}
+-
+q_{\mathrm{truth}}.
+\label{eq:sampled_coordinate_residuals}
+\end{equation}
+The resulting dashboards combine parity plots, residual scatter, and empirical residual-density summaries.
+
+\begin{figure}[p]
+\centering
+\safeincludegraphics[width=0.90\textwidth]
+{images/results/png/sampling_comparison_s3_p0_x_y.png}
+
+```
+\vspace{0.8em}
+
+\safeincludegraphics[width=0.90\textwidth]
+{images/results/png/sampling_comparison_s3_p1_x_zeta.png}
+
+\caption{
+Macroparticle-based comparison for sample \(s=3\). Top: \((x,y)\) projection. Bottom: \((x,\zeta)\) projection. Synthetic particles are sampled from the reference, local-window Transformer, and GNO density maps. Parity and residual diagnostics reveal distributional displacement in physical coordinates.
+}
+\label{fig:sampling_comparison_xy_xzeta}
+```
+
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\safeincludegraphics[width=0.90\textwidth]
+{images/results/png/sampling_comparison_s3_p4_x_delta.png}
+
+```
+\vspace{0.8em}
+
+\safeincludegraphics[width=0.90\textwidth]
+{images/results/png/sampling_comparison_s3_p11_zeta_delta.png}
+
+\caption{
+Macroparticle-based comparison for sample \(s=3\). Top: \((x,\delta)\) projection. Bottom: longitudinal \((\zeta,\delta)\) projection. The sampled-particle representation complements image-space metrics by measuring how reconstruction error translates into physical coordinate displacement.
+}
+\label{fig:sampling_comparison_xdelta_longitudinal}
+```
+
+\end{figure}
+
+This analysis is particularly useful because a histogram-level error does not directly quantify the physical displacement of probability mass. Sampling transforms the reconstructed density into a representation closer to the macroparticle description used by tracking simulations. It therefore provides an intermediate diagnostic between image-based reconstruction and full six-dimensional particle-level validation.
+
+\subsubsection{Interpretation of the Transformer--GNO comparison}
+\label{subsubsec:tf_gno_interpretation}
+
+The comparison suggests that model performance is controlled not only by generic expressivity but also by the support and structure of the learned interaction mechanism. The no-window Transformer permits dense upstream mixing. The local-window Transformer restricts this support. The GNO instead defines information transfer directly through graph connectivity and a learned kernel.
+
+Schematically, local-window attention computes
+\begin{equation}
+y_i^{\mathrm{TF}}
+=
+\sum_{
+j\in\mathcal{N}*{w}(i)
+}
+\alpha*{ij}V_j,
+\label{eq:window_attention_result_view}
+\end{equation}
+where
+\begin{equation}
+\mathcal{N}_{w}(i)
+=
+\left{
+j
+:
+0
+\le
+i-j
+\le
+w
+\right},
+\label{eq:window_neighborhood_results}
+\end{equation}
+while the GNO computes
+\begin{equation}
+y_i^{\mathrm{GNO}}
+=
+\sum_{
+j\in\mathcal{N}_{\mathrm{GNO}}(i)
+}
+K_{\theta}
+\left(
+h_i,
+h_j,
+v_i,
+v_j,
+\mu
+\right)
+v_j.
+\label{eq:gno_result_view}
+\end{equation}
+
+The two architectures therefore impose locality differently:
+\begin{equation}
+\underbrace{
+M_{ij}^{(w)}
+\operatorname{softmax}
+\left(
+\frac{
+Q_iK_j^{\top}
+}{
+\sqrt{d_k}
+}
+\right)
+}_{\text{masked attention interaction}}
+\qquad
+\longleftrightarrow
+\qquad
+\underbrace{
+\mathbf{1}_{
+\left{
+j\in\mathcal{N}(i)
+\right}
+}
+K_{\theta}(i,j)
+}_{\text{graph-kernel interaction}}.
+\label{eq:local_kernel_correspondence_results}
+\end{equation}
+
+The empirical tendency of the local-window Transformer to approach the GNO prediction is therefore consistent with a common structural interpretation: both models constrain the support of information transfer relative to dense global attention. This does not establish an exact equivalence between attention and graph operators. It does, however, motivate locality as a central inductive bias to be studied quantitatively.
+
+% =============================================================================
+\subsection{Window-size dependence}
+\label{subsec:results_window_study}
+% =============================================================================
+
+To investigate the locality hypothesis directly, Transformer models are trained with
+\begin{equation}
+w
+\in
+{
+2,
+10,
+100,
+1000,
+10000
+}.
+\label{eq:window_values_study}
+\end{equation}
+The smallest values enforce strongly local information transfer, while sufficiently large windows approach dense causal attention over the available sequence length.
+
+For each window, the same validation protocol should be applied. Let
+\begin{equation}
+E_p(w)
+=
+\frac{
+\norm{
+\widehat{H}_{p}^{(w)}
+-
+H_p
+}_2
+}{
+\norm{
+H_p
+}_2
++
+\varepsilon
+}
+\label{eq:window_relative_error}
+\end{equation}
+denote the relative error for projection \(p\). A global window-dependent score may be defined as
+\begin{equation}
+\overline{E}(w)
+=
+\frac{1}{15}
+\sum_{p=1}^{15}
+E_p(w),
+\label{eq:window_mean_error}
+\end{equation}
+with a worst-projection score
+\begin{equation}
+E_{\max}(w)
+=
+\max_{p}
+E_p(w).
+\label{eq:window_max_error}
+\end{equation}
+
+The window study provides a controlled test of the central interpretation developed above. If intermediate local windows consistently reduce reconstruction error or residual bias relative to effectively global attention, the result supports the hypothesis that unrestricted latent mixing is not optimal for the present beam-transport task. Conversely, degradation at excessively small \(w\) would indicate that physically relevant dependencies extend beyond the nearest elements.
+
+\placeholderfigure
+{Transformer window-size study}
+{Insert the final unique-file window study here. Recommended plots: mean relative histogram error versus \(w\), worst-projection error versus \(w\), and optionally distance to the GNO prediction versus \(w\). Use a logarithmic horizontal axis because the tested windows span several orders of magnitude.}
+% =============================================================================
+\subsection{Physics-statistics prediction}
+\label{subsec:results_physics_statistics}
+% =============================================================================
+
+Distributional reconstruction should be complemented by direct prediction of physically interpretable beam statistics. For the six-dimensional state,
+\begin{equation}
+\xi
+=
+(x,p_x,y,p_y,\zeta,\delta),
+\end{equation}
+the principal first- and second-order statistics are
+\begin{equation}
+m_d
+=
+\langle\xi_d\rangle,
+\qquad
+\sigma_d
+=
+\sqrt{
+\left\langle
+(\xi_d-m_d)^2
+\right\rangle
+}.
+\label{eq:physics_statistics_definition}
+\end{equation}
+
+A dedicated statistics head can be evaluated through parity relations
+\begin{equation}
+\widehat{m}_d
+\approx
+m_d,
+\qquad
+\widehat{\sigma}*d
+\approx
+\sigma_d,
+\label{eq:physics_statistics_parity}
+\end{equation}
+together with coordinate-wise biases
+\begin{equation}
+B_{m_d}
+=
+\mathbb{E}
+\left[
+\widehat{m}_d-m_d
+\right],
+\qquad
+B_{\sigma_d}
+=
+\mathbb{E}
+\left[
+\widehat{\sigma}_d-\sigma_d
+\right].
+\label{eq:physics_statistics_bias}
+\end{equation}
+
+A corresponding mean absolute error may be defined as
+\begin{equation}
+\operatorname{MAE}_{m_d}
+=
+\mathbb{E}
+\left[
+\left|
+\widehat{m}_d-m_d
+\right|
+\right],
+\end{equation}
+and
+\begin{equation}
+\operatorname{MAE}_{\sigma_d}
+=
+\mathbb{E}
+\left[
+\left|
+\widehat{\sigma}_d-\sigma_d
+\right|
+\right].
+\end{equation}
+
+This validation is important because a model may reproduce normalized marginal shapes while misestimating their physical location or extension. The statistics predictor therefore probes information complementary to the histogram decoder and directly tests whether latent propagation preserves beam-scale observables.
+
+\placeholderfigure
+{Physics-statistics predictor}
+{Insert parity plots for predicted versus reference means and RMS sizes. At minimum, include the six coordinate centroids and six RMS extensions. Report bias, mean absolute error, and, where useful, relative error.}
+
+% =============================================================================
+\subsection{Global comparison of latent propagators}
+\label{subsec:global_model_comparison}
+% =============================================================================
+
+All latent propagators should ultimately be evaluated on the same held-out test set and under identical lattice-token generation. The principal comparison should distinguish explicitly between the no-window Transformer, local-window Transformer, and GNO.
+
+\begin{table}[H]
+\centering
+\caption{
+Final comparison of latent beam-dynamics surrogates. Numerical values should be reported on an identical held-out test set and with the same lattice-token construction.
+}
+\label{tab:global_model_comparison}
+\begin{tabular}{lccccc}
+\toprule
+Model
+&
+Rel.\ hist.\ error
+&
+Moment error
+&
+\(W_1\) / (\operatorname{SW})
+&
+Bias norm
+&
+Inference time
+\
+\midrule
+Transformer, no window
+&
+---
+&
+---
+&
+---
+&
+---
+&
+---
+\
+Transformer, \(w=8\)
+&
+---
+&
+---
+&
+---
+&
+---
+&
+---
+\
+Best windowed Transformer
+&
+---
+&
+---
+&
+---
+&
+---
+&
+---
+\
+CVAE--GNO
+&
+---
+&
+---
+&
+---
+&
+---
+&
+---
+\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Training time and inference time should be reported separately. The empirical observation that the GNO is marginally faster during both optimization and evaluation is potentially relevant, but it should be supported by measurements obtained under identical hardware, batch size, numerical precision, and dataset split.
+
+% =============================================================================
+\subsection{Key finding: locality as a controlling inductive bias}
+\label{subsec:key_finding_locality}
+% =============================================================================
+
+Taken together, the no-window artifacts, the local-window reconstruction, the GNO diagnostics, and the direct pairwise comparisons motivate a common interpretation. The principal distinction between the propagators is not simply parameter count or generic expressive power; it is the structure assigned to information transfer along the lattice.
+
+The no-window Transformer permits dense causal mixing. The windowed Transformer constrains the support of its attention interaction. The GNO imposes a graph-defined support and parameterizes the interaction through an explicit learned kernel. The observed convergence of the windowed Transformer predictions toward both the reference distributions and the GNO behavior is therefore consistent with locality acting as a useful inductive bias for the latent beam-dynamics problem.
+
+The resulting scientific interpretation is
+\begin{equation}
+\boxed{
+\text{global causal mixing}
+;\longrightarrow;
+\text{localized attention}
+;\longrightarrow;
+\text{graph-supported kernel propagation}
+}
+\label{eq:locality_synthesis_results}
+\end{equation}
+rather than a simple ranking of unrelated machine-learning models.
+
+This interpretation remains empirical and should not be overstated as proof that the underlying collective dynamics are strictly local. Wake-mediated interactions can be nonlocal, and the accelerator map accumulates information over extended propagation distances. The result instead suggests that the \emph{support and geometry of the learned effective interaction} are central design choices. The window-size study provides the natural quantitative test of this hypothesis, while the GNO offers an alternative architecture in which interaction support is built directly into the graph representation.
+
+
+\subsection{Transformer latent baseline}
+\subsubsection{Prediction performance}
+The Transformer baseline learns latent evolution from the tokenized lattice sequence. It is an expressive sequence model and is therefore a natural first baseline for the ordered element-by-element structure of accelerator transport. Results should be presented as decoded histogram predictions, moment predictions, and rollout stability.
+
+\placeholderfigure{Transformer predictions}{Insert decoded Transformer predictions versus reference histograms. Use the same test cases that will later be used for Window Transformer and GNO comparison.}
+
+\subsubsection{Global-mixing artifacts}
+The main limitation of the baseline Transformer is that causal masking does not imply locality. Each token can attend to all previous tokens. In a physical lattice, however, many interactions are local or approximately local along the sequence. This mismatch can lead to structured residuals in the decoded distributions.
+
+Let $H_{ij}$ denote a true 2D marginal and $\widehat{H}_{ij}$ its prediction. The residual field is
+\begin{equation}
+    \varepsilon_{ij}(u,v)=\widehat{H}_{ij}(u,v)-H_{ij}(u,v).
+\end{equation}
+A systematic artifact corresponds to a nonzero residual bias
+\begin{equation}
+    b_{ij}(u,v)=\E[\varepsilon_{ij}(u,v)]\neq 0.
+    \label{eq:residual_bias_revised}
+\end{equation}
+This bias can arise from accumulated latent errors. If the learned update is
+\begin{equation}
+    z_{i+1}=z_i+\Delta z_i^{\mathrm{true}}+\eta_{\theta,i},
+\end{equation}
+then after $N$ steps,
+\begin{equation}
+    z_N=z_0+\sum_{i=1}^{N}\Delta z_i^{\mathrm{true}}+\sum_{i=1}^{N}\eta_{\theta,i}.
+\end{equation}
+If $\E[\eta_{\theta,i}]\neq 0$, the rollout develops a systematic drift that appears as biased projected marginals after decoding.
+
+\placeholderfigure{Transformer residual artifacts}{Insert residual maps for the Transformer baseline, highlighting smoothing, centroid drift, or systematic deformation. This is one of the most important figures because it motivates the locality-imposing models.}
+
+\subsection{Local-window Transformer}
+\subsubsection{Effect of windowed attention}
+The local-window Transformer is designed to test whether the Transformer failure mode is related to global mixing. The architecture keeps the same tokenization and latent-space objective, but replaces full causal attention with the window mask in Eq.~\eqref{eq:window_mask_revised}. If performance improves significantly, the result supports the hypothesis that locality is an important inductive bias for beam-distribution evolution.
+
+\placeholderfigure{Transformer versus Window Transformer}{Insert side-by-side predictions and residuals for the same test sample: baseline Transformer, local-window Transformer, and reference. The caption should explicitly state that the main difference is the locality constraint.}
+
+\begin{table}[H]
+\centering
+\caption{Template for comparison between global and local attention.}
+\label{tab:transformer_window_comparison}
+\begin{tabular}{lcc}
+\toprule
+Metric & Transformer & Window Transformer \\
+\midrule
+Histogram relative error & --- & --- \\
+Moment error & --- & --- \\
+Residual bias norm & --- & --- \\
+Rollout error after $N$ elements & --- & --- \\
+Inference time & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Interpretation}
+The windowed model is not simply a regularized Transformer. It implements a physically meaningful constraint: updates at a given location are forced to depend primarily on nearby upstream elements. This is consistent with the idea that the beam evolves through a composition of local maps and directed head--tail interactions rather than arbitrary all-to-all mixing.
+
+\subsection{CVAE + Graph Neural Operator}
+\subsubsection{GNO prediction quality}
+The GNO model replaces attention-based sequence mixing by message passing over a directed lattice graph. The model therefore implements a learned local kernel, making it closer to the operator structure of transport equations. Its predictions should be compared to both the global Transformer and the local-window Transformer.
+
+\placeholderfigure{GNO global prediction dashboard}{Insert the main FCC-ee Week-style comparison: reference, Transformer prediction, GNO prediction, and residual maps. Include at least one 5-panel figure for the most representative 2D marginal.}
+
+\subsubsection{Physical dimensions head}
+In the dual-tracking formulation, the model predicts not only reconstructed histograms but also the physical extension of the beam distribution:
+\begin{equation}
+    \big\{(\mu_i,\sigma_i)\big\}_{i=1}^{15}\mapsto \big\{(\mu_i',\sigma_i')\big\}_{i=1}^{15}.
+\end{equation}
+This auxiliary head is important because a histogram-only decoder may reproduce marginal shapes while slightly misrepresenting physical scale or envelope evolution. The physical-dimensions head directly constrains centroid and width dynamics.
+
+\placeholderfigure{Physical-dimensions head diagnostics}{Insert scatter/parity plots comparing predicted and true centroids/RMS widths for all coordinates or all 15 marginal projections. Report bias and spread.}
+
+\subsubsection{Macroparticle reconstruction}
+A further validation step is to sample macroparticles from the reconstructed distributions. This turns histogram-level predictions back into a particle-cloud representation and allows direct comparison of phase-space geometry, core density, tails, and residual structure.
+
+\placeholderfigure{Macroparticle reconstruction}{Insert true and generated macroparticle clouds sampled from decoded histograms, plus residual or correlation plots. Discuss whether the learned distribution preserves high-density cores and tail structure.}
+
+\subsection{Global comparison of models}
+All models should be evaluated on the same test set and with the same metrics. Table~\ref{tab:global_model_comparison} is the central quantitative table of the thesis.
+
+\begin{table}[H]
+\centering
+\caption{Central comparison table for the final thesis. Fill with final test-set values.}
+\label{tab:global_model_comparison}
+\begin{tabular}{lccccc}
+\toprule
+Model & Rel. hist. error & Moment error & $W_1$ / SW & Bias norm & Inference time \\
+\midrule
+FNO longitudinal & --- & --- & --- & --- & --- \\
+VAE reconstruction & --- & --- & --- & --- & --- \\
+Transformer & --- & --- & --- & --- & --- \\
+Window Transformer & --- & --- & --- & --- & --- \\
+CVAE + GNO & --- & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key finding: locality as the controlling inductive bias}
+The comparison suggests that the central issue is not only model size or generic expressivity. The decisive factor is whether the architecture encodes an inductive bias compatible with beam transport. The baseline Transformer is expressive but globally mixing. Window attention restricts this mixing and improves the result. The GNO goes further by representing the update as a learned local kernel over a directed graph.
+
+This connection can be written schematically as
+\begin{equation}
+    \underbrace{\operatorname{softmax}\big(QK^{\top}\big)V}_{\text{attention kernel}}
+    \quad\longleftrightarrow\quad
+    \underbrace{\sum_{j\in\mathcal{N}(i)}K_{\theta}(h_i,h_j)v_j}_{\text{graph operator kernel}}.
+\end{equation}
+The windowed Transformer and the GNO therefore approach the same physical principle from different architectural directions. The former imposes locality by masking a global attention operator; the latter builds locality directly into the graph-kernel representation. This observation is the main scientific synthesis of the thesis.
+
+% =============================================================================
+\section{Discussion and perspectives}
+\label{sec:discussion}
+% =============================================================================
+
+\subsection{Exploratory research and inductive-bias discovery}
+This work was exploratory in the sense that the final architecture was not fixed at the beginning. Several models were investigated to understand which representations and inductive biases are appropriate for high-dimensional beam-distribution evolution. This should be interpreted as a strength of the project: the comparison between FNO, Transformer, Window Transformer, and GNO revealed a coherent pattern. Models that respect the operator and locality structure of beam dynamics produce more stable and physically consistent predictions than unconstrained global sequence models.
+
+The thesis should therefore not be read as a catalogue of architectures. It should be read as an inductive-bias study: the same physical problem is approached with spectral operators, latent sequence models, local attention, and graph kernels, and the results identify locality as the main structural requirement.
+
+\subsection{Why locality matters in beam dynamics}
+Beam evolution in an accelerator is a composition of local lattice transformations and collective interactions with a causal structure along the bunch and along the lattice. Even when wakefields introduce nonlocality, that nonlocality is structured: it is not arbitrary all-to-all mixing. In particular, head--tail interactions are directed because trailing particles respond to fields generated by leading particles. Architectures that ignore this directionality can fit training data but may accumulate biased errors during rollout.
+
+The windowed Transformer and the GNO both reduce this problem. The windowed Transformer constrains the support of the attention kernel. The GNO uses an explicit neighborhood graph and learned kernel. The similarity of their results is therefore physically meaningful: both approximate a localized transport kernel, one implicitly through attention masking and the other explicitly through message passing.
+
+\subsection{Uncertainty quantification with conditional latent models}
+The CVAE formulation provides a natural opening toward uncertainty quantification. For fixed conditioning variables $c$, one may sample several latent variables
+\begin{equation}
+    z^{(r)}\sim q_{\phi}(z\mid X,c),\qquad r=1,\ldots,R,
+\end{equation}
+and propagate them through the learned dynamics. This produces an ensemble of predictions
+\begin{equation}
+    \widehat{X}_{N}^{(r)}=\mathcal{D}_{\psi}\big(\mathcal{T}_{\theta}^{N}(z^{(r)},\mu),c\big),
+\end{equation}
+from which predictive means, variances, and confidence intervals can be estimated. Such uncertainty estimates would be useful for identifying regions of parameter space where the surrogate is unreliable, where the training data are sparse, or where the beam response is intrinsically sensitive.
+
+\placeholderfigure{CVAE uncertainty ensemble}{Insert several sampled predictions for the same input condition, showing predictive mean and variance over histograms or beam moments. This figure belongs in future work if final uncertainty experiments are not yet complete.}
+
+\subsection{Toward accelerator digital twins and optimization}
+Fast surrogate models are useful not only for reproducing simulation outputs but also for enabling downstream tasks. Once trained, a differentiable surrogate can be used for sensitivity analysis, Bayesian optimization, uncertainty-aware parameter scans, and eventually online model calibration. In this sense, the present work fits into the broader development of accelerator digital twins: fast, approximate, continuously updated models that complement high-fidelity simulations and measurements.
+
+A natural future direction is to combine the learned surrogate with Bayesian optimization. The surrogate could provide fast evaluations of beam quality metrics, while a higher-level optimizer explores machine settings under constraints. This is especially promising for expensive simulation studies and for online tuning scenarios where direct exploration is limited by machine time or operational safety \cite{roussel_bayesian_2024}.
+
+\subsection{Limitations}
+Several limitations should be stated clearly. First, the surrogate is only as reliable as the training distribution. Generalization outside the sampled parameter range cannot be assumed. Second, the 15-projection representation is informative but not equivalent to the full six-dimensional density; distinct distributions may share the same pairwise marginals. Third, the CVAE introduces stochasticity and compression, which may smooth fine filamentary structures. Fourth, the current models do not exactly enforce symplecticity, charge conservation, or known wakefield causality constraints. Finally, the results must be validated against increasingly realistic collective-effects simulations before operational use.
+
+These limitations do not invalidate the approach. Rather, they define the next research steps: richer data, physics-constrained kernels, uncertainty-aware validation, and comparisons against high-fidelity simulations over broader parameter domains.
+
+% =============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% =============================================================================
+This internship investigated machine-learning surrogate models for collective-effects studies in the FCC-ee High-Energy Booster. Starting from the physical observation that beam dynamics can be formulated as the evolution of a distribution under external and collective forces, the work developed a hierarchy of learned approximations: Fourier Neural Operators for reduced longitudinal profiles, variational latent representations for six-dimensional beam clouds, Transformer-based latent dynamics, local-window attention, and Graph Neural Operator propagation.
+
+The main outcome is that high-dimensional beam evolution should be treated as an operator-learning problem with strong physical inductive biases. The FNO results show that longitudinal wake-driven evolution and Ha\"issinski-type profiles can be learned efficiently in reduced functional form. The latent CVAE results show that fifteen pairwise phase-space projections, together with physical moment conditioning, provide a practical representation of six-dimensional beam states. The comparison between Transformer, Window Transformer, and GNO propagators shows that locality is a central requirement: unconstrained global mixing leads to systematic artifacts, whereas local attention and graph-kernel message passing produce more physically consistent reconstructions.
+
+The work is exploratory, but it identifies a coherent research direction. Future surrogate models for collective beam dynamics should combine latent probabilistic representations, directed/local operator kernels, physical constraints, and uncertainty quantification. Such models could eventually support faster parameter scans, design-space exploration, and digital-twin workflows for accelerator physics.
+
+\newpage
+\printbibliography
+
+% =============================================================================
+\appendix
+\section{Additional theoretical material}
+% =============================================================================
+
+\subsection{Parametrized H\'enon maps}
+For a parametrized H\'enon map, the potential is a function of phase-space coordinates and parameters, $V_W(p;\mu)$, and the map takes the form
+\begin{equation}
+\begin{aligned}
+    \widetilde{q}&=p+\eta,\\
+    \widetilde{p}&=-q+\nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+This map is symplectic by construction. Let $\xi=(q,p)$ and $\widetilde{\xi}=(X,Y)$, with
+\begin{equation}
+    X=p+\eta,\qquad Y=-q+\nabla_pV_W(p;\mu).
+\end{equation}
+Then
+\begin{equation}
+    \dd X_i=\dd p_i,\qquad \dd Y_i=-\dd q_i+V_{ij}\dd p_j,
+\end{equation}
+where $V_{ij}=\partial^2 V_W/\partial p_i\partial p_j$ is symmetric. The pullback of the canonical symplectic form is
+\begin{equation}
+\begin{aligned}
+    F^*\omega&=\dd X_i\wedge \dd Y_i\\
+    &=\dd p_i\wedge(-\dd q_i+V_{ij}\dd p_j)\\
+    &=\dd q_i\wedge\dd p_i,
+\end{aligned}
+\end{equation}
+since the Hessian term vanishes by symmetry and antisymmetry of the wedge product. Thus $F^*\omega=\omega$. This motivates structure-preserving alternatives for future versions of the external transport model \cite{burby_fast_2020,huang_symplectic_2024}.
+
+\subsection{Wake reconstruction from Ha\"issinski profiles}
+Let $q=z/\sigma_{z0}$ and let $\lambda(q)$ be a normalized Ha\"issinski profile. The stationary equation can be written
+\begin{equation}
+    \frac{\dd\lambda}{\dd q}+\left[q-F(q,\lambda)\right]\lambda(q)=0,
+\end{equation}
+where
+\begin{equation}
+    F(q,\lambda)=I\int_{-\infty}^{\infty}W(q-q')\lambda(q')\dd q'.
+\end{equation}
+Dividing by $\lambda$ gives
+\begin{equation}
+    F(q)=\frac{\dd}{\dd q}\log\lambda(q)+q.
+\end{equation}
+Thus, if profiles are available at several currents, the wake reconstruction problem becomes an inverse convolution problem. On a uniform grid,
+\begin{equation}
+    F_i^{(n)}\approx I^{(n)}\Delta q\sum_{j=0}^{N-1}w_{i-j}\lambda_j^{(n)},
+\end{equation}
+where $w_{i-j}$ are samples of the wake. A trainable Toeplitz model estimates these samples by minimizing
+\begin{equation}
+    \mathcal{L}(w)=\frac{1}{M}\sum_{n=1}^{M}\norm{\widehat{\bm F}^{(n)}(w)-\bm F^{(n)}}_2^2+\alpha\norm{D^2w}_2^2+\beta\norm{w}_2^2.
+\end{equation}
+This formulation is an interpretable bridge between classical Tikhonov-regularized wake inversion and neural operator learning.
+
+\subsection{Key theoretical guarantees}
+Neural operators are motivated by two theoretical properties: discretization invariance and universal approximation of continuous operators. In practical terms, discretization invariance means that the learned operator is not tied to a single mesh resolution, while universal approximation means that sufficiently rich neural-operator classes can approximate continuous operators on compact subsets of appropriate function spaces \cite{kovachki_neural_2023}.
+
+The associated error decomposition is
+\begin{equation}
+    \norm{\widehat{\mathcal{G}}_{\theta}(D_L,a|_{D_L})-\mathcal{G}^{\dagger}(a)}_U
+    \le
+    \underbrace{\norm{\widehat{\mathcal{G}}_{\theta}(D_L,a|_{D_L})-\mathcal{G}_{\theta}(a)}_U}_{\text{discretization error}}
+    +
+    \underbrace{\norm{\mathcal{G}_{\theta}(a)-\mathcal{G}^{\dagger}(a)}_U}_{\text{approximation error}}.
+\end{equation}
+This decomposition is useful for interpreting validation results: errors may come either from the learned approximation itself or from the histogram/particle representation used to discretize the beam distribution.
+
+\section{Suggested final figure list}
+\begin{enumerate}[label=Fig.~\arabic*:, leftmargin=2.2cm]
+    \item FCC-ee HEB / simulation workflow schematic.
+    \item Wakefield/Ha\"issinski operator-learning schematic.
+    \item Example 15 pairwise phase-space histograms.
+    \item FNO architecture and longitudinal prediction examples.
+    \item CVAE encoder--decoder architecture.
+    \item Latent correlation diagnostics.
+    \item Transformer artifact residual maps.
+    \item Causal vs local-window attention masks.
+    \item Window Transformer improvement over global Transformer.
+    \item GNO message-passing architecture.
+    \item Transformer vs Window Transformer vs GNO global comparison dashboard.
+    \item Macroparticle reconstruction from decoded distributions.
+    \item CVAE uncertainty samples or future-work ensemble.
+\end{enumerate}
+
+\section{Suggested hyperparameter table}
+\begin{table}[H]
+\centering
+\caption{Template for reporting final model hyperparameters.}
+\label{tab:hyperparameters_appendix}
+\begin{tabular}{lcccc}
+\toprule
+Model & Latent dim. & Width & Layers & Notes \\
+\midrule
+FNO & --- & --- & --- & modes = --- \\
+VAE/CVAE & --- & --- & --- & $\beta=$ --- \\
+Transformer & --- & --- & --- & heads = --- \\
+Window Transformer & --- & --- & --- & window = --- \\
+GNO & --- & --- & --- & radius/neighbors = --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{sloppypar}
+\end{document}

@@ -1,0 +1,54 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}State of the art and methodology}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Wakefields, impedance and collective effects in particle accelerators}{2}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Theoretical aspects}{3}{subsubsection.2.1.1}%
+\contentsline {paragraph}{\numberline {2.1.1.1}Wake functions as Green functions.}{3}{paragraph.2.1.1.1}%
+\contentsline {paragraph}{\numberline {2.1.1.2}Impedance formalism.}{3}{paragraph.2.1.1.2}%
+\contentsline {paragraph}{\numberline {2.1.1.3}Hamiltonian longitudinal dynamics without dissipation.}{4}{paragraph.2.1.1.3}%
+\contentsline {paragraph}{\numberline {2.1.1.4}Vlasov-Fokker-Planck equation.}{5}{paragraph.2.1.1.4}%
+\contentsline {paragraph}{\numberline {2.1.1.5}Stationary Gaussian in the no-wake limit.}{5}{paragraph.2.1.1.5}%
+\contentsline {paragraph}{\numberline {2.1.1.6}Ha\"issinski equation.}{5}{paragraph.2.1.1.6}%
+\contentsline {paragraph}{\numberline {2.1.1.7}Physical consequences derived from Ha\"issinski.}{6}{paragraph.2.1.1.7}%
+\contentsline {subsection}{\numberline {2.2}Collective instabilities}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Machine learning for surrogate modeling of collective effects}{8}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Phase-space tomography reconstruction}{9}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Neural operators}{10}{subsubsection.2.3.2}%
+\contentsline {paragraph}{\numberline {2.3.2.1} Stationary longitudinal profile learning.}{13}{paragraph.2.3.2.1}%
+\contentsline {paragraph}{\numberline {2.3.2.2} Time-dependent density evolution.}{13}{paragraph.2.3.2.2}%
+\contentsline {paragraph}{\numberline {2.3.2.3} Observable operator learning.}{13}{paragraph.2.3.2.3}%
+\contentsline {paragraph}{\numberline {2.3.2.4} Transverse collective surrogate.}{13}{paragraph.2.3.2.4}%
+\contentsline {subsection}{\numberline {2.4}Summary}{14}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Machine Learning Workflow}{14}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Continuum Formulation}{15}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Operator-learning formulation}{16}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Fourier neural operator specialization}{17}{subsubsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.3}Data representation and discretization}{17}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Data-generation strategy with Xsuite}{18}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Data-generation strategy with pycolleff}{19}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Learning objectives}{20}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}Performance indicators and validation}{21}{subsubsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.4}Illustrative generated samples and first baseline results}{21}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Representative phase-space projections}{22}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Reduced longitudinal representation}{22}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Coverage of the sampled parameter space}{22}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}First baseline results}{25}{subsubsection.3.4.4}%
+\contentsline {paragraph}{\numberline {3.4.4.1}Training curves.}{26}{paragraph.3.4.4.1}%
+\contentsline {paragraph}{\numberline {3.4.4.2}Prediction versus reference profiles.}{26}{paragraph.3.4.4.2}%
+\contentsline {paragraph}{\numberline {3.4.4.3}Quantitative summary.}{27}{paragraph.3.4.4.3}%
+\contentsline {subsection}{\numberline {3.5}Collective Effects Modelling and Reconstruction}{28}{subsection.3.5}%
+\contentsline {paragraph}{\numberline {3.5.0.1}Latent formulation via CVAE}{28}{paragraph.3.5.0.1}%
+\contentsline {paragraph}{\numberline {3.5.0.2}Latent space structure and disentanglement diagnostics}{28}{paragraph.3.5.0.2}%
+\contentsline {paragraph}{\numberline {3.5.0.3}Conditional consistency of learned distributions}{29}{paragraph.3.5.0.3}%
+\contentsline {paragraph}{\numberline {3.5.0.4}Macroparticle reconstruction of phase-space distributions}{30}{paragraph.3.5.0.4}%
+\contentsline {paragraph}{\numberline {3.5.0.5}Latent evolution models}{31}{paragraph.3.5.0.5}%
+\contentsline {subparagraph}{Transformer-based latent propagator}{31}{paragraph.3.5.0.5}%
+\contentsline {subparagraph}{Graph Neural Operator (GNO) latent propagator}{31}{equation.123}%
+\contentsline {paragraph}{\numberline {3.5.0.6}Global comparison of surrogate models}{32}{paragraph.3.5.0.6}%
+\contentsline {paragraph}{\numberline {3.5.0.7}Reconstruction and training objective}{34}{paragraph.3.5.0.7}%
+\contentsline {section}{\numberline {4}Conclusion et perspectives}{37}{section.4}%
+\contentsline {section}{\numberline {A}Annexe}{41}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Parametrized H\'enon Maps}{41}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Reconstruction of the Longitudinal Wake Function from Ha\"issinski Profiles}{42}{subsection.A.2}%
+\contentsline {subsubsection}{\numberline {A.2.1}Dataset}{43}{subsubsection.A.2.1}%
+\contentsline {section}{\numberline {B}Key theoretical guarantees}{46}{appendix.B}%

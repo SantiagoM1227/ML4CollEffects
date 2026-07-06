@@ -1,0 +1,11 @@
+
+\section{Conclusion}
+\label{sec:conclusion}
+% =============================================================================
+This internship investigated machine-learning surrogate models for collective-effects studies in the FCC-ee High-Energy Booster. Starting from the physical observation that beam dynamics can be formulated as the evolution of a distribution under external and collective forces, the work developed a hierarchy of learned approximations: Fourier Neural Operators for reduced longitudinal profiles, variational latent representations for six-dimensional beam clouds, Transformer-based latent dynamics, local-window attention, and Graph Neural Operator propagation.
+
+The main outcome is that high-dimensional beam evolution should be treated as an operator-learning problem with strong physical inductive biases. The FNO results show that longitudinal wake-driven evolution and Ha\"issinski-type profiles can be learned efficiently in reduced functional form. The latent CVAE results show that fifteen pairwise phase-space projections, together with physical moment conditioning, provide a practical representation of six-dimensional beam states. The comparison between Transformer, Window Transformer, and GNO propagators shows that locality is a central requirement: unconstrained global mixing leads to systematic artifacts, whereas local attention and graph-kernel message passing produce more physically consistent reconstructions.
+
+The work is exploratory, but it identifies a coherent research direction. Future surrogate models for collective beam dynamics should combine latent probabilistic representations, directed/local operator kernels, physical constraints, and uncertainty quantification. Such models could eventually support faster parameter scans, design-space exploration, and digital-twin workflows for accelerator physics.
+
+

@@ -1,0 +1,265 @@
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+\input{glossary}
+\addbibresource{ML_collefects_revised.bib}
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[figurename=Fig.]{caption}
+\usepackage[tablename=Tab.]{caption}
+\usepackage{fancyhdr,graphicx,lastpage}
+
+% Safe helper commands ---------------------------------------------------------
+\newcommand{\rmq}[1]{\textcolor{red}{#1}}
+\newcommand\ignore[1]\null
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\argmin}{\operatorname*{arg\,min}}
+\providecommand{\argmax}{\operatorname*{arg\,max}}
+\providecommand{\dd}{\,\mathrm{d}}
+\providecommand{\E}{\mathbb{E}}
+\providecommand{\KL}{D_{\mathrm{KL}}}
+
+\newcommand{\safeincludegraphics}[2][]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+  \fbox{\begin{minipage}[c][0.16\textheight][c]{0.85\textwidth}
+  \centering \small Missing figure file:\\ \texttt{#2}
+  \end{minipage}}}}
+
+\newcommand{\placeholderfigure}[2]{%
+\begin{figure}[H]
+    \centering
+    \fbox{\begin{minipage}[c][0.26\textheight][c]{0.92\textwidth}
+    \centering
+    \textbf{#1}\\[0.6em]
+    \small #2
+    \end{minipage}}
+\end{figure}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[R]{\textit{Internship report}}
+  \fancyhead[L]{\textit{Santiago Martinez Saenz}}
+  \fancyfoot[L]{\textit{Université Paris-Saclay 2026}}
+  \fancyfoot[R]{\thepage\ / \pageref{LastPage}}
+}
+\pagestyle{plain}
+
+\begin{document}
+\begin{sloppypar}
+\pagestyle{empty}
+
+% -----------------------------------------------------------------------------
+% Title page
+% -----------------------------------------------------------------------------
+\newgeometry{margin=1in}
+\newcommand\titleofdoc{\bfseries Internship Report M2}
+\newcommand\subtitleofdoc{Exploratory modelling of collective effects in the FCC-ee High-Energy Booster using machine learning}
+
+\begin{titlepage}
+   \begin{center}
+        \vspace*{0.5cm}
+        \begin{center}
+        \begin{tabular}{cccc}
+        \safeincludegraphics[height=1.7cm]{images/logo/lascala.png} &
+        \safeincludegraphics[height=1.7cm]{images/logo/ijclab.jpg} &
+        \safeincludegraphics[height=0.8cm]{images/logo/LogoGANIL.png} &
+        \safeincludegraphics[height=1.7cm]{images/logo/cnrs.png}
+        \end{tabular}
+        \end{center}
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        \vspace{2.3cm}
+
+        {\Huge \titleofdoc}\par
+        \vspace{0.6cm}
+        {\LARGE \subtitleofdoc}\par
+
+        \vspace{2.0cm}
+        {\large Santiago Martinez Saenz}\par
+        {\large\bfseries Internship carried out from April to August 2026}\par
+
+        \vspace{3.5cm}
+        \leftline{\small \textbf{Internship tutors:} Dr. Adnan Ghribi (GANIL) and Dr. Hayg Guler (IJCLab)}
+        \leftline{\small \textbf{Referent teacher:} Dr. Sophie Kazamias (Université Paris-Saclay)}
+        \vspace{0.8cm}
+        \leftline{\small \textbf{Educational institutions:} Université Paris-Saclay / Università di Roma La Sapienza}
+        \leftline{\small \textbf{Internship host laboratory:} Grand Accélérateur National d'Ions Lourds (GANIL)}
+        \vfill
+        \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+        \begin{center}
+        \begin{tabular}{ccccc}
+        \safeincludegraphics[height=1cm]{images/logo/saclay.png} &
+        \safeincludegraphics[height=1cm]{images/logo/Uniroma1.svg.png} &
+        \safeincludegraphics[height=1cm]{images/logo/szeged.png} &
+        \safeincludegraphics[height=1cm]{images/logo/lund.png} &
+        \safeincludegraphics[height=1cm]{images/logo/erasmus.png}
+        \end{tabular}
+        \end{center}
+   \end{center}
+\setcounter{page}{0}
+\end{titlepage}
+\restoregeometry
+
+\newpage
+\tableofcontents
+
+
+
+% Corps du rapport
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+
+\section*{Abstract}
+
+Modern particle accelerators such as the Future Circular Collider (FCC-ee) require increasingly precise modeling of beam dynamics in regimes where nonlinear collective effects become significant. These effects, including space-charge forces, wakefields, and beam-induced fields, introduce complex correlations in the six-dimensional phase space distribution that are computationally expensive to simulate using traditional tracking methods.
+
+This internship focuses on the development of machine learning-based surrogate models for the efficient and physically consistent modeling of collective beam dynamics in the FCC-ee booster. In particular, the goal is to construct data-driven representations of the six-dimensional beam distribution evolution under both single-particle Hamiltonian transport and collective effects.
+
+The proposed approach builds upon recent advances in operator learning and physics-informed neural networks. Neural operator architectures, such as Fourier Neural Operators, provide a natural framework for learning mappings between function spaces, making them well-suited to model the evolution of phase space densities rather than individual particle trajectories. In parallel, structure-preserving neural architectures inspired by symplectic maps (e.g. Henon-type networks) are considered to ensure consistency with the underlying Hamiltonian dynamics.
+
+In future developments, the dynamics will be decomposed into a Hamiltonian transport operator and a collective interaction operator, allowing for efficient composition of learned evolution steps. This hybrid approach aims to provide fast, accurate, and physically interpretable surrogate models for beam dynamics, enabling improved simulation, control, and optimization of next-generation accelerator systems.
+
+\section*{Keywords}
+
+Machine learning, accelerator physics, FCC-ee, beam dynamics, collective effects, neural operators, Fourier neural operator, symplectic neural networks, operator learning, surrogate modeling
+\label{conclusion}
+
+
+
+
+\newpage
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+%=============================================================================
+\input{chapters/chapter01.tex}
+\input{chapters/chapter02.tex}
+\input{chapters/chapter03.tex}
+\input{chapters/chapter04.tex}
+\input{chapters/chapter05.tex}  
+\input{chapters/chapter06.tex}
+\input{chapters/chapter07.tex}  
+
+
+% =============================================================================
+\newpage
+\printbibliography
+
+% =============================================================================
+\appendix
+
+
+
+\section{Additional theoretical material}
+% =============================================================================
+
+\subsection{Parametrized H\'enon maps}
+For a parametrized H\'enon map, the potential is a function of phase-space coordinates and parameters, $V_W(p;\mu)$, and the map takes the form
+\begin{equation}
+\begin{aligned}
+    \widetilde{q}&=p+\eta,\\
+    \widetilde{p}&=-q+\nabla_p V_W(p;\mu).
+\end{aligned}
+\end{equation}
+This map is symplectic by construction. Let $\xi=(q,p)$ and $\widetilde{\xi}=(X,Y)$, with
+\begin{equation}
+    X=p+\eta,\qquad Y=-q+\nabla_pV_W(p;\mu).
+\end{equation}
+Then
+\begin{equation}
+    \dd X_i=\dd p_i,\qquad \dd Y_i=-\dd q_i+V_{ij}\dd p_j,
+\end{equation}
+where $V_{ij}=\partial^2 V_W/\partial p_i\partial p_j$ is symmetric. The pullback of the canonical symplectic form is
+\begin{equation}
+\begin{aligned}
+    F^*\omega&=\dd X_i\wedge \dd Y_i\\
+    &=\dd p_i\wedge(-\dd q_i+V_{ij}\dd p_j)\\
+    &=\dd q_i\wedge\dd p_i,
+\end{aligned}
+\end{equation}
+since the Hessian term vanishes by symmetry and antisymmetry of the wedge product. Thus $F^*\omega=\omega$. This motivates structure-preserving alternatives for future versions of the external transport model \cite{burby_fast_2020,huang_symplectic_2024}.
+
+\subsection{Wake reconstruction from Ha\"issinski profiles}
+Let $q=z/\sigma_{z0}$ and let $\lambda(q)$ be a normalized Ha\"issinski profile. The stationary equation can be written
+\begin{equation}
+    \frac{\dd\lambda}{\dd q}+\left[q-F(q,\lambda)\right]\lambda(q)=0,
+\end{equation}
+where
+\begin{equation}
+    F(q,\lambda)=I\int_{-\infty}^{\infty}W(q-q')\lambda(q')\dd q'.
+\end{equation}
+Dividing by $\lambda$ gives
+\begin{equation}
+    F(q)=\frac{\dd}{\dd q}\log\lambda(q)+q.
+\end{equation}
+Thus, if profiles are available at several currents, the wake reconstruction problem becomes an inverse convolution problem. On a uniform grid,
+\begin{equation}
+    F_i^{(n)}\approx I^{(n)}\Delta q\sum_{j=0}^{N-1}w_{i-j}\lambda_j^{(n)},
+\end{equation}
+where $w_{i-j}$ are samples of the wake. A trainable Toeplitz model estimates these samples by minimizing
+\begin{equation}
+    \mathcal{L}(w)=\frac{1}{M}\sum_{n=1}^{M}\norm{\widehat{\bm F}^{(n)}(w)-\bm F^{(n)}}_2^2+\alpha\norm{D^2w}_2^2+\beta\norm{w}_2^2.
+\end{equation}
+This formulation is an interpretable bridge between classical Tikhonov-regularized wake inversion and neural operator learning.
+
+\subsection{Key theoretical guarantees}
+Neural operators are motivated by two theoretical properties: discretization invariance and universal approximation of continuous operators. In practical terms, discretization invariance means that the learned operator is not tied to a single mesh resolution, while universal approximation means that sufficiently rich neural-operator classes can approximate continuous operators on compact subsets of appropriate function spaces \cite{kovachki_neural_2023}.
+
+The associated error decomposition is
+\begin{equation}
+    \norm{\widehat{\mathcal{G}}_{\theta}(D_L,a|_{D_L})-\mathcal{G}^{\dagger}(a)}_U
+    \le
+    \underbrace{\norm{\widehat{\mathcal{G}}_{\theta}(D_L,a|_{D_L})-\mathcal{G}_{\theta}(a)}_U}_{\text{discretization error}}
+    +
+    \underbrace{\norm{\mathcal{G}_{\theta}(a)-\mathcal{G}^{\dagger}(a)}_U}_{\text{approximation error}}.
+\end{equation}
+This decomposition is useful for interpreting validation results: errors may come either from the learned approximation itself or from the histogram/particle representation used to discretize the beam distribution.
+
+\section{Suggested final figure list}
+\begin{enumerate}[label=Fig.~\arabic*:, leftmargin=2.2cm]
+    \item FCC-ee HEB / simulation workflow schematic.
+    \item Wakefield/Ha\"issinski operator-learning schematic.
+    \item Example 15 pairwise phase-space histograms.
+    \item FNO architecture and longitudinal prediction examples.
+    \item CVAE encoder--decoder architecture.
+    \item Latent correlation diagnostics.
+    \item Transformer artifact residual maps.
+    \item Causal vs local-window attention masks.
+    \item Window Transformer improvement over global Transformer.
+    \item GNO message-passing architecture.
+    \item Transformer vs Window Transformer vs GNO global comparison dashboard.
+    \item Macroparticle reconstruction from decoded distributions.
+    \item CVAE uncertainty samples or future-work ensemble.
+\end{enumerate}
+
+\section{Suggested hyperparameter table}
+\begin{table}[H]
+\centering
+\caption{Template for reporting final model hyperparameters.}
+\label{tab:hyperparameters_appendix}
+\begin{tabular}{lcccc}
+\toprule
+Model & Latent dim. & Width & Layers & Notes \\
+\midrule
+FNO & --- & --- & --- & modes = --- \\
+VAE/CVAE & --- & --- & --- & $\beta=$ --- \\
+Transformer & --- & --- & --- & heads = --- \\
+Window Transformer & --- & --- & --- & window = --- \\
+GNO & --- & --- & --- & radius/neighbors = --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{sloppypar}
+\end{document}
