@@ -2369,33 +2369,79 @@
   <!-- CITATION DATA -->
   <!-- SECTION 0 -->
   <bcf:bibdata section="0">
-    <bcf:datasource type="file" datatype="bibtex" glob="false">ML_collefects_revised.bib</bcf:datasource>
+    <bcf:datasource type="file" datatype="bibtex" glob="false">bibliography.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">metral_wake_2021</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">gibellieri_impact_fcc_heb</bcf:citekey>
-    <bcf:citekey order="3" intorder="1">arpaia_machine_2021</bcf:citekey>
-    <bcf:citekey order="3" intorder="2">roussel_bayesian_2024</bcf:citekey>
-    <bcf:citekey order="4" intorder="1">metral_wake_2021</bcf:citekey>
-    <bcf:citekey order="5" intorder="1">metral_wake_2021</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">my_paper</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">metral_wake_2021</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">gibellieri_impact_fcc_heb</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">arpaia_machine_2021</bcf:citekey>
+    <bcf:citekey order="4" intorder="2">roussel_bayesian_2024</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">my_paper</bcf:citekey>
     <bcf:citekey order="6" intorder="1">metral_wake_2021</bcf:citekey>
-    <bcf:citekey order="7" intorder="1">kim_mbtrack2_cuda_2025</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">metral_wake_2021</bcf:citekey>
     <bcf:citekey order="8" intorder="1">metral_wake_2021</bcf:citekey>
     <bcf:citekey order="9" intorder="1">kim_mbtrack2_cuda_2025</bcf:citekey>
-    <bcf:citekey order="10" intorder="1">kingma_autoencoding_2014</bcf:citekey>
-    <bcf:citekey order="11" intorder="1">sohn_cvae_2015</bcf:citekey>
-    <bcf:citekey order="12" intorder="1">vaswani_attention_2017</bcf:citekey>
-    <bcf:citekey order="13" intorder="1">kovachki_neural_2023</bcf:citekey>
-    <bcf:citekey order="14" intorder="1">kovachki_neural_2023</bcf:citekey>
-    <bcf:citekey order="15" intorder="1">kovachki_neural_2023</bcf:citekey>
-    <bcf:citekey order="16" intorder="1">kovachki_neural_2023</bcf:citekey>
-    <bcf:citekey order="17" intorder="1">kingma_autoencoding_2014</bcf:citekey>
-    <bcf:citekey order="18" intorder="1">sohn_cvae_2015</bcf:citekey>
-    <bcf:citekey order="19" intorder="1">vaswani_attention_2017</bcf:citekey>
-    <bcf:citekey order="20" intorder="1">roussel_bayesian_2024</bcf:citekey>
-    <bcf:citekey order="21" intorder="1">burby_fast_2020</bcf:citekey>
-    <bcf:citekey order="21" intorder="2">huang_symplectic_2024</bcf:citekey>
-    <bcf:citekey order="22" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">metral_wake_2021</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">kim_mbtrack2_cuda_2025</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">zhou_theories_2023</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">xsuite_software</bcf:citekey>
+    <bcf:citekey order="13" intorder="2">iadarola_xsuite_2023</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">martinez_ml4colleffects_2026</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">fcc_heb_lattice_v24_1</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">fcc_ee_booster_pywit_model</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">pycolleff_software</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">martinez_ml4colleffects_2026</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">kingma_autoencoding_2014</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">kingma_autoencoding_2014</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">sohn_cvae_2015</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">vaswani_attention_2017</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">kovachki_neural_operator_2023</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">czarnecki_sobolev_2017</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">peyre_computational_2019</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">wiedemann_vlasov_2015</bcf:citekey>
+    <bcf:citekey order="26" intorder="2">metral_mitigation_2022</bcf:citekey>
+    <bcf:citekey order="26" intorder="3">schoenfeldt_vfp_2017</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">funkner_haissinski_2025</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">arpaia_machine_2021</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">huang_symplectic_2024</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">metral_wake_2021</bcf:citekey>
+    <bcf:citekey order="33" intorder="2">gibellieri_impact_fcc_heb</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">li_graph_kernel_2020</bcf:citekey>
+    <bcf:citekey order="35" intorder="2">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">wang_2026</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">kingma_autoencoding_2014</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">sohn_cvae_2015</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">vaswani_attention_2017</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">roussel_bayesian_2024</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">my_paper</bcf:citekey>
+    <bcf:citekey order="42" intorder="1" nocite="1">*</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">kovachki_universal_2021</bcf:citekey>
+    <bcf:citekey order="46" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="47" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="48" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="49" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="50" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="51" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="52" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="53" intorder="1">kovachki_neural_2023</bcf:citekey>
+    <bcf:citekey order="54" intorder="1">kingma_autoencoding_2014</bcf:citekey>
+    <bcf:citekey order="54" intorder="2">sohn_cvae_2015</bcf:citekey>
+    <bcf:citekey order="55" intorder="1">zhou_theories_2023</bcf:citekey>
+    <bcf:citekey order="55" intorder="2">funkner_haissinski_2025</bcf:citekey>
+    <bcf:citekey order="56" intorder="1">Funkner_2025</bcf:citekey>
+    <bcf:citekey order="57" intorder="1">burby_fast_2021</bcf:citekey>
+    <bcf:citekey order="58" intorder="1">funkner_reconstructing_nodate</bcf:citekey>
+    <bcf:citekey order="59" intorder="1">ghribi_impact_nodate</bcf:citekey>
+    <bcf:citekey order="60" intorder="1">hoover_high-dimensional_2024</bcf:citekey>
+    <bcf:citekey order="61" intorder="1">kovachki_neural_nodate</bcf:citekey>
+    <bcf:citekey order="62" intorder="1">metral_wake_2021-1</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

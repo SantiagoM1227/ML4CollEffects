@@ -1,89 +1,92 @@
 \babel@toc {english}{}\relax 
+\contentsline {section}{List of Acronyms}{iv}{section*.1}%
+\contentsline {section}{Glossary}{v}{section*.2}%
+\contentsline {section}{List of Symbols}{xii}{section*.3}%
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Motivation}{1}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Problem statement}{2}{subsection.1.2}%
 \contentsline {section}{\numberline {2}Beam dynamics}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Linear and Nonlinear beam dynamics}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Longitudinal Beam Dynamics}{4}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Beam dynamics maps and pushforward operators}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.3}Distribution-level Beam Dynamics}{5}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Statistical descriptors and beam-size convention}{6}{subsubsection.2.3.1}%
 \contentsline {section}{\numberline {3}Simulation workflow}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Xsuite tracking data}{7}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}PyColleff-based longitudinal data}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Computational cost}{8}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Data representation}{8}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}Empirical measures and reduced profiles}{8}{subsubsection.3.4.1}%
-\contentsline {subsubsection}{\numberline {3.4.2}Fifteen pairwise phase-space projections}{8}{subsubsection.3.4.2}%
-\contentsline {section}{\numberline {4}Machine-learning methodology}{9}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Machine-learning foundations}{9}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}From data to prediction}{10}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Dense neural networks}{11}{subsubsection.4.1.2}%
-\contentsline {subsubsection}{\numberline {4.1.3}Convolutional neural networks}{12}{subsubsection.4.1.3}%
-\contentsline {subsubsection}{\numberline {4.1.4}Autoencoders and latent representations}{13}{subsubsection.4.1.4}%
-\contentsline {subsubsection}{\numberline {4.1.5}Variational autoencoders}{14}{subsubsection.4.1.5}%
-\contentsline {subsubsection}{\numberline {4.1.6}Conditional variational autoencoders}{14}{subsubsection.4.1.6}%
-\contentsline {subsubsection}{\numberline {4.1.7}From basic neural networks to the models used in this work}{15}{subsubsection.4.1.7}%
-\contentsline {subsection}{\numberline {4.2}Operator-learning formulation}{18}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Neural operators}{19}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}From kinetic equations to solution operators}{19}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}General neural-operator architecture}{20}{subsubsection.4.3.2}%
-\contentsline {subsubsection}{\numberline {4.3.3}Discretization and approximation}{22}{subsubsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.4}Fourier Neural Operator}{23}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Graph Neural Operator}{25}{subsection.4.5}%
-\contentsline {subsubsection}{\numberline {4.5.1}Directed graph representation of the accelerator lattice}{26}{subsubsection.4.5.1}%
-\contentsline {subsubsection}{\numberline {4.5.2}Latent-state propagation}{27}{subsubsection.4.5.2}%
-\contentsline {subsubsection}{\numberline {4.5.3}Kernel parameterization}{28}{subsubsection.4.5.3}%
-\contentsline {subsection}{\numberline {4.6}Variational latent representation}{30}{subsection.4.6}%
-\contentsline {subsubsection}{\numberline {4.6.1}VAE formulation}{30}{subsubsection.4.6.1}%
-\contentsline {subsubsection}{\numberline {4.6.2}Conditional VAE}{30}{subsubsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.7}Tokenized latent dynamics}{31}{subsection.4.7}%
-\contentsline {subsubsection}{\numberline {4.7.1}Element tokenization}{31}{subsubsection.4.7.1}%
-\contentsline {subsubsection}{\numberline {4.7.2}Transformer baseline}{31}{subsubsection.4.7.2}%
-\contentsline {subsubsection}{\numberline {4.7.3}Local-window Transformer}{32}{subsubsection.4.7.3}%
-\contentsline {subsubsection}{\numberline {4.7.4}Graph Neural Operator latent propagator}{32}{subsubsection.4.7.4}%
-\contentsline {subsection}{\numberline {4.8}Loss functions and validation metrics}{33}{subsection.4.8}%
-\contentsline {section}{\numberline {5}Results}{33}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Longitudinal operator learning with FNO}{33}{subsection.5.1}%
-\contentsline {subsubsection}{\numberline {5.1.1}Learning reduced longitudinal profiles}{33}{subsubsection.5.1.1}%
-\contentsline {subsubsection}{\numberline {5.1.2}Ha\"issinski-profile reconstruction}{34}{subsubsection.5.1.2}%
-\contentsline {subsubsection}{\numberline {5.1.3}Interpretation}{35}{subsubsection.5.1.3}%
-\contentsline {subsection}{\numberline {5.2}Six-dimensional latent representation}{36}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}CVAE reconstruction quality}{36}{subsubsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2}Latent-space diagnostics}{36}{subsubsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.3}Transformer latent propagation and the effect of locality}{38}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}Global-attention baseline and reconstruction artifacts}{38}{subsubsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.2}Local-window Transformer}{40}{subsubsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.4}CVAE with Graph Neural Operator propagation}{41}{subsection.5.4}%
-\contentsline {subsubsection}{\numberline {5.4.1}Conditional longitudinal consistency}{41}{subsubsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.5}Direct comparison of local-window Transformer and GNO}{41}{subsection.5.5}%
-\contentsline {subsubsection}{\numberline {5.5.1}Two-dimensional marginal reconstruction}{41}{subsubsection.5.5.1}%
-\contentsline {subsubsection}{\numberline {5.5.2}Macroparticle-based distributional diagnostics}{42}{subsubsection.5.5.2}%
-\contentsline {subsubsection}{\numberline {5.5.3}Interpretation of the Transformer--GNO comparison}{46}{subsubsection.5.5.3}%
-\contentsline {subsection}{\numberline {5.6}Window-size dependence}{46}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Physics-statistics prediction}{47}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}Global comparison of latent propagators}{48}{subsection.5.8}%
-\contentsline {subsection}{\numberline {5.9}Key finding: locality as a controlling inductive bias}{48}{subsection.5.9}%
-\contentsline {subsection}{\numberline {5.10}Transformer latent baseline}{49}{subsection.5.10}%
-\contentsline {subsubsection}{\numberline {5.10.1}Prediction performance}{49}{subsubsection.5.10.1}%
-\contentsline {subsubsection}{\numberline {5.10.2}Global-mixing artifacts}{50}{subsubsection.5.10.2}%
-\contentsline {subsection}{\numberline {5.11}Local-window Transformer}{50}{subsection.5.11}%
-\contentsline {subsubsection}{\numberline {5.11.1}Effect of windowed attention}{50}{subsubsection.5.11.1}%
-\contentsline {subsubsection}{\numberline {5.11.2}Interpretation}{51}{subsubsection.5.11.2}%
-\contentsline {subsection}{\numberline {5.12}CVAE + Graph Neural Operator}{51}{subsection.5.12}%
-\contentsline {subsubsection}{\numberline {5.12.1}GNO prediction quality}{51}{subsubsection.5.12.1}%
-\contentsline {subsubsection}{\numberline {5.12.2}Physical dimensions head}{52}{subsubsection.5.12.2}%
-\contentsline {subsubsection}{\numberline {5.12.3}Macroparticle reconstruction}{52}{subsubsection.5.12.3}%
-\contentsline {subsection}{\numberline {5.13}Global comparison of models}{53}{subsection.5.13}%
-\contentsline {subsection}{\numberline {5.14}Locality as the controlling inductive bias}{53}{subsection.5.14}%
-\contentsline {section}{\numberline {6}Discussion and perspectives}{54}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Exploratory research and inductive-bias discovery}{54}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Why locality matters in beam dynamics}{54}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Uncertainty quantification with conditional latent models}{54}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Toward accelerator digital twins and optimization}{55}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Limitations}{55}{subsection.6.5}%
-\contentsline {section}{\numberline {7}Conclusion}{56}{section.7}%
-\contentsline {section}{\numberline {A}Additional theoretical material}{58}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Parametrized H\'enon maps}{58}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Wake reconstruction from Ha\"issinski profiles}{58}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Key theoretical guarantees}{59}{subsection.A.3}%
-\contentsline {section}{\numberline {B}Suggested final figure list}{59}{appendix.B}%
-\contentsline {section}{\numberline {C}Suggested hyperparameter table}{60}{appendix.C}%
+\contentsline {subsection}{\numberline {3.1}Six-dimensional Xsuite tracking dataset}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}PyColleff longitudinal dataset}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Data representation and physical quantities}{9}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Empirical measures and reduced profiles}{9}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Fifteen pairwise phase-space projections}{9}{subsubsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.4}Computational cost}{10}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Data and code availability}{10}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Machine-learning methodology}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Machine-learning objectives and foundations}{11}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}From data to prediction}{12}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Dense neural networks}{13}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Convolutional neural networks}{14}{subsubsection.4.1.3}%
+\contentsline {subsubsection}{\numberline {4.1.4}Autoencoders and latent representations}{15}{subsubsection.4.1.4}%
+\contentsline {subsubsection}{\numberline {4.1.5}Variational autoencoders}{15}{subsubsection.4.1.5}%
+\contentsline {subsubsection}{\numberline {4.1.6}Conditional variational autoencoders}{16}{subsubsection.4.1.6}%
+\contentsline {subsubsection}{\numberline {4.1.7}From basic neural networks to the models used in this work}{17}{subsubsection.4.1.7}%
+\contentsline {subsection}{\numberline {4.2}Operator-learning formulation}{19}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Neural operators}{21}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}From kinetic equations to solution operators}{21}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}General neural-operator architecture}{22}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Discretization and approximation}{23}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Fourier Neural Operator}{25}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Graph Neural Operator}{27}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Directed graph representation of the accelerator lattice}{28}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Latent-state propagation}{29}{subsubsection.4.5.2}%
+\contentsline {subsubsection}{\numberline {4.5.3}Kernel parameterization}{30}{subsubsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.6}Variational latent representation}{32}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1}VAE formulation}{32}{subsubsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.2}Conditional VAE}{32}{subsubsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.7}Tokenized latent dynamics}{37}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {4.7.1}Element tokenization}{37}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {4.7.2}Transformer baseline}{37}{subsubsection.4.7.2}%
+\contentsline {subsubsection}{\numberline {4.7.3}Local-window Transformer}{37}{subsubsection.4.7.3}%
+\contentsline {subsubsection}{\numberline {4.7.4}Graph Neural Operator latent propagator}{39}{subsubsection.4.7.4}%
+\contentsline {subsection}{\numberline {4.8}Loss functions and validation metrics}{40}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Conditional latent uncertainty estimation}{40}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Posterior sampling and propagation}{41}{subsection.4.10}%
+\contentsline {subsubsection}{\numberline {4.10.1}Monte-Carlo estimators}{41}{subsubsection.4.10.1}%
+\contentsline {section}{\numberline {5}Results}{42}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Longitudinal operator learning with FNO}{42}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Learning reduced longitudinal profiles}{42}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Ha\"issinski-profile reconstruction}{42}{subsubsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.2}Six-dimensional latent representation}{42}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}CVAE reconstruction quality}{42}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Latent-space diagnostics}{44}{subsubsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.3}Transformer latent propagation and the effect of locality}{48}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Global-attention baseline}{48}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Local-window Transformer}{49}{subsubsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.4}CVAE with Graph Neural Operator propagation}{49}{subsection.5.4}%
+\contentsline {subsubsection}{\numberline {5.4.1}Consistency in longitudinal dynamics}{49}{subsubsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.5}Direct comparison of local-window Transformer and GNO}{51}{subsection.5.5}%
+\contentsline {subsubsection}{\numberline {5.5.1}Two-dimensional marginal reconstruction}{51}{subsubsection.5.5.1}%
+\contentsline {subsubsection}{\numberline {5.5.2}Macroparticle-based distributional diagnostics}{53}{subsubsection.5.5.2}%
+\contentsline {subsubsection}{\numberline {5.5.3}Windowed attention and graph-kernel correspondence}{53}{subsubsection.5.5.3}%
+\contentsline {subsection}{\numberline {5.6}Window-size dependence}{57}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Physics-statistics prediction}{59}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Global comparison of latent propagators}{59}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}Conditional latent uncertainty of the CVAE--GNO surrogate}{61}{subsection.5.9}%
+\contentsline {subsubsection}{\numberline {5.9.1}Fixed-condition ensemble propagation}{61}{subsubsection.5.9.1}%
+\contentsline {subsubsection}{\numberline {5.9.2}Uncertainty of the physical-statistics head}{63}{subsubsection.5.9.2}%
+\contentsline {subsubsection}{\numberline {5.9.3}Held-out-set per-bin diagnostic}{65}{subsubsection.5.9.3}%
+\contentsline {section}{\numberline {6}Discussion and perspectives}{67}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Exploratory research and architectural inductive bias}{67}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Conditional latent uncertainty}{68}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Toward accelerator digital twins and optimization}{69}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Limitations}{69}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Conclusion}{69}{section.7}%
+\contentsline {section}{\numberline {A}Auxiliary theoretical results}{75}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Key theoretical guarantees}{75}{subsection.A.1}%
+\contentsline {subsubsection}{\numberline {A.1.1}Discretization invariance of neural operators}{75}{subsubsection.A.1.1}%
+\contentsline {subsubsection}{\numberline {A.1.2}Uniform approximation of continuous operators}{76}{subsubsection.A.1.2}%
+\contentsline {subsubsection}{\numberline {A.1.3}Approximation in expected risk}{77}{subsubsection.A.1.3}%
+\contentsline {subsubsection}{\numberline {A.1.4}Fourier neural operator universality}{78}{subsubsection.A.1.4}%
+\contentsline {subsubsection}{\numberline {A.1.5}Conditional variational lower bound}{78}{subsubsection.A.1.5}%
+\contentsline {subsubsection}{\numberline {A.1.6}Exact causal and local-support guarantees}{79}{subsubsection.A.1.6}%
+\contentsline {subsubsection}{\numberline {A.1.7}Graph support and message-passing locality}{79}{subsubsection.A.1.7}%
+\contentsline {subsubsection}{\numberline {A.1.8}Combined discretization--approximation error decomposition}{80}{subsubsection.A.1.8}%
+\contentsline {subsection}{\numberline {A.2}Prospective wake reconstruction from Ha\"issinski profiles}{80}{subsection.A.2}%
+\contentsline {section}{\numberline {B}Declaration of originality and absence of plagiarism}{81}{appendix.B}%

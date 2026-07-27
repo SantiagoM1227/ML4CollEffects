@@ -1,24 +1,804 @@
+\usepackage[acronym,toc,nonumberlist]{glossaries}
 
-\usepackage[toc]{glossaries}
+% Separate glossary for mathematical and physical symbols.
+\newglossary[slg]{symbols}{syi}{syg}{List of Symbols}
 
-% \makeglossaries
+% No-index generation is convenient for a self-contained thesis build.
 \makenoidxglossaries
 
+% Keep glossary links in the surrounding text colour.
+\renewcommand{\glstextformat}[1]{#1}
 
-\newglossaryentry{put}
-{
-    name= {put}, % reference name for this glossary term
-    description={A put option in finance is\dots)}
+% ============================================================================
+% ACRONYMS
+% ============================================================================
+
+\newacronym{ae}{AE}{autoencoder}
+\newacronym{ai}{AI}{artificial intelligence}
+\newacronym{bo}{BO}{Bayesian optimization}
+\newacronym{cern}{CERN}{European Organization for Nuclear Research}
+\newacronym{cnn}{CNN}{convolutional neural network}
+\newacronym{cpu}{CPU}{central processing unit}
+\newacronym{cuda}{CUDA}{Compute Unified Device Architecture}
+\newacronym{cvae}{CVAE}{conditional variational autoencoder}
+\newacronym{dl}{DL}{deep learning}
+\newacronym{doi}{DOI}{digital object identifier}
+\newacronym{elbo}{ELBO}{evidence lower bound}
+\newacronym{fccee}{FCC-ee}{Future Circular Collider electron--positron collider}
+\newacronym{fcc}{FCC}{Future Circular Collider}
+\newacronym{fft}{FFT}{fast Fourier transform}
+\newacronym{fno}{FNO}{Fourier Neural Operator}
+\newacronym{ganil}{GANIL}{Grand Accélérateur National d'Ions Lourds}
+\newacronym{gelu}{GELU}{Gaussian error linear unit}
+\newacronym{gno}{GNO}{Graph Neural Operator}
+\newacronym{gpu}{GPU}{graphics processing unit}
+\newacronym{heb}{HEB}{High-Energy Booster}
+\newacronym{ipac}{IPAC}{International Particle Accelerator Conference}
+\newacronym{jacow}{JACoW}{Joint Accelerator Conferences Website}
+\newacronym{kl}{KL}{Kullback--Leibler}
+\newacronym{madx}{MAD-X}{Methodical Accelerator Design, version X}
+\newacronym{mha}{MHA}{multi-head attention}
+\newacronym{ml}{ML}{machine learning}
+\newacronym{mlp}{MLP}{multilayer perceptron}
+\newacronym{mse}{MSE}{mean squared error}
+\newacronym{neg}{NEG}{non-evaporable getter}
+\newacronym{ood}{OOD}{out of distribution}
+\newacronym{pde}{PDE}{partial differential equation}
+\newacronym{rf}{RF}{radio frequency}
+\newacronym{rms}{RMS}{root mean square}
+\newacronym{swd}{SWD}{sliced Wasserstein distance}
+\newacronym{tf}{TF}{Transformer}
+\newacronym{vae}{VAE}{variational autoencoder}
+\newacronym{vfp}{VFP}{Vlasov--Fokker--Planck}
+\newacronym{uq}{UQ}{uncertainty quantification}
+
+% ============================================================================
+% SOFTWARE, DATA, AND COMPUTATIONAL TOOLS
+% ============================================================================
+
+\newglossaryentry{xsuite}{
+    name={Xsuite},
+    sort={Xsuite},
+    description={Open-source Python suite for multiparticle accelerator simulations, including tracking, optics manipulation, collective-effects interfaces, and accelerator-model workflows}
 }
 
-
-
-\newglossaryentry{call}
-{
-    name= {call},
-    description={call option is ...}
+\newglossaryentry{xtrack}{
+    name={Xtrack},
+    sort={Xtrack},
+    description={Xsuite component used to construct accelerator lines and track macroparticles through lattice elements}
 }
 
+\newglossaryentry{cpymad}{
+    name={\texttt{cpymad}},
+    sort={cpymad},
+    description={Python interface to MAD-X used to load and manipulate accelerator lattice descriptions}
+}
 
-% \renewcommand{\glstextformat}[1]{\color{black}  #1}
-\renewcommand{\glstextformat}[1]{\color{blue}  #1}
+\newglossaryentry{pycolleff}{
+    name={PyColleff},
+    sort={PyColleff},
+    description={Python module developed by LNLS for impedance modelling and collective-instability analysis in electron storage rings}
+}
+
+\newglossaryentry{pywit}{
+    name={PyWIT},
+    sort={PyWIT},
+    description={Python Wake and Impedance Toolbox used to represent and manipulate accelerator wake and impedance models}
+}
+
+% \newglossaryentry{zenodo}{
+%     name={Zenodo},
+%     sort={Zenodo},
+%     description={Open research repository used to archive datasets, software releases, and associated metadata with a persistent DOI}
+% }
+
+% \newglossaryentry{dataset-manifest}{
+%     name={dataset manifest},
+%     sort={dataset manifest},
+%     description={Machine-readable record of dataset files, array shapes, parameter ranges, units, software versions, checksums, and train--validation--test indices}
+% }
+
+% \newglossaryentry{checkpoint}{
+%     name={model checkpoint},
+%     sort={model checkpoint},
+%     description={Saved state of a trained model, usually including learned parameters and, when required, optimizer or preprocessing state}
+% }
+
+% ============================================================================
+% ACCELERATOR AND BEAM-PHYSICS TERMS
+% ============================================================================
+
+\newglossaryentry{accelerator-lattice}{
+    name={accelerator lattice},
+    sort={accelerator lattice},
+    description={Ordered sequence of magnets, radio-frequency systems, drifts, and other elements that determines charged-particle transport through an accelerator}
+}
+
+\newglossaryentry{beam-centroid}{
+    name={beam centroid},
+    sort={beam centroid},
+    description={First statistical moment of a beam-coordinate distribution; for coordinate $\xi_i$, it is the ensemble average $\langle \xi_i\rangle$}
+}
+
+\newglossaryentry{beam-size}{
+    name={beam size},
+    sort={beam size},
+    description={Transverse spatial extent of a beam, conventionally expressed through an RMS coordinate spread and related to emittance, optical beta function, dispersion, and momentum spread}
+}
+
+\newglossaryentry{betatron-motion}{
+    name={betatron motion},
+    sort={betatron motion},
+    description={Oscillatory transverse motion of a particle around the reference orbit under the action of focusing elements}
+}
+
+\newglossaryentry{bunch}{
+    name={bunch},
+    sort={bunch},
+    description={Localized ensemble of charged particles transported together through an accelerator}
+}
+
+\newglossaryentry{bunch-charge}{
+    name={bunch charge},
+    sort={bunch charge},
+    description={Total electric charge carried by one particle bunch}
+}
+
+\newglossaryentry{collective-effects}{
+    name={collective effects},
+    sort={collective effects},
+    description={Beam-dynamics phenomena in which particles interact through fields generated by the beam itself or by its electromagnetic interaction with the accelerator environment}
+}
+
+\newglossaryentry{coupled-bunch-instability}{
+    name={coupled-bunch instability},
+    sort={coupled-bunch instability},
+    description={Coherent instability in which wake-mediated interactions couple the motion of different bunches circulating in an accelerator}
+}
+
+\newglossaryentry{dispersion}{
+    name={dispersion},
+    sort={dispersion},
+    description={Dependence of the closed orbit or particle position on relative momentum deviation; it contributes to the measured transverse beam size}
+}
+
+\newglossaryentry{emittance}{
+    name={emittance},
+    sort={emittance},
+    description={Phase-space area or volume characterizing the spread of a beam in a conjugate coordinate--momentum plane}
+}
+
+\newglossaryentry{haissinski}{
+    name={Ha\"issinski distribution},
+    sort={Haissinski distribution},
+    description={Stationary longitudinal bunch distribution obtained from the self-consistent balance of RF confinement, wakefields, synchrotron-radiation damping, and quantum excitation below the microwave-instability threshold}
+}
+
+\newglossaryentry{impedance}{
+    name={beam coupling impedance},
+    sort={beam coupling impedance},
+    description={Frequency-domain representation of the electromagnetic response of the accelerator environment to the beam}
+}
+
+\newglossaryentry{intrabeam-scattering}{
+    name={intrabeam scattering},
+    sort={intrabeam scattering},
+    description={Multiple small-angle Coulomb scattering among particles within the same bunch, which can increase beam emittances and energy spread}
+}
+
+\newglossaryentry{line-density}{
+    name={longitudinal line density},
+    sort={longitudinal line density},
+    description={Particle or charge density projected onto the longitudinal coordinate}
+}
+
+\newglossaryentry{liouville-theorem}{
+    name={Liouville's theorem},
+    sort={Liouville theorem},
+    description={Statement that Hamiltonian phase-space flow preserves phase-space volume and transports densities incompressibly}
+}
+
+\newglossaryentry{macroparticle}{
+    name={macroparticle},
+    sort={macroparticle},
+    description={Numerical simulation particle representing many physical particles while carrying effective charge and phase-space coordinates}
+}
+
+\newglossaryentry{microwave-instability}{
+    name={microwave instability},
+    sort={microwave instability},
+    description={Single-bunch longitudinal instability associated with short-range wakefields and high-frequency impedance}
+}
+
+\newglossaryentry{panofsky-wenzel}{
+    name={Panofsky--Wenzel theorem},
+    sort={Panofsky Wenzel theorem},
+    description={Relation connecting longitudinal and transverse wakefields through derivatives of the integrated electromagnetic force}
+}
+
+\newglossaryentry{phase-space}{
+    name={phase space},
+    sort={phase space},
+    description={Space of particle positions and conjugate momenta; the beam state in this thesis is represented in six dimensions}
+}
+
+\newglossaryentry{phase-space-marginal}{
+    name={phase-space marginal},
+    sort={phase-space marginal},
+    description={Lower-dimensional distribution obtained by integrating the full phase-space density over unobserved coordinates}
+}
+
+\newglossaryentry{quantile}{
+    name={quantile},
+    sort={quantile},
+    description={Value below which a specified fraction of a probability distribution lies; useful for describing non-Gaussian beam tails and asymmetric distributions}
+}
+
+\newglossaryentry{resistive-wall}{
+    name={resistive-wall impedance},
+    sort={resistive wall impedance},
+    description={Beam coupling impedance produced by finite electrical conductivity of the vacuum chamber walls}
+}
+
+\newglossaryentry{rms-spread}{
+    name={coordinate-wise RMS spread},
+    sort={coordinate-wise RMS spread},
+    description={Square root of the second central moment of one beam coordinate; it remains defined for non-Gaussian distributions with finite variance but does not fully characterize their shape}
+}
+
+\newglossaryentry{self-consistent-force}{
+    name={self-consistent force},
+    sort={self consistent force},
+    description={Force that depends on the instantaneous beam distribution and therefore couples the evolution of individual particles to the collective state}
+}
+
+\newglossaryentry{space-charge}{
+    name={space charge},
+    sort={space charge},
+    description={Collective electromagnetic interaction arising directly from the charge and current distribution of the beam}
+}
+
+\newglossaryentry{synchrotron-radiation}{
+    name={synchrotron radiation},
+    sort={synchrotron radiation},
+    description={Electromagnetic radiation emitted by relativistic charged particles undergoing transverse acceleration, producing damping and quantum excitation in electron rings}
+}
+
+\newglossaryentry{symplectic-map}{
+    name={symplectic map},
+    sort={symplectic map},
+    description={Phase-space transformation that preserves the symplectic structure of Hamiltonian dynamics and therefore respects the associated geometric invariants}
+}
+
+\newglossaryentry{twiss-parameters}{
+    name={Twiss parameters},
+    sort={Twiss parameters},
+    description={Optical functions $\alpha$, $\beta$, and $\gamma$ used to describe linear transverse beam envelopes and phase-space ellipses}
+}
+
+\newglossaryentry{vlasov-equation}{
+    name={Vlasov equation},
+    sort={Vlasov equation},
+    description={Kinetic equation describing collisionless evolution of a phase-space density under external and self-consistent forces}
+}
+
+\newglossaryentry{vlasov-fokker-planck}{
+    name={Vlasov--Fokker--Planck equation},
+    sort={Vlasov Fokker Planck equation},
+    description={Kinetic equation combining Vlasov transport with damping and diffusion terms}
+}
+
+\newglossaryentry{wake-function}{
+    name={wake function},
+    sort={wake function},
+    description={Green-function response of the accelerator environment to a point-like source charge}
+}
+
+\newglossaryentry{wake-potential}{
+    name={wake potential},
+    sort={wake potential},
+    description={Integrated electromagnetic effect experienced by a beam distribution, obtained by convolving the wake function with the source distribution}
+}
+
+% ============================================================================
+% MATHEMATICAL AND STATISTICAL TERMS
+% ============================================================================
+
+\newglossaryentry{convolution}{
+    name={convolution},
+    sort={convolution},
+    description={Integral operation combining a function with a translated kernel; in beam dynamics it relates a longitudinal density to its induced wake potential}
+}
+
+\newglossaryentry{empirical-measure}{
+    name={empirical measure},
+    sort={empirical measure},
+    description={Discrete probability measure formed by assigning equal point mass to each simulated macroparticle}
+}
+
+\newglossaryentry{fourier-transform}{
+    name={Fourier transform},
+    sort={Fourier transform},
+    description={Transformation between a function in physical space and its representation in frequency or wave-number space}
+}
+
+\newglossaryentry{kernel}{
+    name={kernel},
+    sort={kernel},
+    description={Function defining weighted interactions or an integral operator between input and output locations}
+}
+
+\newglossaryentry{kl-divergence}{
+    name={Kullback--Leibler divergence},
+    sort={Kullback Leibler divergence},
+    description={Asymmetric divergence measuring how one probability distribution differs from another; in a VAE it regularizes the approximate posterior toward the prior}
+}
+
+\newglossaryentry{monte-carlo}{
+    name={Monte Carlo estimator},
+    sort={Monte Carlo estimator},
+    description={Approximation of an expectation or integral by an average over random samples}
+}
+
+\newglossaryentry{posterior}{
+    name={posterior distribution},
+    sort={posterior distribution},
+    description={Probability distribution updated after conditioning on observed data or model inputs}
+}
+
+\newglossaryentry{prior}{
+    name={prior distribution},
+    sort={prior distribution},
+    description={Probability distribution specified before conditioning on observations; the standard VAE prior is commonly a unit Gaussian}
+}
+
+\newglossaryentry{pushforward}{
+    name={pushforward measure},
+    sort={pushforward measure},
+    description={Distribution obtained by transporting a measure through a deterministic map}
+}
+
+\newglossaryentry{wasserstein-distance}{
+    name={Wasserstein distance},
+    sort={Wasserstein distance},
+    description={Optimal-transport distance between probability distributions that accounts for the cost of moving probability mass}
+}
+
+\newglossaryentry{sliced-wasserstein}{
+    name={sliced Wasserstein distance},
+    sort={sliced Wasserstein distance},
+    description={Distributional distance obtained by averaging one-dimensional Wasserstein distances over projected directions}
+}
+
+% ============================================================================
+% MACHINE-LEARNING AND SURROGATE-MODELLING TERMS
+% ============================================================================
+
+\newglossaryentry{attention}{
+    name={attention},
+    sort={attention},
+    description={Neural-network mechanism that forms weighted combinations of value representations using learned similarities between queries and keys}
+}
+
+\newglossaryentry{autoencoder}{
+    name={autoencoder},
+    sort={autoencoder},
+    description={Neural network trained to encode data into a lower-dimensional representation and decode that representation back to the input space}
+}
+
+\newglossaryentry{causal-attention}{
+    name={causal attention},
+    sort={causal attention},
+    description={Attention mask that permits a token to receive information only from itself and preceding tokens in an ordered sequence}
+}
+
+\newglossaryentry{conditional-latent-uncertainty}{
+    name={conditional latent uncertainty},
+    sort={conditional latent uncertainty},
+    description={Variability obtained by repeatedly sampling the conditional latent distribution while holding model parameters and conditioning variables fixed}
+}
+
+\newglossaryentry{calibration}{
+    name={uncertainty calibration},
+    sort={uncertainty calibration},
+    description={Agreement between predicted uncertainty intervals or probabilities and their empirical coverage or observed error frequencies}
+}
+
+\newglossaryentry{decoder}{
+    name={decoder},
+    sort={decoder},
+    description={Model component that maps a latent representation back to the data or observable space}
+}
+
+\newglossaryentry{digital-twin}{
+    name={digital twin},
+    sort={digital twin},
+    description={Computational representation of a physical system that combines models and data to support prediction, monitoring, calibration, or control}
+}
+
+\newglossaryentry{discretization-invariance}{
+    name={discretization invariance},
+    sort={discretization invariance},
+    description={Property of an operator-learning architecture whose parameters do not depend on one fixed input or output discretization and whose discrete realizations converge under refinement}
+}
+
+\newglossaryentry{encoder}{
+    name={encoder},
+    sort={encoder},
+    description={Model component that maps high-dimensional observations into features or a latent representation}
+}
+
+\newglossaryentry{graph-message-passing}{
+    name={graph message passing},
+    sort={graph message passing},
+    description={Update mechanism in which graph nodes aggregate learned messages from neighbouring nodes connected by edges}
+}
+
+\newglossaryentry{inductive-bias}{
+    name={inductive bias},
+    sort={inductive bias},
+    description={Architectural assumption that favours particular solution structures, such as locality, causality, translation structure, or graph connectivity}
+}
+
+\newglossaryentry{latent-space}{
+    name={latent space},
+    sort={latent space},
+    description={Learned lower-dimensional representation in which complex observations are encoded and manipulated}
+}
+
+\newglossaryentry{local-window-attention}{
+    name={local-window attention},
+    sort={local window attention},
+    description={Attention mechanism restricted to a finite neighbourhood of each token, imposing local support on information transfer}
+}
+
+\newglossaryentry{neural-operator}{
+    name={neural operator},
+    sort={neural operator},
+    description={Learned parametric mapping between function spaces rather than only between fixed-dimensional vectors}
+}
+
+\newglossaryentry{operator-learning}{
+    name={operator learning},
+    sort={operator learning},
+    description={Machine-learning framework for approximating mappings that transform input functions, fields, or distributions into output functions, fields, or distributions}
+}
+
+\newglossaryentry{reparameterization-trick}{
+    name={reparameterization trick},
+    sort={reparameterization trick},
+    description={Differentiable sampling construction used in variational autoencoders, typically written as a deterministic transformation of Gaussian noise}
+}
+
+\newglossaryentry{surrogate-model}{
+    name={surrogate model},
+    sort={surrogate model},
+    description={Computationally inexpensive approximation of a more costly simulator, experiment, or physical model}
+}
+
+\newglossaryentry{transformer}{
+    name={Transformer},
+    sort={Transformer},
+    description={Sequence-model architecture based on attention layers and token-wise transformations}
+}
+
+\newglossaryentry{under-dispersion}{
+    name={under-dispersion},
+    sort={under dispersion},
+    description={Condition in which the variability predicted by an ensemble or probabilistic model is systematically smaller than the observed prediction error}
+}
+
+\newglossaryentry{variational-autoencoder}{
+    name={variational autoencoder},
+    sort={variational autoencoder},
+    description={Probabilistic autoencoder that learns an approximate latent posterior and is trained using reconstruction and prior-regularization terms}
+}
+
+\newglossaryentry{conditional-variational-autoencoder}{
+    name={conditional variational autoencoder},
+    sort={conditional variational autoencoder},
+    description={Variational autoencoder whose posterior and generation process are conditioned on auxiliary physical or machine variables}
+}
+
+\newglossaryentry{fourier-neural-operator}{
+    name={Fourier Neural Operator},
+    sort={Fourier Neural Operator},
+    description={Neural-operator architecture that parameterizes non-local integral transformations through learned multiplication of Fourier modes}
+}
+
+\newglossaryentry{graph-neural-operator}{
+    name={Graph Neural Operator},
+    sort={Graph Neural Operator},
+    description={Neural-operator architecture that discretizes a learned kernel through graph-based message passing on arbitrary or physically structured nodes}
+}
+
+% ============================================================================
+% SYMBOLS
+% ============================================================================
+
+\newglossaryentry{sym:xi}{
+    type=symbols,
+    name={\ensuremath{\boldsymbol{\xi}}},
+    sort={xi},
+    description={Six-dimensional phase-space coordinate, typically $\boldsymbol{\xi}=(x,p_x,y,p_y,\zeta,\delta)$}
+}
+
+\newglossaryentry{sym:x}{
+    type=symbols,
+    name={\ensuremath{x}},
+    sort={x},
+    description={Horizontal transverse position}
+}
+
+\newglossaryentry{sym:px}{
+    type=symbols,
+    name={\ensuremath{p_x}},
+    sort={px},
+    description={Horizontal normalized canonical momentum}
+}
+
+\newglossaryentry{sym:y}{
+    type=symbols,
+    name={\ensuremath{y}},
+    sort={y},
+    description={Vertical transverse position}
+}
+
+\newglossaryentry{sym:py}{
+    type=symbols,
+    name={\ensuremath{p_y}},
+    sort={py},
+    description={Vertical normalized canonical momentum}
+}
+
+\newglossaryentry{sym:zeta}{
+    type=symbols,
+    name={\ensuremath{\zeta}},
+    sort={zeta},
+    description={Longitudinal position relative to the synchronous particle}
+}
+
+\newglossaryentry{sym:delta}{
+    type=symbols,
+    name={\ensuremath{\delta}},
+    sort={delta},
+    description={Relative momentum or energy deviation}
+}
+
+\newglossaryentry{sym:rho}{
+    type=symbols,
+    name={\ensuremath{\rho}},
+    sort={rho},
+    description={Beam probability density in six-dimensional phase space}
+}
+
+\newglossaryentry{sym:lambda}{
+    type=symbols,
+    name={\ensuremath{\lambda}},
+    sort={lambda},
+    description={Normalized longitudinal line density}
+}
+
+\newglossaryentry{sym:mu}{
+    type=symbols,
+    name={\ensuremath{\boldsymbol{\mu}}},
+    sort={mu},
+    description={Vector of machine, lattice, material, or collective-effect conditioning parameters}
+}
+
+\newglossaryentry{sym:phi-map}{
+    type=symbols,
+    name={\ensuremath{\Phi_{\boldsymbol{\mu}}}},
+    sort={Phi},
+    description={Single-particle or macroparticle-cloud transport map for parameters $\boldsymbol{\mu}$}
+}
+
+\newglossaryentry{sym:operator}{
+    type=symbols,
+    name={\ensuremath{\mathcal{G}}},
+    sort={G},
+    description={Target evolution or solution operator acting on a function or beam distribution}
+}
+
+\newglossaryentry{sym:empirical}{
+    type=symbols,
+    name={\ensuremath{\rho^{N}}},
+    sort={rho N},
+    description={Empirical beam measure formed from a finite macroparticle cloud}
+}
+
+\newglossaryentry{sym:centroid}{
+    type=symbols,
+    name={\ensuremath{m_i}},
+    sort={mi},
+    description={Centroid of coordinate $\xi_i$}
+}
+
+\newglossaryentry{sym:sigma}{
+    type=symbols,
+    name={\ensuremath{\sigma_i}},
+    sort={sigma i},
+    description={Coordinate-wise RMS spread of coordinate $\xi_i$}
+}
+
+\newglossaryentry{sym:emittance}{
+    type=symbols,
+    name={\ensuremath{\varepsilon_{x,y}}},
+    sort={epsilon},
+    description={Horizontal or vertical geometric emittance}
+}
+
+\newglossaryentry{sym:beta}{
+    type=symbols,
+    name={\ensuremath{\beta_{x,y}}},
+    sort={beta},
+    description={Horizontal or vertical Twiss beta function}
+}
+
+\newglossaryentry{sym:dispersion}{
+    type=symbols,
+    name={\ensuremath{D_{x,y}}},
+    sort={D},
+    description={Horizontal or vertical dispersion function}
+}
+
+\newglossaryentry{sym:eta}{
+    type=symbols,
+    name={\ensuremath{\eta}},
+    sort={eta},
+    description={Phase-slip factor in longitudinal dynamics}
+}
+
+\newglossaryentry{sym:wake-long}{
+    type=symbols,
+    name={\ensuremath{W_{\parallel}}},
+    sort={W parallel},
+    description={Longitudinal wake function}
+}
+
+\newglossaryentry{sym:wake-trans}{
+    type=symbols,
+    name={\ensuremath{W_{\perp}}},
+    sort={W perpendicular},
+    description={Transverse wake function}
+}
+
+\newglossaryentry{sym:impedance-long}{
+    type=symbols,
+    name={\ensuremath{Z_{\parallel}}},
+    sort={Z parallel},
+    description={Longitudinal beam coupling impedance}
+}
+
+\newglossaryentry{sym:impedance-trans}{
+    type=symbols,
+    name={\ensuremath{Z_{\perp}}},
+    sort={Z perpendicular},
+    description={Transverse beam coupling impedance}
+}
+
+\newglossaryentry{sym:latent}{
+    type=symbols,
+    name={\ensuremath{\mathbf{z}}},
+    sort={z latent},
+    description={Latent random variable or encoded latent state}
+}
+
+\newglossaryentry{sym:condition}{
+    type=symbols,
+    name={\ensuremath{\mathbf{c}}},
+    sort={c},
+    description={Conditioning vector supplied to a conditional model}
+}
+
+\newglossaryentry{sym:posterior}{
+    type=symbols,
+    name={\ensuremath{q_{\phi}(\mathbf{z}\mid X,\mathbf{c})}},
+    sort={q phi},
+    description={Approximate conditional latent posterior parameterized by encoder parameters $\phi$}
+}
+
+\newglossaryentry{sym:decoder}{
+    type=symbols,
+    name={\ensuremath{p_{\psi}(X\mid\mathbf{z},\mathbf{c})}},
+    sort={p psi},
+    description={Conditional decoder distribution parameterized by $\psi$}
+}
+
+\newglossaryentry{sym:histogram}{
+    type=symbols,
+    name={\ensuremath{H_{ij}}},
+    sort={Hij},
+    description={Two-dimensional histogram or probability-mass representation of coordinates $(\xi_i,\xi_j)$}
+}
+
+\newglossaryentry{sym:np}{
+    type=symbols,
+    name={\ensuremath{N_p}},
+    sort={Np},
+    description={Number of macroparticles per beam cloud}
+}
+
+\newglossaryentry{sym:ns}{
+    type=symbols,
+    name={\ensuremath{N_s}},
+    sort={Ns},
+    description={Number of simulated input--output samples or trajectories}
+}
+
+\newglossaryentry{sym:nb}{
+    type=symbols,
+    name={\ensuremath{N_b}},
+    sort={Nb},
+    description={Number of histogram bins per coordinate}
+}
+
+\newglossaryentry{sym:nzeta}{
+    type=symbols,
+    name={\ensuremath{N_{\zeta}}},
+    sort={N zeta},
+    description={Number of points in the longitudinal discretization grid}
+}
+
+\newglossaryentry{sym:r}{
+    type=symbols,
+    name={\ensuremath{R}},
+    sort={R},
+    description={Number of stochastic posterior samples used in a Monte Carlo ensemble}
+}
+
+\newglossaryentry{sym:alpha}{
+    type=symbols,
+    name={\ensuremath{\alpha}},
+    sort={alpha},
+    description={Under-relaxation coefficient in the longitudinal fixed-point iteration}
+}
+
+\newglossaryentry{sym:qfactor}{
+    type=symbols,
+    name={\ensuremath{Q}},
+    sort={Q},
+    description={Quality factor of a resonator model}
+}
+
+\newglossaryentry{sym:w1}{
+    type=symbols,
+    name={\ensuremath{W_1}},
+    sort={W1},
+    description={Wasserstein-1 distance}
+}
+
+\newglossaryentry{sym:loss}{
+    type=symbols,
+    name={\ensuremath{\mathcal{L}}},
+    sort={L},
+    description={Generic training objective or loss function}
+}
+
+% ============================================================================
+% PRINTING COMMAND
+% ============================================================================
+
+% Calling this command adds every defined entry, even if the body text has not
+% yet been converted to \gls{...} commands.
+\newcommand{\printthesisglossaries}{%
+    \glsaddall
+    \printnoidxglossary[
+        type=\acronymtype,
+        title={List of Acronyms},
+        sort=letter,
+        style=long
+    ]
+    \printnoidxglossary[
+        type=main,
+        title={Glossary},
+        sort=letter,
+        style=long
+    ]
+    \printnoidxglossary[
+        type=symbols,
+        title={List of Symbols},
+        sort=letter,
+        style=long
+    ]
+}

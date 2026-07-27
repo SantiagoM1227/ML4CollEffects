@@ -1,0 +1,5 @@
+[1] Config.pm:308> INFO - This is Biber 2.20
+[1] Config.pm:311> INFO - Logfile is 'main_revised.tex.blg'
+[94] biber-darwin:340> INFO - === Thu Jul 23, 2026, 15:04:12
+[294] Utils.pm:410> ERROR - Cannot find 'main_revised.tex.bcf'!
+[295] Biber.pm:136> INFO - ERRORS: 1

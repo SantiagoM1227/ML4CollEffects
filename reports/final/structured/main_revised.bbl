@@ -19,67 +19,232 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global/global}
-    \entry{metral_wake_2021}{article}{}{}
-      \name{author}{1}{}{%
-        {{hash=b3c6586c4f371fded4ce259c93b53750}{%
-           family={Métral},
-           familyi={M\bibinitperiod},
-           given={Elias},
-           giveni={E\bibinitperiod}}}%
-      }
-      \strng{namehash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{fullhash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{fullhashraw}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{bibnamehash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{authorbibnamehash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{authornamehash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{authorfullhash}{b3c6586c4f371fded4ce259c93b53750}
-      \strng{authorfullhashraw}{b3c6586c4f371fded4ce259c93b53750}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{CERN Yellow Reports: School Proceedings}
-      \field{note}{Lecture notes; replace with the exact proceedings metadata used in your local bibliography if different}
-      \field{title}{Wakefields and Impedances}
-      \field{year}{2021}
-    \endentry
-    \entry{gibellieri_impact_fcc_heb}{misc}{}{}
-      \name{author}{3}{}{%
-        {{hash=898a4f88430925f82ed9ca96550870ec}{%
-           family={Gibellieri},
-           familyi={G\bibinitperiod},
-           given={Davide},
-           giveni={D\bibinitperiod}}}%
+    \entry{my_paper}{article}{}{}
+      \name{author}{13}{}{%
         {{hash=c347e600549dffa7ff562c8da843ba44}{%
            family={Ghribi},
            familyi={G\bibinitperiod},
            given={Adnan},
            giveni={A\bibinitperiod}}}%
-        {{hash=4982a85eac389d034976e2837235987c}{%
-           family={collaborators},
-           familyi={c\bibinitperiod}}}%
+        {{hash=5bac6a3ecd66eff3f23741f6f108de6d}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Keon\bibnamedelima Hee},
+           giveni={K\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=d73eb8bae79c897f09f1b111a68c4533}{%
+           family={Mashal},
+           familyi={M\bibinitperiod},
+           given={Ahmad},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ac41c36144c466bcdc36f5c4ef1709ad}{%
+           family={Chance},
+           familyi={C\bibinitperiod},
+           given={Antoine},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d7334e0fa99d500e71cffcac5f3b7833}{%
+           family={Dalena},
+           familyi={D\bibinitperiod},
+           given={Barbara},
+           giveni={B\bibinitperiod}}}%
+        {{hash=05f6969523db0cf9b3e81d3c5d8cec0b}{%
+           family={Zannini},
+           familyi={Z\bibinitperiod},
+           given={Carlo},
+           giveni={C\bibinitperiod}}}%
+        {{hash=6e3040e5c1fb167d5b344e1c113535da}{%
+           family={Antuono},
+           familyi={A\bibinitperiod},
+           given={Chiara},
+           giveni={C\bibinitperiod}}}%
+        {{hash=5dc3613cde836589ae79cc30ddecbd22}{%
+           family={Gibellieri},
+           familyi={G\bibinitperiod},
+           given={Dora},
+           giveni={D\bibinitperiod}}}%
+        {{hash=2aeff7e90636cd820f0fc3cba3f89cd1}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+        {{hash=99743187aafc75ce30d9ed544abaee6c}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={Mauro},
+           giveni={M\bibinitperiod}}}%
+        {{hash=aedff89294b7b389e97e9c3ef65cf99e}{%
+           family={Zobov},
+           familyi={Z\bibinitperiod},
+           given={Mikhail},
+           giveni={M\bibinitperiod}}}%
+        {{hash=60a9a738c29a81b7d75df111d70aef68}{%
+           family={Bruant},
+           familyi={B\bibinitperiod},
+           given={Quentin},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=31ea9cb987aca82a3b8e108b85e70301}{%
+           family={Martinez\bibnamedelima Saenz},
+           familyi={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Santiago},
+           giveni={S\bibinitperiod}}}%
       }
-      \strng{namehash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{fullhash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{fullhashraw}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{bibnamehash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{authorbibnamehash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{authornamehash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{authorfullhash}{e88d1396a71ca50a0501e47241e48d5b}
-      \strng{authorfullhashraw}{e88d1396a71ca50a0501e47241e48d5b}
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{location}{1}{%
+        {Geneva, Switzerland}%
+      }
+      \list{publisher}{1}{%
+        {JACoW Publishing}%
+      }
+      \strng{namehash}{44be27a3712d54ff2953e33d75f688c2}
+      \strng{fullhash}{fe424e3215bcea6464efc690221599a4}
+      \strng{fullhashraw}{fe424e3215bcea6464efc690221599a4}
+      \strng{bibnamehash}{44be27a3712d54ff2953e33d75f688c2}
+      \strng{authorbibnamehash}{44be27a3712d54ff2953e33d75f688c2}
+      \strng{authornamehash}{44be27a3712d54ff2953e33d75f688c2}
+      \strng{authorfullhash}{fe424e3215bcea6464efc690221599a4}
+      \strng{authorfullhashraw}{fe424e3215bcea6464efc690221599a4}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 17th International Particle Accelerator Conference ({IPAC'26})}
+      \field{eventday}{17}
+      \field{eventendday}{22}
+      \field{eventendmonth}{5}
+      \field{eventendyear}{2026}
+      \field{eventmonth}{5}
+      \field{eventyear}{2026}
+      \field{isbn}{978-3-95450-252-3}
+      \field{issn}{2673-5350}
+      \field{title}{Updates on Impedance Studies for the {FCC-ee} High Energy Booster}
+      \field{venue}{Deauville, France}
+      \field{year}{2026}
+      \field{eventenddateera}{ce}
+      \field{eventdateera}{ce}
+      \field{pages}{229\bibrangedash 232}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.18429/JACoW-IPAC2026-MOP1072
+      \endverb
+      \verb{urlraw}
+      \verb https://jacow.org/ipac2026/papers/MOP1072.pdf
+      \endverb
+      \verb{url}
+      \verb https://jacow.org/ipac2026/papers/MOP1072.pdf
+      \endverb
+    \endentry
+    \entry{metral_wake_2021}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=df99401da2031fb8ea92211a26230d7c}{%
+           family={Métral},
+           familyi={M\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{fullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \strng{bibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorbibnamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authornamehash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhash}{df99401da2031fb8ea92211a26230d7c}
+      \strng{authorfullhashraw}{df99401da2031fb8ea92211a26230d7c}
+      \field{extraname}{1}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Internal or conference material; replace with exact FCC-ee note/proceedings metadata if available}
-      \field{title}{Impact of Collective Effects in the FCC-ee High-Energy Booster}
+      \field{journaltitle}{Journal of Instrumentation}
+      \field{month}{10}
+      \field{number}{10}
+      \field{title}{Wake Field, Impedance and Collective Instability}
+      \field{volume}{16}
+      \field{year}{2021}
+      \field{pages}{P10009}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{urlraw}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+      \verb{url}
+      \verb https://iopscience.iop.org/article/10.1088/1748-0221/16/10/P10009
+      \endverb
+    \endentry
+    \entry{gibellieri_impact_fcc_heb}{article}{}{}
+      \name{author}{10}{}{%
+        {{hash=c5b51caef426309cf78caac23384463b}{%
+           family={Ghribi},
+           familyi={G\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=29691a5cc04125fb373d44ff0c3bf507}{%
+           family={Mashal},
+           familyi={M\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d71d1b42f2b2ad559bc3bea1d7afc515}{%
+           family={Chance},
+           familyi={C\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=aaee24d638679e2360a99a5efc27c3a4}{%
+           family={Dalena},
+           familyi={D\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=37a3a88c0a3141f7a9129233b5d92974}{%
+           family={Zannini},
+           familyi={Z\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=dea427a80930cfe6fff275ce77124fea}{%
+           family={Gibellieri},
+           familyi={G\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=a1c9aeb6612912839cdbf4c1d202a8b7}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=0203164cb562044718d52e3433dc6506}{%
+           family={Zobov},
+           familyi={Z\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fd47fc879f087e830fe76c2a44a6f783}{%
+           family={Bruant},
+           familyi={B\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=1f26f664835ac6c347db22001b657f1a}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Y.},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{fullhash}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{fullhashraw}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{bibnamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authorbibnamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authornamehash}{815b614224e86ea038057cb8609a7d6d}
+      \strng{authorfullhash}{e8a7ddf8a52cf19908192bb0010655f5}
+      \strng{authorfullhashraw}{e8a7ddf8a52cf19908192bb0010655f5}
+      \field{extraname}{2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Impact of Collective Effects on Beam Stability in the {FCC-ee} Main Rings and the High-Energy Booster}
       \field{year}{2026}
     \endentry
     \entry{arpaia_machine_2021}{article}{}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{7}{}{%
+      \name{author}{20}{}{%
         {{hash=3498bfb336ca8c0aaa9e00193d1002d3}{%
            family={Arpaia},
            familyi={A\bibinitperiod},
@@ -115,21 +280,86 @@
            familyi={F\bibinitperiod},
            given={E.},
            giveni={E\bibinitperiod}}}%
+        {{hash=028371a6aaad0383e06f2bfc6315d96b}{%
+           family={Giordano},
+           familyi={G\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=0f8809297a0f137d7a589895b9774394}{%
+           family={Giovannozzi},
+           familyi={G\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=cf97e1b91b2eae27e668e6aaed578b82}{%
+           family={Pieloni},
+           familyi={P\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+        {{hash=12de2af8def2bdcbe161a83b7e8ae375}{%
+           family={Prevete},
+           familyi={P\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=bd626f98949606bcb6d9fa5614a3dc39}{%
+           family={Redaelli},
+           familyi={R\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d418966546d7498e002d72faef98d752}{%
+           family={Salvachua},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=ff0b9653555beff9cf999e91de958fc5}{%
+           family={Salvant},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=f981c95c65d1e68c6962a5a984aa4f80}{%
+           family={Schenk},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=606f3929d3387481f6633a71dfda87ae}{%
+           family={Camillocci},
+           familyi={C\bibinitperiod},
+           given={M.\bibnamedelimi Solfaroli},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c25c17ae7f703e6fbb197dd02bf0194f}{%
+           family={Tomás},
+           familyi={T\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=d84624c1f47f025b44347dc2f13fc081}{%
+           family={Valentino},
+           familyi={V\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=d69de2aaa48eb8bcd26b1121ce9f8659}{%
+           family={Van\bibnamedelimb Der\bibnamedelima Veken},
+           familyi={V\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim V\bibinitperiod},
+           given={F.\bibnamedelimi F.},
+           giveni={F\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=56597e3d38c7d1c9230bda78838e1d7f}{%
+           family={Wenninger},
+           familyi={W\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
       }
       \strng{namehash}{ce9a41afdb9c740747aec5bb2601cb9b}
-      \strng{fullhash}{b39afbbeec40ec2376be8e58fd6262c6}
-      \strng{fullhashraw}{b39afbbeec40ec2376be8e58fd6262c6}
+      \strng{fullhash}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \strng{fullhashraw}{dd502e298df9b8d33296bfa80c6fbbc6}
       \strng{bibnamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
       \strng{authorbibnamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
       \strng{authornamehash}{ce9a41afdb9c740747aec5bb2601cb9b}
-      \strng{authorfullhash}{b39afbbeec40ec2376be8e58fd6262c6}
-      \strng{authorfullhashraw}{b39afbbeec40ec2376be8e58fd6262c6}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \strng{authorfullhash}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \strng{authorfullhashraw}{dd502e298df9b8d33296bfa80c6fbbc6}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Nuclear Instruments and Methods in Physics Research Section A}
-      \field{title}{Machine learning for beam dynamics studies at the {CERN} Large Hadron Collider}
+      \field{journaltitle}{Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment}
+      \field{title}{Machine Learning for Beam Dynamics Studies at the {CERN} Large Hadron Collider}
       \field{volume}{985}
       \field{year}{2021}
       \field{pages}{164652}
@@ -137,11 +367,15 @@
       \verb{doi}
       \verb 10.1016/j.nima.2020.164652
       \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900220310494
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900220310494
+      \endverb
     \endentry
     \entry{roussel_bayesian_2024}{article}{}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{10}{}{%
+      \name{author}{27}{}{%
         {{hash=ea7ae361a35847fefa577493d9c6bef1}{%
            family={Roussel},
            familyi={R\bibinitperiod},
@@ -192,21 +426,107 @@
            familyi={X\bibinitperiod},
            given={Chenran},
            giveni={C\bibinitperiod}}}%
+        {{hash=9760871fd150bc9f8167e47897ab7904}{%
+           family={Kaiser},
+           familyi={K\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f611677a7a26eece1e2afc0dc9ecb4bf}{%
+           family={Pousa},
+           familyi={P\bibinitperiod},
+           given={Angel\bibnamedelima Ferran},
+           giveni={A\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=53c4b70edf77b4316b8aab2fd2920da6}{%
+           family={Eichler},
+           familyi={E\bibinitperiod},
+           given={Annika},
+           giveni={A\bibinitperiod}}}%
+        {{hash=61cab51f1e16da0434e47d2c84c6f7da}{%
+           family={Lübsen},
+           familyi={L\bibinitperiod},
+           given={Jannis\bibnamedelima O.},
+           giveni={J\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
+        {{hash=dacffacb2c10649febcf253cb66919cd}{%
+           family={Isenberg},
+           familyi={I\bibinitperiod},
+           given={Natalie\bibnamedelima M.},
+           giveni={N\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=a85dcf731e772b177341998a236d587a}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Yuan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=4496468867f103f3bd7835264f36be48}{%
+           family={Kuklev},
+           familyi={K\bibinitperiod},
+           given={Nikita},
+           giveni={N\bibinitperiod}}}%
+        {{hash=15dcd55f04f9b37baf633eff3c8aafa0}{%
+           family={Martinez},
+           familyi={M\bibinitperiod},
+           given={Jose},
+           giveni={J\bibinitperiod}}}%
+        {{hash=6b0726beb2530d7d84ac0caf3d21f6e3}{%
+           family={Mustapha},
+           familyi={M\bibinitperiod},
+           given={Brahim},
+           giveni={B\bibinitperiod}}}%
+        {{hash=e47dd6b187fe1bc866d4e7d1523b8798}{%
+           family={Kain},
+           familyi={K\bibinitperiod},
+           given={Verena},
+           giveni={V\bibinitperiod}}}%
+        {{hash=f35f8458c6fd2fb5cf277d9c60b43249}{%
+           family={Mayes},
+           familyi={M\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod}}}%
+        {{hash=562dc030fdc9104ca9f358d9cf5289b1}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Weijian},
+           giveni={W\bibinitperiod}}}%
+        {{hash=764dd94b0a7760f4558ee5edf6d6c908}{%
+           family={Liuzzo},
+           familyi={L\bibinitperiod},
+           given={Simone\bibnamedelima Maria},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=f25c52725d7fc0bf2516efe886b77d7b}{%
+           family={St.\bibnamedelimi John},
+           familyi={S\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Jason},
+           giveni={J\bibinitperiod}}}%
+        {{hash=3703c50dcf5a60844063d4633a978943}{%
+           family={Streeter},
+           familyi={S\bibinitperiod},
+           given={Matthew\bibnamedelimb J.\bibnamedelimi V.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=187fd2ad47bb486c2b3dd87f3efb0787}{%
+           family={Lehe},
+           familyi={L\bibinitperiod},
+           given={Remi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=cb1889b535f5e3414808403a8cb0c85c}{%
+           family={Neiswanger},
+           familyi={N\bibinitperiod},
+           given={Willie},
+           giveni={W\bibinitperiod}}}%
       }
       \strng{namehash}{b877250e48ae121d245cc1eb032dd263}
-      \strng{fullhash}{b19b17e314bd0f84c40664957e77237e}
-      \strng{fullhashraw}{b19b17e314bd0f84c40664957e77237e}
+      \strng{fullhash}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \strng{fullhashraw}{fad168d0b24c7dcf9ae241c4b366fcc0}
       \strng{bibnamehash}{b877250e48ae121d245cc1eb032dd263}
       \strng{authorbibnamehash}{b877250e48ae121d245cc1eb032dd263}
       \strng{authornamehash}{b877250e48ae121d245cc1eb032dd263}
-      \strng{authorfullhash}{b19b17e314bd0f84c40664957e77237e}
-      \strng{authorfullhashraw}{b19b17e314bd0f84c40664957e77237e}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \strng{authorfullhash}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \strng{authorfullhashraw}{fad168d0b24c7dcf9ae241c4b366fcc0}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Physical Review Accelerators and Beams}
-      \field{title}{Bayesian optimization algorithms for accelerator physics}
+      \field{number}{8}
+      \field{title}{Bayesian Optimization Algorithms for Accelerator Physics}
       \field{volume}{27}
       \field{year}{2024}
       \field{pages}{084801}
@@ -214,34 +534,407 @@
       \verb{doi}
       \verb 10.1103/PhysRevAccelBeams.27.084801
       \endverb
+      \verb{urlraw}
+      \verb https://link.aps.org/doi/10.1103/PhysRevAccelBeams.27.084801
+      \endverb
+      \verb{url}
+      \verb https://link.aps.org/doi/10.1103/PhysRevAccelBeams.27.084801
+      \endverb
     \endentry
     \entry{kim_mbtrack2_cuda_2025}{thesis}{}{}
       \name{author}{1}{}{%
-        {{hash=a4274347858ba5511f42323569cb1045}{%
+        {{hash=5bac6a3ecd66eff3f23741f6f108de6d}{%
            family={Kim},
            familyi={K\bibinitperiod},
-           given={Seok-Ho},
-           giveni={S\bibinithyphendelim H\bibinitperiod}}}%
+           given={Keon\bibnamedelima Hee},
+           giveni={K\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
       }
       \list{institution}{1}{%
-        {University / laboratory to be completed}%
+        {Korea University}%
       }
-      \strng{namehash}{a4274347858ba5511f42323569cb1045}
-      \strng{fullhash}{a4274347858ba5511f42323569cb1045}
-      \strng{fullhashraw}{a4274347858ba5511f42323569cb1045}
-      \strng{bibnamehash}{a4274347858ba5511f42323569cb1045}
-      \strng{authorbibnamehash}{a4274347858ba5511f42323569cb1045}
-      \strng{authornamehash}{a4274347858ba5511f42323569cb1045}
-      \strng{authorfullhash}{a4274347858ba5511f42323569cb1045}
-      \strng{authorfullhashraw}{a4274347858ba5511f42323569cb1045}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \strng{namehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{fullhash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{fullhashraw}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{bibnamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorbibnamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authornamehash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorfullhash}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \strng{authorfullhashraw}{5bac6a3ecd66eff3f23741f6f108de6d}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Placeholder entry; replace with exact thesis/report metadata}
-      \field{title}{{mbtrack2-cuda}: Development and Applications to Collective Beam Dynamics}
+      \field{month}{8}
+      \field{title}{Development of GPU-Accelerated Particle Tracking Simulation Code {MBTRACK2-CUDA} for Studies of Collective Effects in Circular Accelerators}
       \field{type}{phdthesis}
       \field{year}{2025}
+    \endentry
+    \entry{zhou_theories_2023}{misc}{}{}
+      \name{author}{6}{}{%
+        {{hash=d27d040dd550d482bd14821ce09e1765}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Demin},
+           giveni={D\bibinitperiod}}}%
+        {{hash=2ce70dd6a4c31e784404981097a1574e}{%
+           family={Ishibashi},
+           familyi={I\bibinitperiod},
+           given={Takuya},
+           giveni={T\bibinitperiod}}}%
+        {{hash=83873a3ffc35bc15a3b0e77ca797a0ca}{%
+           family={Mitsuka},
+           familyi={M\bibinitperiod},
+           given={Gaku},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ef683a713777dcb1c70b2f9511b4744f}{%
+           family={Tobiyama},
+           familyi={T\bibinitperiod},
+           given={Makoto},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4dde7d4e637faed71b4251e277d98b59}{%
+           family={Bane},
+           familyi={B\bibinitperiod},
+           given={Karl},
+           giveni={K\bibinitperiod}}}%
+        {{hash=aa9084c890b697c611f6c993fb0c3062}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Linhao},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{fullhash}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{fullhashraw}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{bibnamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authorbibnamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authornamehash}{9e6421192dc6b2325097dc2b97614721}
+      \strng{authorfullhash}{2b7f7918fa09adc447ae4cd671fd558f}
+      \strng{authorfullhashraw}{2b7f7918fa09adc447ae4cd671fd558f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{physics.acc-ph}
+      \field{eprinttype}{arXiv}
+      \field{title}{Theories Derived from {Haissinski} Equation and Their Applications to Electron Storage Rings}
+      \field{year}{2023}
+      \verb{doi}
+      \verb 10.48550/arXiv.2307.01286
+      \endverb
+      \verb{eprint}
+      \verb 2307.01286
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2307.01286
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2307.01286
+      \endverb
+    \endentry
+    \entry{xsuite_software}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=45d4d0c35596c21316fd3276c3a98c58}{%
+           family={{Xsuite Collaboration}},
+           familyi={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{fullhash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{fullhashraw}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{bibnamehash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{authorbibnamehash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{authornamehash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{authorfullhash}{45d4d0c35596c21316fd3276c3a98c58}
+      \strng{authorfullhashraw}{45d4d0c35596c21316fd3276c3a98c58}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Software documentation}
+      \field{title}{{Xsuite}: Accelerator Beam Dynamics Simulation Tools}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://xsuite.readthedocs.io/
+      \endverb
+      \verb{url}
+      \verb https://xsuite.readthedocs.io/
+      \endverb
+    \endentry
+    \entry{iadarola_xsuite_2023}{misc}{}{}
+      \name{author}{20}{}{%
+        {{hash=4879793390d8823abb0be18bba13a38d}{%
+           family={Iadarola},
+           familyi={I\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=667e1c8beae70728632141dcbe4e8153}{%
+           family={De\bibnamedelima Maria},
+           familyi={D\bibinitperiod\bibinitdelim M\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=001405828b41261d5cb62d257bc3fb8c}{%
+           family={Lopaciuk},
+           familyi={L\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=8eaf9f60591025dd7f3cf3f4005373db}{%
+           family={Abramov},
+           familyi={A\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=40b8692aa3e6ad14eeefac0c66795599}{%
+           family={Buffat},
+           familyi={B\bibinitperiod},
+           given={X.},
+           giveni={X\bibinitperiod}}}%
+        {{hash=38823293bec5305e652d056373b2f8a4}{%
+           family={Demetriadou},
+           familyi={D\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=945a9789f95dd0790048c3753172a5f5}{%
+           family={Deniau},
+           familyi={D\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=6d0ce0bb9cf0aee65c76cde81fb4e1dc}{%
+           family={Hermes},
+           familyi={H\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=40240247d7f1084265c4bfa2e0fb8adb}{%
+           family={Kicsiny},
+           familyi={K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=67632b0fdd8eb537c6b533723fb4a7ee}{%
+           family={Kruyt},
+           familyi={K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=a4bca4a1ca9a453dbdbbc04d3722aca6}{%
+           family={Latina},
+           familyi={L\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=50ac7fb817776dab9b1ea18e8ae2b55d}{%
+           family={Mether},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=55476433e70151cb44eb24bdbba8ef19}{%
+           family={Paraschou},
+           familyi={P\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=1a7896e8e892f3e40f0c735494c1b228}{%
+           family={Sterbini},
+           familyi={S\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=8bae9a16fdf8221fc4c17687d2fb6eda}{%
+           family={Van\bibnamedelimb Der\bibnamedelima Veken},
+           familyi={V\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim V\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=2deb7e391a84f7ba00e9d75d3752de2e}{%
+           family={Belanger},
+           familyi={B\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=c61d2ae43d0e48d3a077f677ca22e527}{%
+           family={Niedermayer},
+           familyi={N\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=3ce107461c239f62185a968b70e97ea6}{%
+           family={Di\bibnamedelima Croce},
+           familyi={D\bibinitperiod\bibinitdelim C\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=cf97e1b91b2eae27e668e6aaed578b82}{%
+           family={Pieloni},
+           familyi={P\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+        {{hash=60cb5ef3adb6240c69325322c958bd6e}{%
+           family={Van\bibnamedelima Riesen-Haupt},
+           familyi={V\bibinitperiod\bibinitdelim R\bibinithyphendelim H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{fullhash}{82a798ab959737a3e47f94292ac6ac29}
+      \strng{fullhashraw}{82a798ab959737a3e47f94292ac6ac29}
+      \strng{bibnamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authorbibnamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authornamehash}{7efd382febc5a58bac7e41968cd593fb}
+      \strng{authorfullhash}{82a798ab959737a3e47f94292ac6ac29}
+      \strng{authorfullhashraw}{82a798ab959737a3e47f94292ac6ac29}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{physics.acc-ph}
+      \field{eprinttype}{arXiv}
+      \field{title}{{Xsuite}: An Integrated Beam Physics Simulation Framework}
+      \field{year}{2023}
+      \verb{doi}
+      \verb 10.48550/arXiv.2310.00317
+      \endverb
+      \verb{eprint}
+      \verb 2310.00317
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2310.00317
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2310.00317
+      \endverb
+    \endentry
+    \entry{martinez_ml4colleffects_2026}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=31ea9cb987aca82a3b8e108b85e70301}{%
+           family={Martinez\bibnamedelima Saenz},
+           familyi={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Santiago},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{fullhash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{fullhashraw}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{bibnamehash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{authorbibnamehash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{authornamehash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{authorfullhash}{31ea9cb987aca82a3b8e108b85e70301}
+      \strng{authorfullhashraw}{31ea9cb987aca82a3b8e108b85e70301}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{GitHub repository. Thesis version: commit \texttt{<COMMIT-HASH>}}
+      \field{title}{{ML4CollEffects}: Machine-learning models for collective effects in accelerator beam dynamics}
+      \field{urlday}{27}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/SantiagoM1227/ML4CollEffects
+      \endverb
+      \verb{url}
+      \verb https://github.com/SantiagoM1227/ML4CollEffects
+      \endverb
+    \endentry
+    \entry{fcc_heb_lattice_v24_1}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=4c5580c7f10f4b8b71495fa1ea9fa04e}{%
+           family={{FCC-ee High-Energy Booster Optics Team}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{fullhash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{fullhashraw}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{bibnamehash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{authorbibnamehash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{authornamehash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{authorfullhash}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \strng{authorfullhashraw}{4c5580c7f10f4b8b71495fa1ea9fa04e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Public CERNBox optics archive}
+      \field{note}{Includes the MAD-X driver \texttt{heb\_ring\_z.madx} and the \texttt{fcc\_heb} sequence}
+      \field{title}{{FCC-ee HEB lattice release v24\_1}}
+      \field{urlday}{27}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://cernbox.cern.ch/files/link/public/JGnu3xAMHy3M1t0/_notebooks
+      \endverb
+      \verb{url}
+      \verb https://cernbox.cern.ch/files/link/public/JGnu3xAMHy3M1t0/_notebooks
+      \endverb
+    \endentry
+    \entry{fcc_ee_booster_pywit_model}{software}{}{}
+      \name{author}{1}{}{%
+        {{hash=c7a22a9c70c23d3e4cd0e641f01fca41}{%
+           family={{ImpedanCEI Collaboration}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{fullhash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{fullhashraw}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{bibnamehash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{authorbibnamehash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{authornamehash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{authorfullhash}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \strng{authorfullhashraw}{c7a22a9c70c23d3e4cd0e641f01fca41}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{GitHub repository containing impedance and wake inputs for the FCC-ee High-Energy Booster}
+      \field{title}{{FCC-ee Booster PyWIT impedance and wake model}}
+      \field{urlday}{27}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/ImpedanCEI/fcc_ee_booster_pywit_model
+      \endverb
+      \verb{url}
+      \verb https://github.com/ImpedanCEI/fcc_ee_booster_pywit_model
+      \endverb
+    \endentry
+    \entry{pycolleff_software}{software}{}{}
+      \name{author}{2}{}{%
+        {{hash=644b8abb8e2ed320813173782b739963}{%
+           family={Sá},
+           familyi={S\bibinitperiod},
+           given={Fernando},
+           giveni={F\bibinitperiod},
+           prefix={de},
+           prefixi={d\bibinitperiod}}}%
+        {{hash=f7848570bd884a85f226edd8ccd18a5f}{%
+           family={Alves},
+           familyi={A\bibinitperiod},
+           given={Murilo},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Zenodo}%
+      }
+      \strng{namehash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{fullhash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{fullhashraw}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{bibnamehash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{authorbibnamehash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{authornamehash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{authorfullhash}{9e9fac5c94a6797b625e052a78d37094}
+      \strng{authorfullhashraw}{9e9fac5c94a6797b625e052a78d37094}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{25}
+      \field{month}{11}
+      \field{title}{{pycolleff} and {cppcolleff}: Modules for Impedance Analysis and Wake-Field-Induced Instabilities Evaluation}
+      \field{version}{1.0.4}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.5281/zenodo.7974570
+      \endverb
+      \verb{urlraw}
+      \verb https://github.com/lnls-fac/collective_effects
+      \endverb
+      \verb{url}
+      \verb https://github.com/lnls-fac/collective_effects
+      \endverb
     \endentry
     \entry{kingma_autoencoding_2014}{inproceedings}{}{}
       \name{author}{2}{}{%
@@ -268,9 +961,14 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{International Conference on Learning Representations}
+      \field{booktitle}{Proceedings of the 2nd International Conference on Learning Representations}
+      \field{eprintclass}{stat.ML}
+      \field{eprinttype}{arXiv}
       \field{title}{Auto-Encoding Variational Bayes}
       \field{year}{2014}
+      \verb{eprint}
+      \verb 1312.6114
+      \endverb
     \endentry
     \entry{sohn_cvae_2015}{inproceedings}{}{}
       \name{author}{3}{}{%
@@ -298,14 +996,16 @@
       \strng{authornamehash}{b62ac6da925cbaaf571515e404354c1b}
       \strng{authorfullhash}{b62ac6da925cbaaf571515e404354c1b}
       \strng{authorfullhashraw}{b62ac6da925cbaaf571515e404354c1b}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Advances in Neural Information Processing Systems}
-      \field{title}{Learning Structured Output Representation using Deep Conditional Generative Models}
+      \field{title}{Learning Structured Output Representation Using Deep Conditional Generative Models}
       \field{volume}{28}
       \field{year}{2015}
+      \field{pages}{3483\bibrangedash 3491}
+      \range{pages}{9}
     \endentry
     \entry{vaswani_attention_2017}{inproceedings}{}{}
       \name{author}{8}{}{%
@@ -358,14 +1058,242 @@
       \strng{authornamehash}{ee273ab30cfb889666f8c4d806eb9ce7}
       \strng{authorfullhash}{f82970bbd2bdd7a002d2af62b743d5cc}
       \strng{authorfullhashraw}{f82970bbd2bdd7a002d2af62b743d5cc}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Advances in Neural Information Processing Systems}
       \field{title}{Attention Is All You Need}
       \field{volume}{30}
       \field{year}{2017}
+    \endentry
+    \entry{peyre_computational_2019}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=8381a1d2d66d734a8454d63ac3344f53}{%
+           family={Peyré},
+           familyi={P\bibinitperiod},
+           given={Gabriel},
+           giveni={G\bibinitperiod}}}%
+        {{hash=a771427291cb72a39e026a68b102335d}{%
+           family={Cuturi},
+           familyi={C\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Now Publishers}%
+      }
+      \strng{namehash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{fullhash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{fullhashraw}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{bibnamehash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{authorbibnamehash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{authornamehash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{authorfullhash}{031f81e8cc543b25b04a1a69bce7d466}
+      \strng{authorfullhashraw}{031f81e8cc543b25b04a1a69bce7d466}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Foundations and Trends in Machine Learning}
+      \field{number}{5--6}
+      \field{title}{Computational Optimal Transport}
+      \field{volume}{11}
+      \field{year}{2019}
+      \field{pages}{355\bibrangedash 607}
+      \range{pages}{253}
+      \verb{doi}
+      \verb 10.1561/2200000073
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1561/2200000073
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1561/2200000073
+      \endverb
+    \endentry
+    \entry{wiedemann_vlasov_2015}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{hash=f7d524a2ec35fb3f9eff2cd2aa8fca36}{%
+           family={Wiedemann},
+           familyi={W\bibinitperiod},
+           given={Helmut},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{fullhash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{fullhashraw}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{bibnamehash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{authorbibnamehash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{authornamehash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{authorfullhash}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \strng{authorfullhashraw}{f7d524a2ec35fb3f9eff2cd2aa8fca36}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Particle Accelerator Physics}
+      \field{isbn}{978-3-319-18317-6}
+      \field{series}{Graduate Texts in Physics}
+      \field{title}{Vlasov and Fokker--Planck Equations}
+      \field{year}{2015}
+      \verb{doi}
+      \verb 10.1007/978-3-319-18317-6_12
+      \endverb
+    \endentry
+    \entry{metral_mitigation_2022}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=b3c6586c4f371fded4ce259c93b53750}{%
+           family={Métral},
+           familyi={M\bibinitperiod},
+           given={Elias},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{fullhash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{fullhashraw}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{bibnamehash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{authorbibnamehash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{authornamehash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{authorfullhash}{b3c6586c4f371fded4ce259c93b53750}
+      \strng{authorfullhashraw}{b3c6586c4f371fded4ce259c93b53750}
+      \field{extraname}{2}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The European Physical Journal Plus}
+      \field{number}{1}
+      \field{title}{General Mitigation Techniques for Coherent Beam Instabilities in Particle Accelerators}
+      \field{volume}{137}
+      \field{year}{2022}
+      \field{pages}{47}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1140/epjp/s13360-021-02264-4
+      \endverb
+    \endentry
+    \entry{schoenfeldt_vfp_2017}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=2d2244504d959aa40c8801d4fde0498e}{%
+           family={Schönfeldt},
+           familyi={S\bibinitperiod},
+           given={Patrik},
+           giveni={P\bibinitperiod}}}%
+        {{hash=e3ab13b130a034eccfbe8875d7393b87}{%
+           family={Brosi},
+           familyi={B\bibinitperiod},
+           given={Miriam},
+           giveni={M\bibinitperiod}}}%
+        {{hash=5881ccd96d5f64351698b84bf31c0572}{%
+           family={Schwarz},
+           familyi={S\bibinitperiod},
+           given={Markus},
+           giveni={M\bibinitperiod}}}%
+        {{hash=c6deddc9e3607a56170a3e0dd549639b}{%
+           family={Steinmann},
+           familyi={S\bibinitperiod},
+           given={Johannes\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=b1e00ced453866bee6eadf66879cd2ab}{%
+           family={Müller},
+           familyi={M\bibinitperiod},
+           given={Anke-Susanne},
+           giveni={A\bibinithyphendelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{b7fefcc032ed9a91ff2e954234f98c6f}
+      \strng{fullhash}{e9b2a2a9ae070614a43e94069d5b5954}
+      \strng{fullhashraw}{e9b2a2a9ae070614a43e94069d5b5954}
+      \strng{bibnamehash}{b7fefcc032ed9a91ff2e954234f98c6f}
+      \strng{authorbibnamehash}{b7fefcc032ed9a91ff2e954234f98c6f}
+      \strng{authornamehash}{b7fefcc032ed9a91ff2e954234f98c6f}
+      \strng{authorfullhash}{e9b2a2a9ae070614a43e94069d5b5954}
+      \strng{authorfullhashraw}{e9b2a2a9ae070614a43e94069d5b5954}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physical Review Accelerators and Beams}
+      \field{number}{3}
+      \field{title}{Parallelized Vlasov--Fokker--Planck Solver for Desktop Personal Computers}
+      \field{volume}{20}
+      \field{year}{2017}
+      \field{pages}{030704}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevAccelBeams.20.030704
+      \endverb
+    \endentry
+    \entry{funkner_haissinski_2025}{inproceedings}{}{}
+      \name{author}{8}{}{%
+        {{hash=32435303968fe1458115069c05910e5f}{%
+           family={Funkner},
+           familyi={F\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=bb3fa27eb61d868eeec0b379d08acdba}{%
+           family={Mochihashi},
+           familyi={M\bibinitperiod},
+           given={Akira},
+           giveni={A\bibinitperiod}}}%
+        {{hash=3910c0ed17139c897bdd2abb0505b541}{%
+           family={Mueller},
+           familyi={M\bibinitperiod},
+           given={Anke-Susanne},
+           giveni={A\bibinithyphendelim S\bibinitperiod}}}%
+        {{hash=a8a1ba7daa0ed81f296cca58be0c61aa}{%
+           family={Bründermann},
+           familyi={B\bibinitperiod},
+           given={Erik},
+           giveni={E\bibinitperiod}}}%
+        {{hash=3b2d572ae6da9a678398f1308d41a250}{%
+           family={Donoso},
+           familyi={D\bibinitperiod},
+           given={Felipe},
+           giveni={F\bibinitperiod}}}%
+        {{hash=5e49fb24a197b5cffdc4d0d4322e47b5}{%
+           family={Niehues},
+           familyi={N\bibinitperiod},
+           given={Gudrun},
+           giveni={G\bibinitperiod}}}%
+        {{hash=964731b983f576a29f8b86ec57071968}{%
+           family={Steinmann},
+           familyi={S\bibinitperiod},
+           given={Johannes},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5881ccd96d5f64351698b84bf31c0572}{%
+           family={Schwarz},
+           familyi={S\bibinitperiod},
+           given={Markus},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{673862c9c2c71eabdd1f335e4eb56137}
+      \strng{fullhash}{691ace29e7044c51a206d2a59dd1cf4d}
+      \strng{fullhashraw}{691ace29e7044c51a206d2a59dd1cf4d}
+      \strng{bibnamehash}{673862c9c2c71eabdd1f335e4eb56137}
+      \strng{authorbibnamehash}{673862c9c2c71eabdd1f335e4eb56137}
+      \strng{authornamehash}{673862c9c2c71eabdd1f335e4eb56137}
+      \strng{authorfullhash}{691ace29e7044c51a206d2a59dd1cf4d}
+      \strng{authorfullhashraw}{691ace29e7044c51a206d2a59dd1cf4d}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 16th International Particle Accelerator Conference}
+      \field{series}{JACoW IPAC2025}
+      \field{title}{Reconstructing Wake Functions Using {Haissinski} Distributions from Multiple Bunch Charges}
+      \field{year}{2025}
+      \field{pages}{WEPS102}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.18429/JACoW-IPAC2025-WEPS102
+      \endverb
     \endentry
     \entry{kovachki_neural_2023}{article}{}{}
       \name{author}{7}{}{%
@@ -413,8 +1341,8 @@
       \strng{authornamehash}{d1a1701be8d68f5d464310f6647611ca}
       \strng{authorfullhash}{301e7a64eb5bae7a9f5af3792935eb01}
       \strng{authorfullhashraw}{301e7a64eb5bae7a9f5af3792935eb01}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Research}
@@ -424,40 +1352,12 @@
       \field{year}{2023}
       \field{pages}{1\bibrangedash 97}
       \range{pages}{97}
-    \endentry
-    \entry{burby_fast_2020}{article}{}{}
-      \name{author}{3}{}{%
-        {{hash=b9344e4d95e0625f313bea3132f8724c}{%
-           family={Burby},
-           familyi={B\bibinitperiod},
-           given={J.\bibnamedelimi W.},
-           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
-        {{hash=4d364a0b532303441c6621ce57289055}{%
-           family={Tang},
-           familyi={T\bibinitperiod},
-           given={Q.},
-           giveni={Q\bibinitperiod}}}%
-        {{hash=9ac3e9968bca9ea6ac6d93e6b6695f97}{%
-           family={Maulik},
-           familyi={M\bibinitperiod},
-           given={R.},
-           giveni={R\bibinitperiod}}}%
-      }
-      \strng{namehash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{fullhash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{fullhashraw}{5937adfc50ad8e584282666ae1385b40}
-      \strng{bibnamehash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{authorbibnamehash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{authornamehash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{authorfullhash}{5937adfc50ad8e584282666ae1385b40}
-      \strng{authorfullhashraw}{5937adfc50ad8e584282666ae1385b40}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2007.04496}
-      \field{title}{Fast neural Poincaré maps for toroidal magnetic fields}
-      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://jmlr.org/papers/v24/21-1524.html
+      \endverb
+      \verb{url}
+      \verb https://jmlr.org/papers/v24/21-1524.html
+      \endverb
     \endentry
     \entry{huang_symplectic_2024}{article}{}{}
       \name{author}{9}{}{%
@@ -515,12 +1415,13 @@
       \strng{authornamehash}{86ab4db30180a71244283aad7c790e9f}
       \strng{authorfullhash}{8adc26e24a057a235089c33aeaaa15ad}
       \strng{authorfullhashraw}{8adc26e24a057a235089c33aeaaa15ad}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Physics: Conference Series}
-      \field{title}{Symplectic neural surrogate models for beam dynamics}
+      \field{number}{6}
+      \field{title}{Symplectic Neural Surrogate Models for Beam Dynamics}
       \field{volume}{2687}
       \field{year}{2024}
       \field{pages}{062026}
@@ -528,8 +1429,685 @@
       \verb{doi}
       \verb 10.1088/1742-6596/2687/6/062026
       \endverb
+      \verb{urlraw}
+      \verb https://iopscience.iop.org/article/10.1088/1742-6596/2687/6/062026
+      \endverb
+      \verb{url}
+      \verb https://iopscience.iop.org/article/10.1088/1742-6596/2687/6/062026
+      \endverb
+    \endentry
+    \entry{wang_2026}{unpublished}{}{}
+      \name{author}{3}{}{%
+        {{hash=da71d3435569425664b347932f50af6c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=d01de8ca5a4bf27cef5ad2f07193a34e}{%
+           family={Hoffstaetter},
+           familyi={H\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=3ca3029088d06bfa4d9f361bd0ae5879}{%
+           family={Cao},
+           familyi={C\bibinitperiod},
+           given={I.},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {JACoW Publishing, Geneva, Switzerland}%
+      }
+      \strng{namehash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{fullhash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{fullhashraw}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{bibnamehash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{authorbibnamehash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{authornamehash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{authorfullhash}{7dfd46bbecbf587e3053ff5668654b37}
+      \strng{authorfullhashraw}{7dfd46bbecbf587e3053ff5668654b37}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 17th International Particle Accelerator Conference}
+      \field{isbn}{978-3-95450-252-3}
+      \field{issn}{2673-5350}
+      \field{month}{5}
+      \field{note}{Presented at IPAC'26, Deauville, France, 2026, paper THP5347, to be published}
+      \field{number}{17}
+      \field{series}{IPAC'26}
+      \field{title}{Learning Beam Dynamics in the Latent Space of Beam Distributions}
+      \field{venue}{Deauville, France}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://jacow.org/ipac2026/pdf/THP5347.pdf
+      \endverb
+      \verb{url}
+      \verb https://jacow.org/ipac2026/pdf/THP5347.pdf
+      \endverb
+    \endentry
+    \entry{kovachki_universal_2021}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=d3715d69863d59245589f244c5866bd4}{%
+           family={Kovachki},
+           familyi={K\bibinitperiod},
+           given={Nikola},
+           giveni={N\bibinitperiod}}}%
+        {{hash=a014cc0669036a9cec9a98d21084194d}{%
+           family={Lanthaler},
+           familyi={L\bibinitperiod},
+           given={Samuel},
+           giveni={S\bibinitperiod}}}%
+        {{hash=202d2742653588d0b8e2bddcf2377672}{%
+           family={Mishra},
+           familyi={M\bibinitperiod},
+           given={Siddhartha},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{fullhash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{fullhashraw}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{bibnamehash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{authorbibnamehash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{authornamehash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{authorfullhash}{b58ff5c64162070d3cc3591413d33d9c}
+      \strng{authorfullhashraw}{b58ff5c64162070d3cc3591413d33d9c}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Machine Learning Research}
+      \field{number}{290}
+      \field{title}{On Universal Approximation and Error Bounds for {Fourier Neural Operators}}
+      \field{volume}{22}
+      \field{year}{2021}
+      \field{pages}{1\bibrangedash 76}
+      \range{pages}{76}
+      \verb{urlraw}
+      \verb https://jmlr.org/papers/v22/21-0806.html
+      \endverb
+      \verb{url}
+      \verb https://jmlr.org/papers/v22/21-0806.html
+      \endverb
+    \endentry
+    \entry{kipf_gcn_2017}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=26d8bcbda6afaf96334bf47c8fb88a75}{%
+           family={Kipf},
+           familyi={K\bibinitperiod},
+           given={Thomas\bibnamedelima N.},
+           giveni={T\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=53d2880ad8047b61cdae2c6b2803e763}{%
+           family={Welling},
+           familyi={W\bibinitperiod},
+           given={Max},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{fullhash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{fullhashraw}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{bibnamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorbibnamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authornamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorfullhash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorfullhashraw}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Conference on Learning Representations}
+      \field{title}{Semi-Supervised Classification with Graph Convolutional Networks}
+      \field{year}{2017}
+      \true{nocite}
+    \endentry
+    \entry{burby_fast_2020}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=b9344e4d95e0625f313bea3132f8724c}{%
+           family={Burby},
+           familyi={B\bibinitperiod},
+           given={J.\bibnamedelimi W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=4d364a0b532303441c6621ce57289055}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=9ac3e9968bca9ea6ac6d93e6b6695f97}{%
+           family={Maulik},
+           familyi={M\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{fullhash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{fullhashraw}{5937adfc50ad8e584282666ae1385b40}
+      \strng{bibnamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorbibnamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authornamehash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorfullhash}{5937adfc50ad8e584282666ae1385b40}
+      \strng{authorfullhashraw}{5937adfc50ad8e584282666ae1385b40}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{physics.plasm-ph}
+      \field{eprinttype}{arXiv}
+      \field{journaltitle}{Plasma Physics and Controlled Fusion}
+      \field{number}{2}
+      \field{title}{Fast Neural {Poincaré} Maps for Toroidal Magnetic Fields}
+      \field{volume}{63}
+      \field{year}{2021}
+      \true{nocite}
+      \field{pages}{024001}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1088/1361-6587/abcbaa
+      \endverb
+      \verb{eprint}
+      \verb 2007.04496
+      \endverb
+    \endentry
+    \entry{turaev_polynomial_2003}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=a97e63324f4bd1f76954665f24ac137a}{%
+           family={Turaev},
+           familyi={T\bibinitperiod},
+           given={Dmitry},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{fullhash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{fullhashraw}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{bibnamehash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{authorbibnamehash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{authornamehash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{authorfullhash}{a97e63324f4bd1f76954665f24ac137a}
+      \strng{authorfullhashraw}{a97e63324f4bd1f76954665f24ac137a}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Nonlinearity}
+      \field{number}{1}
+      \field{title}{Polynomial Approximations of Symplectic Dynamics and Richness of Chaos in Non-Hyperbolic Area-Preserving Maps}
+      \field{volume}{16}
+      \field{year}{2003}
+      \true{nocite}
+      \field{pages}{123\bibrangedash 135}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1088/0951-7715/16/1/308
+      \endverb
+    \endentry
+    \entry{hoover_high_dimensional_2024}{misc}{}{}
+      \name{author}{2}{}{%
+        {{hash=706997da4bd33662fe1fbb7feeaec844}{%
+           family={Hoover},
+           familyi={H\bibinitperiod},
+           given={Austin},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b6dcfcddac86d8fe60ea9d7cd12698b9}{%
+           family={Wong},
+           familyi={W\bibinitperiod},
+           given={Jonathan\bibnamedelima C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{fullhash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{fullhashraw}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{bibnamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorbibnamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authornamehash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorfullhash}{1448de4703983cb81f5388eb7bd8eb73}
+      \strng{authorfullhashraw}{1448de4703983cb81f5388eb7bd8eb73}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{physics.acc-ph}
+      \field{eprinttype}{arXiv}
+      \field{title}{High-Dimensional Maximum-Entropy Phase Space Tomography Using Normalizing Flows}
+      \field{year}{2024}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2406.00236
+      \endverb
+      \verb{eprint}
+      \verb 2406.00236
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2406.00236
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2406.00236
+      \endverb
+    \endentry
+    \entry{pyheadtail_software}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=9b7d3d3c3813680eafb4fd955f77f2b9}{%
+           family={Oeftiger},
+           familyi={O\bibinitperiod},
+           given={Adrian},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {CERN}%
+      }
+      \strng{namehash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{fullhash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{fullhashraw}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{bibnamehash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{authorbibnamehash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{authornamehash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{authorfullhash}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \strng{authorfullhashraw}{9b7d3d3c3813680eafb4fd955f77f2b9}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{18}
+      \field{month}{4}
+      \field{number}{CERN-ACC-NOTE-2019-0013}
+      \field{title}{An Overview of {PyHEADTAIL}}
+      \field{type}{Technical Report}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.17181/CERN-ACC-NOTE-2019-0013
+      \endverb
+      \verb{urlraw}
+      \verb https://cds.cern.ch/record/2672381
+      \endverb
+      \verb{url}
+      \verb https://cds.cern.ch/record/2672381
+      \endverb
+    \endentry
+    \entry{wang_resistive-wall_2022}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=dab2a48d9607c0ab6dfe6ca148c1ad0d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Y.\bibnamedelimi T.},
+           giveni={Y\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=da71d3435569425664b347932f50af6c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=0f5a015a1ab7ba65c0730e4590d302bf}{%
+           family={Qin},
+           familyi={Q\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=61545bd3bf816e88e4632ad51d1455d2}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=23aa59fe1ef97b9309bc34f1b4946aec}{%
+           family={Yue},
+           familyi={Y\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{fullhash}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{fullhashraw}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{bibnamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authorbibnamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authornamehash}{58b6ed94da0786035e6bb05eecdc144d}
+      \strng{authorfullhash}{0a67fd46de53b7cdb1715023617e6988}
+      \strng{authorfullhashraw}{0a67fd46de53b7cdb1715023617e6988}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment}
+      \field{title}{Resistive-Wall Impedance of an Elliptical Multilayer Beam Pipe}
+      \field{volume}{1037}
+      \field{year}{2022}
+      \true{nocite}
+      \field{pages}{166928}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.nima.2022.166928
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900222003722
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0168900222003722
+      \endverb
+    \endentry
+    \entry{kim_cuda-based_2026}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=5bac6a3ecd66eff3f23741f6f108de6d}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Keon\bibnamedelima Hee},
+           giveni={K\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=f7fb345578c2dc025510fa9cb1c40081}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Eun-San},
+           giveni={E\bibinithyphendelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{fullhash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{fullhashraw}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{bibnamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorbibnamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authornamehash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorfullhash}{6cb6d96f25d7b367cdde9b520efa1618}
+      \strng{authorfullhashraw}{6cb6d96f25d7b367cdde9b520efa1618}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Nuclear Science and Techniques}
+      \field{number}{1}
+      \field{title}{{CUDA}-Based {GPU}-Only Computation for Efficient Tracking Simulation of Single- and Multi-Bunch Collective Effects}
+      \field{volume}{37}
+      \field{year}{2026}
+      \true{nocite}
+      \field{pages}{6}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1007/s41365-025-01814-0
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/s41365-025-01814-0
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/s41365-025-01814-0
+      \endverb
+    \endentry
+    \entry{kossaifi_library_2026}{misc}{}{}
+      \name{author}{11}{}{%
+        {{hash=cbd0b159e6f95f4c491cdd8647937fed}{%
+           family={Kossaifi},
+           familyi={K\bibinitperiod},
+           given={Jean},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d3715d69863d59245589f244c5866bd4}{%
+           family={Kovachki},
+           familyi={K\bibinitperiod},
+           given={Nikola},
+           giveni={N\bibinitperiod}}}%
+        {{hash=009036050bf23abe561429f6eaa0b018}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Zongyi},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9ab2bbfde9ad82e07b657e3c79ad17e3}{%
+           family={Pitt},
+           familyi={P\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=a60247ed916f17dde7bd3f592bbac2ae}{%
+           family={Liu-Schiaffini},
+           familyi={L\bibinithyphendelim S\bibinitperiod},
+           given={Miguel},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b563323b4d0ab22d2a3d6b6e14175773}{%
+           family={George},
+           familyi={G\bibinitperiod},
+           given={Robert\bibnamedelima Joseph},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=a9e473c93ebd20f3d927caad0d6a16cd}{%
+           family={Bonev},
+           familyi={B\bibinitperiod},
+           given={Boris},
+           giveni={B\bibinitperiod}}}%
+        {{hash=3648b51d63e1ae389e46f87296d4c89a}{%
+           family={Azizzadenesheli},
+           familyi={A\bibinitperiod},
+           given={Kamyar},
+           giveni={K\bibinitperiod}}}%
+        {{hash=2f45c7b06edceda99c5169c8b0847367}{%
+           family={Berner},
+           familyi={B\bibinitperiod},
+           given={Julius},
+           giveni={J\bibinitperiod}}}%
+        {{hash=0374bc5710e4a5160237123774f058ff}{%
+           family={Duruisseaux},
+           familyi={D\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod}}}%
+        {{hash=bd4a2be6ede169a3c794a1cd7e3fb9a2}{%
+           family={Anandkumar},
+           familyi={A\bibinitperiod},
+           given={Anima},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{fullhash}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{fullhashraw}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{bibnamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authorbibnamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authornamehash}{5d0a29e6a80c25d7cf0e934004260002}
+      \strng{authorfullhash}{6966cf2767c5dbc68a7e24951f499dce}
+      \strng{authorfullhashraw}{6966cf2767c5dbc68a7e24951f499dce}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.AI}
+      \field{eprinttype}{arXiv}
+      \field{title}{A Library for Learning Neural Operators}
+      \field{year}{2026}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2412.10354
+      \endverb
+      \verb{eprint}
+      \verb 2412.10354
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2412.10354
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2412.10354
+      \endverb
+    \endentry
+    \entry{liu_survey_2025}{misc}{}{}
+      \name{author}{10}{}{%
+        {{hash=83f95dca7c81df3fe67380769eb0321c}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Jing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=87d7505abb0a27a70d1d38d9613a71c6}{%
+           family={Ma},
+           familyi={M\bibinitperiod},
+           given={Zhenchao},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=280280355f35ee0123870f82695c847f}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zepu},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=64c8b646fd22d5733f0edeaa9e5aba1c}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={Chenxuanyin},
+           giveni={C\bibinitperiod}}}%
+        {{hash=bca2e981ea48254d8e4c3f577b096317}{%
+           family={Ren},
+           familyi={R\bibinitperiod},
+           given={Jiayang},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7854df7d2d51eff7a971cc37d31cda4b}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zehua},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=cce3fe771da500a9e35bf9956380ddba}{%
+           family={Song},
+           familyi={S\bibinitperiod},
+           given={Liang},
+           giveni={L\bibinitperiod}}}%
+        {{hash=411bdca716d2c6048b0e8219b47b64ad}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Bo},
+           giveni={B\bibinitperiod}}}%
+        {{hash=621013bf54d3546375ad71f17f020b5b}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=8b4082936a45dafc0f71d542aad12350}{%
+           family={Leung},
+           familyi={L\bibinitperiod},
+           given={Victor\bibnamedelimb C.\bibnamedelimi M.},
+           giveni={V\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{fullhash}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{fullhashraw}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{bibnamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authorbibnamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authornamehash}{e5bd7c7d70238c2c10b0a197391b05cd}
+      \strng{authorfullhash}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \strng{authorfullhashraw}{6e78fc4d359b6fbd6b7aa46298e955c4}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.AI}
+      \field{eprinttype}{arXiv}
+      \field{title}{A Survey on Diffusion Models for Anomaly Detection}
+      \field{year}{2025}
+      \true{nocite}
+      \verb{doi}
+      \verb 10.48550/arXiv.2501.11430
+      \endverb
+      \verb{eprint}
+      \verb 2501.11430
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2501.11430
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2501.11430
+      \endverb
+    \endentry
+    \entry{gibellieri_impact_nodate}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=5dc3613cde836589ae79cc30ddecbd22}{%
+           family={Gibellieri},
+           familyi={G\bibinitperiod},
+           given={Dora},
+           giveni={D\bibinitperiod}}}%
+        {{hash=c347e600549dffa7ff562c8da843ba44}{%
+           family={Ghribi},
+           familyi={G\bibinitperiod},
+           given={Adnan},
+           giveni={A\bibinitperiod}}}%
+        {{hash=99743187aafc75ce30d9ed544abaee6c}{%
+           family={Migliorati},
+           familyi={M\bibinitperiod},
+           given={Mauro},
+           giveni={M\bibinitperiod}}}%
+        {{hash=05f6969523db0cf9b3e81d3c5d8cec0b}{%
+           family={Zannini},
+           familyi={Z\bibinitperiod},
+           given={Carlo},
+           giveni={C\bibinitperiod}}}%
+        {{hash=aedff89294b7b389e97e9c3ef65cf99e}{%
+           family={Zobov},
+           familyi={Z\bibinitperiod},
+           given={Mikhail},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{location}{1}{%
+        {Geneva, Switzerland}%
+      }
+      \list{publisher}{1}{%
+        {JACoW Publishing}%
+      }
+      \strng{namehash}{547cd70818e32486af9dc10e68ebb77b}
+      \strng{fullhash}{803f68e65cc066ed56e7248b511aac6b}
+      \strng{fullhashraw}{803f68e65cc066ed56e7248b511aac6b}
+      \strng{bibnamehash}{547cd70818e32486af9dc10e68ebb77b}
+      \strng{authorbibnamehash}{547cd70818e32486af9dc10e68ebb77b}
+      \strng{authornamehash}{547cd70818e32486af9dc10e68ebb77b}
+      \strng{authorfullhash}{803f68e65cc066ed56e7248b511aac6b}
+      \strng{authorfullhashraw}{803f68e65cc066ed56e7248b511aac6b}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 16th International Particle Accelerator Conference (IPAC'25)}
+      \field{isbn}{978-3-95450-248-6}
+      \field{issn}{2673-5490}
+      \field{title}{Impact of the Geometric Impedance of Collimators on Beam Stability in {FCC-ee}}
+      \field{venue}{Taipei, Taiwan}
+      \field{year}{2025}
+      \true{nocite}
+      \field{pages}{2137\bibrangedash 2140}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.18429/JACoW-IPAC2025-WEPM074
+      \endverb
+    \endentry
+    \entry{chance_selected_nodate}{inproceedings}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=2aeff7e90636cd820f0fc3cba3f89cd1}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {english}%
+      }
+      \list{location}{1}{%
+        {Geneva, Switzerland}%
+      }
+      \list{publisher}{1}{%
+        {JACoW Publishing}%
+      }
+      \strng{namehash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{fullhash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{fullhashraw}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{bibnamehash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{authorbibnamehash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{authornamehash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{authorfullhash}{f6c70dd23065f678b22fe1ee490a3b44}
+      \strng{authorfullhashraw}{f6c70dd23065f678b22fe1ee490a3b44}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 15th International Particle Accelerator Conference (IPAC'24)}
+      \field{isbn}{978-3-95450-247-9}
+      \field{issn}{2673-5490}
+      \field{title}{Selected Advances in the Accelerator Design of the Future Circular Electron-Positron Collider ({FCC-ee})}
+      \field{venue}{Nashville, TN, USA}
+      \field{year}{2024}
+      \true{nocite}
+      \field{pages}{2493\bibrangedash 2496}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.18429/JACoW-IPAC2024-WEPR14
+      \endverb
     \endentry
   \enddatalist
+  \keyalias{Funkner_2025}{funkner_haissinski_2025}
+  \keyalias{burby_fast_2021}{burby_fast_2020}
+  \keyalias{funkner_reconstructing_nodate}{funkner_haissinski_2025}
+  \keyalias{ghribi_impact_nodate}{gibellieri_impact_fcc_heb}
+  \keyalias{hoover_high-dimensional_2024}{hoover_high_dimensional_2024}
+  \keyalias{kovachki_neural_nodate}{kovachki_neural_2023}
+  \keyalias{metral_wake_2021-1}{metral_wake_2021}
 \endrefsection
 \endinput
 
