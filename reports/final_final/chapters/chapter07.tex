@@ -1,0 +1,13 @@
+\section{Conclusion}
+\label{sec:conclusion}
+% =============================================================================
+
+This internship investigated simulation-based machine-learning surrogates for collective-effects studies relevant to the FCC-ee High-Energy Booster. Two modelling levels were considered. A Fourier Neural Operator was first evaluated on longitudinal density maps. Separately, six-dimensional particle clouds were reduced to fifteen pairwise phase-space marginals, six centroids, and six RMS sizes. A conditional variational autoencoder compressed the marginal representation, after which global causal attention, finite-window attention, and a Graph Neural Operator propagated the latent beam state.
+
+The central empirical result is that restricting the support of latent information transfer improves the evaluated models relative to global causal attention. On the common held-out test set, the relative histogram error decreases from $0.681$ for the global Transformer to $0.534$ for the $W=8$ Transformer and $0.511$ for the GNO. The $W=8$ Transformer obtains the lowest sliced-Wasserstein discrepancy, $0.014$, whereas the GNO obtains the lowest aggregate moment error, $0.547$, residual-bias norm, $0.376$, and inference time, approximately $2.34\,\mathrm{ms}$ per sample. The comparison therefore identifies complementary strengths rather than a single model that dominates every criterion.
+
+The work also clarifies what these results do not establish. The fifteen marginals are a reduced representation and do not uniquely reconstruct the complete six-dimensional joint density. The reported checkpoints come from one data split without matched repeated seeds, reference-simulation costs were not measured under a common protocol, and coordinate-wise physical-statistics scores were not retained. The results consequently support the conclusion that structured causal support and graph connectivity are useful inductive biases within the sampled simulation regime; they do not prove strict physical locality, calibrated uncertainty, operational speed-up, or validity outside the training domain.
+
+The most direct next steps are to enforce consistency among pairwise marginals and to export coordinate-wise $R^2$ and bias. The architectural comparison should then be repeated with fixed regularisation, multiple seeds, and out-of-distribution parameter splits. End-to-end simulation and inference costs must also be measured on identified hardware. With these validations, latent operator models could become useful components of uncertainty-aware parameter scans and future accelerator digital-twin workflows.
+
+% =============================================================================

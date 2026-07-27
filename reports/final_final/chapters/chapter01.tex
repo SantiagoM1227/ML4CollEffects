@@ -1,0 +1,61 @@
+\section{Introduction}
+\label{sec:introduction}
+% =============================================================================
+
+\subsection{Motivation}
+
+Collective effects are among the principal performance-limiting phenomena in modern circular accelerators. As beam intensity increases, the approximation of independent particles evolving only under externally imposed electromagnetic fields becomes insufficient. The beam interacts with itself and with its environment through wakefields, beam-coupling impedance, space charge, synchrotron radiation, and other collective mechanisms. These interactions may produce emittance growth, coherent tune shifts, bunch lengthening, coupled-bunch motion, transverse mode coupling, and single-bunch instabilities. Wakefield and impedance formalisms therefore provide the standard language for describing beam--environment interactions and evaluating stability margins \cite{metral_wake_2021}.
+
+These questions are particularly relevant to the Future Circular Collider for electrons and positrons (FCC-ee). Within the proposed injector chain, the High-Energy Booster (HEB) must accumulate and ramp the beam while preserving its phase-space quality. At injection, the interplay between the lattice, vacuum-chamber properties, wakefields, resistive-wall impedance, radiation, and multi-bunch motion motivates computational studies over a broad parameter domain \cite{gibellieri_impact_fcc_heb}. High-fidelity multiparticle tracking remains indispensable for such studies, but repeated simulations make exhaustive scans and uncertainty studies expensive.
+
+Machine-learning surrogates offer a complementary approach: after training on reference simulations, they can provide inexpensive evaluations for previously unseen configurations inside the sampled domain. The objective is not to replace tracking codes or to claim machine validity beyond the training distribution. It is to determine which representations and architectural biases permit fast approximation of simulated beam-distribution evolution while retaining the observables needed for exploratory analysis. Related machine-learning applications in accelerator physics include diagnostics, correction, optimisation, and simulation surrogates \cite{arpaia_machine_2021,roussel_bayesian_2024}.
+
+\subsection{Scope and problem statement}
+
+In canonical order, the phase-space state is written as
+\begin{equation}
+    \xi_{\mathrm{can}}
+    =
+    (x,p_x,y,p_y,\zeta,\delta)
+    \in
+    \mathbb{R}^{6}.
+    \label{eq:canonical_coordinate_order}
+\end{equation}
+Let $\rho_s(\xi)$ denote the beam density at longitudinal position, lattice index, or turn $s$. For fixed machine and collective-effect parameters $\mu$, the target evolution is the generally nonlinear operator
+\begin{equation}
+    \mathcal{G}_{\Delta s,\mu}:
+    \rho_s
+    \longmapsto
+    \rho_{s+\Delta s}.
+    \label{eq:intro_operator_target}
+\end{equation}
+Without collective forces, this operator reduces to the pushforward induced by a single-particle lattice map. With self-consistent forces, the map depends on the distribution itself.
+
+The full six-dimensional joint density is not reconstructed uniquely in this work. Instead, each simulated beam state is represented by its fifteen pairwise two-dimensional marginals, together with six centroids and six RMS sizes. To match the numerical implementation and the plotted pair indices, histogram channels use the storage order
+\begin{equation}
+    \xi_{\mathrm{data}}
+    =
+    (x,y,\zeta,p_x,p_y,\delta),
+    \label{eq:data_coordinate_order}
+\end{equation}
+which is a fixed permutation of Eq.~\eqref{eq:canonical_coordinate_order}. This distinction is maintained throughout the report: physical equations use canonical order, whereas pair indices and figure labels use the data order.
+
+The central research question is therefore:
+\begin{quote}
+Can simulated beam evolution be approximated by learned operators acting on reduced longitudinal profiles or on a pairwise-marginal representation, and does restricting the support of latent information transfer improve prediction relative to global causal attention?
+\end{quote}
+
+\subsection{Contributions and evaluation strategy}
+
+The principal contributions of the internship are:
+\begin{enumerate}
+    \item a simulation and preprocessing workflow that converts particle clouds into reduced longitudinal profiles and fifteen pairwise phase-space marginals;
+    \item a conditional variational autoencoder (CVAE) that compresses the marginal representation while retaining explicit centroids and RMS sizes;
+    \item a controlled comparison of global causal attention, finite-window causal attention, and Graph Neural Operator (GNO) propagation in the same latent representation;
+    \item a kernel-support interpretation connecting masked attention and graph message passing at the level of their non-local interaction layers;
+    \item a joint evaluation using histogram error, transport-based discrepancies, residual bias, physical statistics, and inference time.
+\end{enumerate}
+
+The study is exploratory and simulation-based. Its conclusions are restricted to the sampled parameter domain, the available train--validation--test split, and the pairwise-marginal representation. In particular, improved performance of a restricted-support model is interpreted as evidence about the tested surrogate architectures, not as proof that the underlying collective beam dynamics are strictly local.
+
+% =============================================================================

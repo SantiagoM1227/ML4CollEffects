@@ -1,0 +1,65 @@
+\section{Discussion and perspectives}
+\label{sec:discussion}
+% =============================================================================
+
+\subsection{What the architectural comparison establishes}
+\label{subsec:exploratory_inductive_bias}
+
+The study compares several hypotheses about how a reduced beam representation should evolve. The FNO uses a spectral parameterisation for a field defined on a regular longitudinal grid. The global Transformer treats the lattice as an ordered sequence with complete upstream access. The windowed Transformer replaces the complete causal graph by a banded graph, and the GNO uses explicit directed connectivity and a learned graph kernel. These models should therefore be understood as different structural approximations, not merely as networks of different sizes.
+
+On the selected held-out checkpoints, global attention gives a relative histogram error of $0.681$, whereas the $W=8$ Transformer and GNO obtain $0.534$ and $0.511$, respectively. The GNO also has the smallest aggregate moment error, residual-bias norm, and inference time. However, the $W=8$ Transformer has the smallest sliced-Wasserstein value, $0.014$ compared with $0.022$ for the GNO. The result is therefore a Pareto trade-off rather than a universal ranking.
+
+The restricted-support models improve the chosen test metrics, but several explanations remain possible. A sparse interaction graph can act as statistical regularisation, reduce weakly constrained correlations, simplify optimisation, or alter effective capacity. Moreover, each window used an independently selected KL weight and checkpoint, and the comparison was not repeated over matched random seeds. The observed improvement is consequently evidence that structured support is a useful inductive bias for this dataset; it is not a controlled proof that locality alone causes the improvement.
+
+The physical interpretation also requires care. Lattice transport is composed sequentially, but collective effects such as wakefields are non-local and directed. The token neighbourhood of a latent propagator is not the same object as the longitudinal head--tail support of a wake function. Windowed attention and graph message passing are computationally related through restricted aggregation, yet neither kernel is identified with a physical wake or Green function. Establishing such an interpretation would require dedicated kernel diagnostics and perturbations of the lattice or bunch ordering.
+
+\subsection{Representation limits and physical consistency}
+
+The fifteen pairwise marginals provide a tractable reduction from particle clouds to $15\times64\times64$ arrays. They retain non-Gaussian projected structure, including tilt, halo, asymmetry, and multimodality, while remaining compatible with convolutional encoders. The price of this reduction is non-identifiability: distinct six-dimensional joint densities can possess the same complete set of pairwise marginals. The model therefore reconstructs a pairwise-marginal representation of a six-dimensional beam state, not a unique six-dimensional density.
+
+Independent channel normalisation preserves unit mass in every projected density but does not guarantee that two channels sharing a coordinate yield the same one-dimensional marginal. Equation~\eqref{eq:marginal_consistency_metric} provides a direct diagnostic for this defect. A natural extension is to add
+\begin{equation}
+    \mathcal{L}_{\mathrm{cons}}
+    =
+    \lambda_{\mathrm{cons}}\mathcal{E}_{\mathrm{cons}}
+\end{equation}
+to the reconstruction objective or to construct the decoder around shared one-dimensional marginal factors. Such a constraint would connect probabilistic consistency to the architecture more directly than generic regularisation.
+
+The explicit statistics head addresses a different limitation. A normalised histogram can reproduce morphology while missing absolute displacement or extension. Predicting six centroids and six RMS sizes in parallel separates these quantities from projected shape. The current results indicate that RMS extensions are easier to predict than small centroid shifts. Future models should standardise each coordinate by a train-only physical scale and report coordinate-wise $R^2$, MAE, and signed bias.
+
+\subsection{Prospective uncertainty quantification}
+
+The stochastic CVAE posterior permits repeated latent samples,
+\begin{equation}
+    z^{(r)}\sim q_{\phi}(z\mid X,a,d),
+    \qquad
+    r=1,\ldots,R,
+\end{equation}
+which can be propagated to form an ensemble $\widehat{H}^{(r)}$. The corresponding sample mean and variance describe sensitivity to the encoded latent distribution. They must not automatically be interpreted as calibrated predictive uncertainty. Posterior sampling mainly reflects the learned conditional latent variability; it does not by itself quantify uncertainty in network parameters, simulator discrepancy, or out-of-distribution extrapolation.
+
+A calibrated study would separate at least three contributions: latent or aleatoric variability, epistemic variability across independently trained models, and reference-simulation uncertainty. Calibration should be evaluated through empirical coverage, reliability curves, proper scoring rules, and the relation between predicted variance and observed error. Until those tests are performed, uncertainty quantification remains a perspective rather than a demonstrated result.
+
+\subsection{Toward optimisation and accelerator digital twins}
+
+Once validated, a differentiable surrogate can support sensitivity analysis, constrained parameter scans, and Bayesian optimisation \cite{roussel_bayesian_2024}. The present models are not yet an operational digital twin: they have not been calibrated to machine measurements, tested under distribution shift, or coupled to an online state-estimation loop. They should instead be regarded as components of a possible digital-twin workflow in which high-fidelity simulation, measurement, uncertainty estimates, and a fast surrogate are updated together.
+
+\subsection{Limitations}
+
+The conclusions of this report are subject to the following limitations:
+\begin{enumerate}
+    \item the principal six-dimensional benchmark contains 512 simulated trajectory pairs and one fixed train--validation--test split;
+    \item the selected propagator checkpoints were not evaluated over several matched random seeds, so optimisation variability and statistical significance are unknown;
+    \item the window study changes both attention width and the independently selected KL weight, and is therefore not a fixed-regularisation ablation;
+    \item the pairwise representation does not uniquely determine the full six-dimensional joint density and may violate consistency among shared one-dimensional marginals;
+    \item the CVAE is lossy, with a test relative reconstruction error of $0.367$, so downstream errors combine compression and propagation effects;
+    \item the latent Pearson diagnostic uses only 51 validation samples and lacks permutation, multiple-testing, and nonlinear-dependence controls;
+    \item the macroparticle dashboards resample two-dimensional predicted maps and do not constitute an independently generated six-dimensional particle cloud;
+    \item coordinate-wise $R^2$, MAE, and bias were not retained for the statistics head, preventing a complete quantitative assessment of centroid and RMS predictions;
+    \item reference-simulation runtimes were not measured under a common protocol, so no simulator speed-up is claimed;
+    \item the models do not exactly enforce symplecticity, detailed wakefield causality, cross-marginal consistency, or calibrated uncertainty;
+    \item all quantitative conclusions are in-distribution and simulation-based; extrapolation to unseen machine settings or operational FCC-ee data has not been demonstrated.
+\end{enumerate}
+
+These limitations define a concrete validation programme. It comprises fixed-hyperparameter and repeated-seed ablations, stronger baselines, out-of-distribution splits, shared-marginal consistency, coordinate-wise physical metrics, calibrated ensembles, and end-to-end timing against identified high-fidelity simulations.
+
+% =============================================================================

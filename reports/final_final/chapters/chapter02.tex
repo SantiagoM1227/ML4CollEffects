@@ -1,0 +1,171 @@
+\section{Beam dynamics}
+\label{sec:beam_dynamics_data}
+% =============================================================================
+
+\subsection{Single-particle maps and distribution transport}
+
+In the absence of collective forces, the phase-space coordinates at the entrance of lattice element $j$ are mapped to its exit by
+\begin{equation}
+    \xi_{j+1}=\Phi_{j,\mu_j}(\xi_j),
+    \label{eq:single_particle_map}
+\end{equation}
+where $\mu_j$ contains the local element parameters. In the linear approximation, $\Phi_{j,\mu_j}(\xi)=M_j(\mu_j)\xi$ and a sequence of $N$ elements gives
+\begin{equation}
+    \xi_N=M_{N-1}\cdots M_1M_0\xi_0.
+    \label{eq:linear_particle_transport}
+\end{equation}
+
+At distribution level, the corresponding evolution is the pushforward
+\begin{equation}
+    \rho_{j+1}=(\Phi_{j,\mu_j})_{\#}\rho_j,
+    \label{eq:linear_pushforward}
+\end{equation}
+defined weakly, for every suitable test function $\varphi$, by
+\begin{equation}
+    \int \varphi(\xi)\,\dd (\Phi_{j,\mu_j})_{\#}\rho_j(\xi)
+    =
+    \int \varphi\!\left(\Phi_{j,\mu_j}(\xi)\right)\,\dd\rho_j(\xi).
+    \label{eq:pushforward_weak_definition}
+\end{equation}
+Equation~\eqref{eq:pushforward_weak_definition} is the definition of the pushforward; it is not, by itself, a statement of phase-space incompressibility. Volume preservation follows when the microscopic map is symplectic, and therefore satisfies $|\det D\Phi_{j,\mu_j}|=1$ wherever the Jacobian exists.
+
+\subsection{Wakefields and impedance}
+
+Intense beams interact with surrounding accelerator structures and generate fields that act back on trailing particles. Under the rigid-beam and impulse approximations, the response of the environment to a point-like source is represented by the longitudinal wake $W_{\parallel}$ and transverse wake $\bm W_{\perp}$. The longitudinal line density $\lambda(z)$ is normalised such that
+\begin{equation}
+    \int_{-\infty}^{\infty}\lambda(z)\,\dd z=1.
+\end{equation}
+Using the convention that positive separation corresponds to a source particle ahead of a trailing test particle, causality is imposed through $W_{\parallel}(s)=\bm W_{\perp}(s)=0$ for $s<0$. The bunch wake potentials are then
+\begin{align}
+    V_{\parallel}[\lambda](z)
+    &=
+    \int_{-\infty}^{\infty}
+    W_{\parallel}(z-z')\lambda(z')\,\dd z',
+    \label{eq:long_wake_potential_revised}
+    \\
+    \bm V_{\perp}[\lambda](z)
+    &=
+    \int_{-\infty}^{\infty}
+    \bm W_{\perp}(z-z')\lambda(z')\,\dd z'.
+    \label{eq:trans_wake_potential_revised}
+\end{align}
+The vanishing of the wake outside its causal support makes the apparently two-sided integral effectively one-sided. These convolution laws motivate an operator-learning description: the input function $\lambda$ is mapped to an induced field through a structured integral kernel \cite{metral_wake_2021}.
+
+The same response is described spectrally by the beam-coupling impedance. With the Fourier convention used in this report,
+\begin{align}
+    Z_{\parallel}(\omega)
+    &=
+    \frac{1}{c}
+    \int_{-\infty}^{\infty}
+    W_{\parallel}(z)e^{i\omega z/c}\,\dd z,
+    \label{eq:Zparallel_revised}
+    \\
+    \bm Z_{\perp}(\omega)
+    &=
+    \frac{i}{c}
+    \int_{-\infty}^{\infty}
+    \bm W_{\perp}(z)e^{i\omega z/c}\,\dd z.
+    \label{eq:Ztrans_revised}
+\end{align}
+Alternative sign conventions are possible and must be used consistently with the longitudinal coordinate. For real wake functions, $Z^{*}(\omega)=Z(-\omega)$. The Panofsky--Wenzel relation connects longitudinal and transverse wakes,
+\begin{equation}
+    \nabla_{\perp}W_{\parallel}(z,\bm r_{\perp})
+    =
+    \frac{\partial}{\partial z}\bm W_{\perp}(z,\bm r_{\perp}),
+    \label{eq:PW}
+\end{equation}
+and provides a structural consistency check for impedance calculations \cite{metral_wake_2021,kim_mbtrack2_cuda_2025}.
+
+\subsection{Longitudinal kinetic dynamics}
+
+Let $z$ denote the longitudinal displacement relative to the synchronous particle and $\delta$ the relative energy deviation. With the prime denoting differentiation with respect to the chosen longitudinal evolution coordinate $s$, a reduced conservative model is
+\begin{equation}
+    z'=-\eta\delta,
+    \qquad
+    \delta'=K(z),
+    \label{eq:longitudinal_hamiltonian_equations}
+\end{equation}
+where $\eta$ is the phase-slip factor and $K$ is the total longitudinal restoring force in the adopted normalisation. The corresponding density $\psi(z,\delta,s)$ satisfies
+\begin{equation}
+    \frac{\partial\psi}{\partial s}
+    -\eta\delta\frac{\partial\psi}{\partial z}
+    +K(z)\frac{\partial\psi}{\partial\delta}
+    =0,
+    \label{eq:vlasov_revised}
+\end{equation}
+or equivalently $\partial_s\psi+\{\psi,H\}=0$. When synchrotron-radiation damping and quantum excitation are included, a reduced Vlasov--Fokker--Planck model takes the form
+\begin{equation}
+    \frac{\partial\psi}{\partial s}
+    -\eta\delta\frac{\partial\psi}{\partial z}
+    +K(z)\frac{\partial\psi}{\partial\delta}
+    =
+    \frac{2}{c\tau_z}
+    \frac{\partial}{\partial\delta}
+    \left(
+        \delta\psi
+        +\sigma_{\delta}^{2}\frac{\partial\psi}{\partial\delta}
+    \right),
+    \label{eq:vfp_revised}
+\end{equation}
+where $\tau_z$ is the longitudinal damping time and $\sigma_{\delta}$ the equilibrium energy spread.
+
+Below the microwave-instability threshold, the stationary line density can be expressed through the Ha\"issinski equation. To avoid using the same symbol for the point-charge wake and the bunch-induced potential, define
+\begin{equation}
+    \mathcal{V}_{w}[\lambda](z)
+    =
+    \int_{-\infty}^{\infty}
+    W_{\parallel}(z-z')\lambda(z')\,\dd z'.
+    \label{eq:haissinski_wake_functional}
+\end{equation}
+The stationary profile satisfies schematically
+\begin{equation}
+    \frac{\dd\lambda_h}{\dd z}
+    +
+    \left[
+        \frac{z}{\sigma_{z0}^{2}}
+        -\frac{1}{\eta\sigma_{\delta}^{2}}F_h[\lambda_h](z)
+    \right]
+    \lambda_h(z)
+    =0,
+    \label{eq:haissinski_diff}
+\end{equation}
+with $\int\lambda_h(z)\,\dd z=1$. Equivalently,
+\begin{equation}
+    \lambda_h(z)
+    =
+    A\exp\!\left[-V_{\mathrm{eff}}[\lambda_h](z)\right],
+    \label{eq:haissinski_sol}
+\end{equation}
+where $V_{\mathrm{eff}}$ combines the RF potential and the self-induced wake contribution. The dependence of $V_{\mathrm{eff}}$ on $\lambda_h$ makes Eq.~\eqref{eq:haissinski_sol} a nonlinear fixed-point problem. This is the relation approximated in the reduced longitudinal benchmark; the report does not identify the learned FNO multiplier directly with the physical impedance.
+
+\subsection{Distribution-level evolution and modelling scope}
+
+For the canonical coordinate vector of Eq.~\eqref{eq:canonical_coordinate_order}, a lattice section with parameters $\mu$ defines a microscopic map
+\begin{equation}
+    \Phi_{\mu}:\mathbb{R}^{6}\rightarrow\mathbb{R}^{6},
+    \qquad
+    \xi_{\mathrm{out}}=\Phi_{\mu}(\xi_{\mathrm{in}}).
+\end{equation}
+When collective effects are included, the distribution-level evolution is generally nonlinear and may be written schematically as
+\begin{equation}
+    \partial_s\rho
+    +\nabla_{\xi}\!\cdot\!\left(F_{\mathrm{ext}}\rho\right)
+    +\nabla_{\xi}\!\cdot\!\left(F_{\mathrm{coll}}[\rho]\rho\right)
+    =
+    \mathcal{D}[\rho],
+    \label{eq:generic_vfp_6d_revised}
+\end{equation}
+where $F_{\mathrm{ext}}$ is the external lattice force, $F_{\mathrm{coll}}[\rho]$ the density-dependent collective force, and $\mathcal{D}$ represents damping and diffusion.
+
+A formal first-order splitting over a step $\Delta s$ is
+\begin{equation}
+    \rho_{j+1}
+    \approx
+    e^{\Delta s\mathcal{D}_j}
+    e^{\Delta s\mathcal{C}_j[\rho_j]}
+    (\Phi_{j,\mu_j})_{\#}\rho_j.
+    \label{eq:section_splitting_revised}
+\end{equation}
+This expression is used only to organise the modelling problem into external transport, collective interaction, and dissipative contributions. The present numerical surrogates learn the composite transformations represented in the simulation data; they do not separately identify or enforce the three generators in Eq.~\eqref{eq:section_splitting_revised}.
+
+% =============================================================================
